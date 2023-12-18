@@ -1,6 +1,6 @@
 'use client'
 import Head from 'next/head';
-import GameStudioManager from './GameStudioManager';
+import App from './components/App';
 import './globals.css'
 
 export default function Home() {
@@ -12,7 +12,7 @@ export default function Home() {
           rel="stylesheet"
           href="/animate.css" // The path to your animate.css file in the public folder
         />      </Head>
-      <GameStudioManager />
+      <App></App>
     </div>
   );
 }
