@@ -1,8 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const EmployeeComponent = ({ employees, hireEmployee, fireEmployee, assignToProject, projects }) => {
+const EmployeeComponent = ({
+    employees,
+    hireEmployee,
+    fireEmployee,
+    assignToProject,
+    projects,
+    spreadEmployees
+}) => {
     const [selectedEmployeeType, setSelectedEmployeeType] = useState('Developer');
-    const [selectedProjectId, setSelectedProjectId] = useState(projects.length > 0 ? projects[0].id : '');
+    const [freeEmployees, setFreeEmployees] = useState([]);
+    const [sliderValues, setSliderValues] = useState({});
+
+    useEffect(() => {
+        setFreeEmployees(employees.filter(emp => emp.type === selectedEmployeeType && !emp.projectId));
+        initializeSliderValues();
+    }, [employees, selectedEmployeeType, projects]);
+
+    const employeeTypes = ['Developer', 'Designer', 'Marketeer'];
+
+    const initializeSliderValues = () => {
+        const initialSliderValues = {};
+        projects.forEach(project => {
+            initialSliderValues[project.id] = 0;
+        });
+        setSliderValues(initialSliderValues);
+    };
 
     const handleHireEmployee = () => {
         hireEmployee(selectedEmployeeType);
@@ -13,46 +36,62 @@ const EmployeeComponent = ({ employees, hireEmployee, fireEmployee, assignToProj
     };
 
     const handleAssignToProject = (employeeId, projectId) => {
-        console.log(employeeId, projectId)
         assignToProject(employeeId, projectId);
+    };
+
+    const handleSpreadEmployees = () => {
+        // Placeholder for spreadEmployees function
+        // spreadEmployees(selectedEmployeeType, projects);
+        console.error('spreadEmployees function needs to be implemented');
+    };
+
+    const handleSliderChange = (projectId, value) => {
+        setSliderValues(prevValues => ({ ...prevValues, [projectId]: value }));
+        // Here, you would implement logic to reassign employees based on the new slider values
     };
 
     return (
         <div className="bg-gray-100 p-4 rounded-lg shadow-md">
-            <div className="flex justify-between mb-4">
-                <select onChange={(e) => setSelectedEmployeeType(e.target.value)} className="p-2 border text-black border-gray-300 rounded-md">
-                    <option value="Developer">Developer</option>
-                    <option value="Designer">Designer</option>
-                    <option value="Marketeer">Marketeer</option>
-                </select>
-                <button onClick={handleHireEmployee} className="bg-blue-500 text-black hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                    Hire Employee
+            <ul className="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
+                {employeeTypes.map(type => (
+                    <li key={type} className="me-2">
+                        <button
+                            onClick={() => setSelectedEmployeeType(type)}
+                            className={`inline-block p-4 rounded-t-lg ${selectedEmployeeType === type ? 'text-blue-600 bg-gray-100 dark:bg-gray-800 dark:text-blue-500' : 'hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300'}`}
+                        >
+                            {type}s
+                        </button>
+                    </li>
+                ))}
+            </ul>
+
+            <div className="p-3 bg-white rounded-b-lg shadow-md">
+                <h3 className="font-bold">{selectedEmployeeType}s</h3>
+                <p>Available: {freeEmployees.length}</p>
+                <button onClick={handleHireEmployee} className="bg-blue-500 text-white hover:bg-blue-700 font-bold py-2 px-4 rounded">
+                    Hire {selectedEmployeeType}
                 </button>
-            </div>
+                <button onClick={handleSpreadEmployees} className="bg-green-500 text-white hover:bg-green-700 font-bold py-2 px-4 rounded ml-2">
+                    Spread Free {selectedEmployeeType}s
+                </button>
 
-            {employees.map((employee, index) => (
-                <div key={index} className="bg-white p-3  text-black rounded-lg shadow-md mb-2">
-                    <p className="bg-white p-3  text-black rounded-lg shadow-md mb-2 font-bold">{employee.type}</p>
-                    <p className="bg-white p-3  text-black rounded-lg shadow-md mb-2">Assigned to: {employee.projectId ? projects.find(p => p.id === employee.projectId).name : 'None'}</p>
-                    <div className="flex justify-between items-center">
-                        <select defaultValue={'---'} placeholder={"---"}
-
-                            onChange={(e) => setSelectedProjectId(e.target.value)} className="p-2 border text-black border-gray-300 rounded-md">
-                            {projects.map(project => (
-                                <option key={project.id} value={project.id}>{project.name}</option>
-                            ))}
-                        </select>
-                        <button onClick={() => handleAssignToProject(employee.id, selectedProjectId)} className="mr-2 bg-green-500 text-black hover:bg-green-700 text-white font-bold py-1 px-3 rounded">
-                            Assign
-                        </button>
-                        <button onClick={() => handleFireEmployee(employee.id)} className="bg-red-500 text-black hover:bg-red-700 text-white font-bold py-1 px-3 rounded">
-                            Fire
-                        </button>
+                {/* Projects list and sliders */}
+                {projects.map((project) => (
+                    <div key={project.id} className="mt-4">
+                        <h4 className="font-bold">{project.name}</h4>
+                        <input
+                            type="range"
+                            min="0"
+                            max={freeEmployees.length}
+                            value={sliderValues[project.id]}
+                            onChange={(e) => handleSliderChange(project.id, e.target.value)}
+                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                        />
+                        <p className="text-xs mt-2">Assign {selectedEmployeeType}s: {sliderValues[project.id]}</p>
                     </div>
-                </div>
-            ))
-            }
-        </div >
+                ))}
+            </div>
+        </div>
     );
 };
 

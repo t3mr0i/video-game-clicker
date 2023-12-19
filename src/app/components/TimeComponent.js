@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
-const TimeComponent = ({ currentYear, setCurrentYear, platforms, employees, updateConsoleSales, paySalaries, addNotification }) => {
+const TimeComponent = ({ currentYear, setCurrentYear, platforms, employees, updateConsoleSales, paySalaries, addNotification, updateWeeklySales, currentWeek, setCurrentWeek }) => {
     const [currentMonth, setCurrentMonth] = useState(1);
     const [currentDay, setCurrentDay] = useState(1);
-    const [currentWeek, setCurrentWeek] = useState(1);
     const [monthProgress, setMonthProgress] = useState(0);
 
     useEffect(() => {
@@ -35,7 +34,10 @@ const TimeComponent = ({ currentYear, setCurrentYear, platforms, employees, upda
         if (newDay % 7 === 0) { // Advance the week every 7 days
             newWeek++;
             setMonthProgress((newMonth % 4) * 25); // Update progress every week
+            updateWeeklySales(); // Update sales for all projects
+
         }
+
 
         updateConsoleSales(platforms, newYear, newMonth);
         if (newDay === 1 && newMonth === 1) {

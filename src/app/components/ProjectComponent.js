@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import GameDisplayComponent from './GameDisplayComponent';
+import MetaCriticRatingComponent from './MetaCriticRatingComponent';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShip } from '@fortawesome/free-solid-svg-icons';
+import classNames from 'classnames';
 const ProjectComponent = ({ projects, createProject, updateProjectProgress, currentYear, platforms, genres, employees, openShippingModal }) => {
     const [newProjectName, setNewProjectName] = useState('');
     const [selectedSize, setSelectedSize] = useState('A'); // A, AA, AAA
@@ -8,6 +12,7 @@ const ProjectComponent = ({ projects, createProject, updateProjectProgress, curr
     const [selectedGenre, setSelectedGenre] = useState('');
     const [developmentPoints, setDevelopmentPoints] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const defaultOption = <option value="" disabled>---</option>;
 
     const gameSizes = {
         'A': 1,
@@ -41,8 +46,11 @@ const ProjectComponent = ({ projects, createProject, updateProjectProgress, curr
     const handleCreateProject = () => {
         const maxPoints = calculateDevelopmentPoints(selectedSize, selectedPlatform, selectedGenre);
 
+        console.log("Selected Genre:", selectedGenre);
+        console.log("Selected Platform:", selectedPlatform);
+
         if (newProjectName.trim() !== '') {
-            createProject({
+            const newProject = {
                 name: newProjectName,
                 size: selectedSize,
                 platform: selectedPlatform,
@@ -55,11 +63,20 @@ const ProjectComponent = ({ projects, createProject, updateProjectProgress, curr
                 revenue: 0, // Initialize revenue
                 shipped: false, // Initialize shipping status
                 startDate: `${currentYear}-${String(new Date().getMonth() + 1).padStart(2, '0')}`
-            });
+            };
+
+            createProject(newProject);
+            console.log("Created Project:", newProject);
+
             setNewProjectName('');
             setIsModalOpen(false);
+        } else {
+            // Handle the case where the project name is empty
+            console.error("Project name is required.");
         }
     };
+
+
     const handleWorkOnProject = (projectId) => {
         updateProjectProgress(projectId, 0.1);
     };
@@ -72,6 +89,27 @@ const ProjectComponent = ({ projects, createProject, updateProjectProgress, curr
     const closeModal = () => setIsModalOpen(false);
 
     const availablePlatforms = platforms.filter(platform => platform.releaseYear <= currentYear);
+
+    function renderProgressBars(progress) {
+        const cycleCount = Math.floor(progress / 100); // Number of complete cycles
+        const currentProgress = progress % 100; // Remaining progress after cycles
+
+        // Define colors for each cycle, add more colors if needed
+        const cycleColors = ['bg-green-500', 'bg-yellow-500', 'bg-red-500', 'bg-blue-500'];
+
+        // Determine the color based on the cycle count
+        const barColor = cycleColors[cycleCount % cycleColors.length];
+
+        // Return the progress bar with dynamic width and color
+        return (
+            <div className="w-full bg-gray-200 rounded-full h-2.5">
+                <div
+                    className={`${barColor} h-2.5 rounded-full transition-all duration-300 ease-in-out`}
+                    style={{ width: `${currentProgress}%` }}
+                ></div>
+            </div>
+        );
+    }
 
 
     return (
@@ -90,19 +128,22 @@ const ProjectComponent = ({ projects, createProject, updateProjectProgress, curr
                     className="p-2 border text-gray-800 border-gray-300 rounded-md w-full mb-4"
                 />
                 <div className="flex justify-between mb-4">
-                    <select onChange={(e) => setSelectedSize(e.target.value)} className="p-2 border text-gray-800 border-gray-300 rounded-md">
+                    <select value={selectedSize} onChange={(e) => setSelectedSize(e.target.value)} className="p-2 border text-gray-800 border-gray-300 rounded-md">
+                        {defaultOption}
                         <option value="A">A</option>
                         <option value="AA">AA</option>
                         <option value="AAA">AAA</option>
                     </select>
-                    <select onChange={(e) => setSelectedPlatform(e.target.value)} className="p-2 border text-gray-800 border-gray-300 rounded-md">
+                    <select value={selectedPlatform} onChange={(e) => setSelectedPlatform(e.target.value)} className="p-2 border text-gray-800 border-gray-300 rounded-md">
+                        {defaultOption}
                         {availablePlatforms.map(platform => (
                             <option key={platform.name} value={platform.name}>{platform.name}</option>
                         ))}
                     </select>
-                    <select onChange={(e) => setSelectedGenre(e.target.value)} className="p-2 border text-gray-800 border-gray-300 rounded-md">
+                    <select value={selectedGenre} onChange={(e) => setSelectedGenre(e.target.value)} className="p-2 border text-gray-800 border-gray-300 rounded-md">
+                        {defaultOption}
                         {genres.map(genre => (
-                            <option key={genre.name} value={genre.name}>{genre.name}</option>
+                            <option key={genre.id} value={genre.name}>{genre.name}</option>
                         ))}
                     </select>
                 </div>
@@ -112,40 +153,57 @@ const ProjectComponent = ({ projects, createProject, updateProjectProgress, curr
                     Develop new Videogame
                 </button>
             </Modal>
-            {projects.map((project, index) => (
-                <div key={index} className="bg-white p-4 rounded-lg shadow-md mb-4">
-                    <div className="flex justify-between items-center">
-                        <h3 className="text-lg font-bold">{project.name}</h3>
-                        <div className="text-sm text-gray-600">
-                            Progress Value: {project.progress}
-                            Employees: Developer: {countEmployeesAssigned(project.id, 'Developer')}, Designers: {countEmployeesAssigned(project.id, 'Designer')}, Marketing: {countEmployeesAssigned(project.id, 'Marketer')} | Genre: {project.genre} | Platform: {project.platform} | Size: {project.size} | Start Date: {project.startDate}
-                        </div>
-                    </div>
-                    <div className="mt-2">
-                        <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
-                            <div className="bg-green-500 h-full" style={{ width: `${project.progress}%` }}></div>
-                        </div>
-                        <div className="flex justify-between items-center mt-2 text-sm">
-                            <span>Progress: {Math.min(project.progress, 100).toFixed(2)}%</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                {projects.map((project, index) => (
+                    <div key={index} className="bg-white p-4 rounded-lg shadow-md">
+                        <div className="p-5">
+                            <div className="flex justify-between">
+                                <div>
+                                    <h5 className="text-xl font-bold mb-2" style={{ color: '#314455' }}>{project.name}</h5>
+                                    <p className="text-sm" style={{ color: '#7a8c99' }}>{project.platform} | {project.size} | {project.genre} | Start: {project.startDate}</p>
+                                </div>
+                                <div className="text-right">
+                                    <button onClick={() => handleWorkOnProject(project.id)} className="text-sm bg-[#f2a365] hover:bg-[#f4b880] text-white font-medium py-1 px-2 rounded">
+                                        Work
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="w-full bg-[#dae1e7] rounded-full h-2.5 my-3">
+                                {renderProgressBars(project.progress)}
+                            </div>
 
-                            <span>Marketing Value: {project.marketingValue}</span>
-                            <button className={`py-1 px-3 text-xs rounded ${'bg-blue-500 hover:bg-blue-700  text-gray-100'}`} onClick={() => handleWorkOnProject(project.id)}>
-                                Work
-                            </button>
+                            <div className="flex justify-between items-center">
+                                <span className="text-xs" style={{ color: '#314455' }}>Progress: {Math.round(project.progress)}%</span>
+                                <div className="text-xs text-right">
+                                    <span style={{ color: '#7a8c99' }}>Dev: {countEmployeesAssigned(project.id, 'Developer')}</span><br />
+                                    <span style={{ color: '#7a8c99' }}>Design: {countEmployeesAssigned(project.id, 'Designer')}</span><br />
+                                    <span style={{ color: '#7a8c99' }}>Marketing: {countEmployeesAssigned(project.id, 'Marketer')}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <MetaCriticRatingComponent rating={project.metaCriticRating} />
+                        <div className="bg-[#dae1e7] p-4 text-center">
+                            <GameDisplayComponent game={project} />
+                            <p className="text-gray-700 mt-2">Total Revenue: ${project.revenue.toFixed(2)}</p>
+                        </div>
+                        {project.progress >= 100 && !project.shipped && (
                             <button
                                 onClick={() => openShippingModal(project.id)}
-                                className={`py-1 px-3 text-xs rounded ${project.progress >= 100 ? 'bg-blue-500 hover:bg-blue-700 text-white' : 'bg-gray-500 text-gray-100'} disabled:opacity-50`}
-                                disabled={project.progress < 100}
-                            >Ship Game
+                                className={classNames(
+                                    "mt-4 py-1 px-3 text-xs rounded", // Add absolute positioning
+                                    {
+                                        'bg-blue-500 hover:bg-blue-700 text-white': project.progress >= 100,
+                                        'bg-gray-500 text-gray-100 disabled:opacity-50': project.progress < 100,
+                                    }
+                                )}
+                            >
+                                Ship Game
                             </button>
-                        </div>
+                        )}
                     </div>
-                    <GameDisplayComponent game={project} />
-                    <MetaCriticRatingComponent rating={game.metaCriticRating} />
+                ))}
 
-                </div>
-            ))
-            }
+            </div >
         </div >
     );
 };

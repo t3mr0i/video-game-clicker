@@ -1,30 +1,43 @@
 import React from 'react';
-import { Line } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend,
+} from 'chart.js';
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend
+);
 
 const GameDisplayComponent = ({ game }) => {
-    // Check if game.sales is defined and has data
-    const salesData = game.sales && game.sales.length > 0 ? {
+    const salesData = game.sales && game.sales.length > 0 && {
         labels: game.sales.map((sale, index) => `Week ${index + 1}`),
         datasets: [{
             label: 'Sales',
             data: game.sales,
-            fill: false,
             backgroundColor: 'rgb(75, 192, 192)',
             borderColor: 'rgba(75, 192, 192, 0.2)',
         }],
-    } : null;
+    }
 
     return (
-        <div className="mt-4">
-            {salesData ? (
+        salesData && (
+            <div className="mt-4" style={{ width: '200px', height: '200px' }}>
                 <>
-                    <Line data={salesData} options={{ maintainAspectRatio: false }} />
-                    <p className="text-gray-700 mt-2">Total Revenue: ${game.revenue.toFixed(2)}</p>
+                    <Bar data={salesData} options={{ maintainAspectRatio: false, responsive: true }} key={game.id} />
                 </>
-            ) : (
-                <p className="text-gray-700 mt-2">Sales data not available.</p>
-            )}
-        </div>
+            </div>
+        )
     );
 };
 

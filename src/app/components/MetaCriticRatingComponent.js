@@ -16,17 +16,23 @@ const MetaCriticRatingComponent = ({ rating }) => {
         return () => clearInterval(interval);
     }, [rating]);
 
-    return (
-        <div className={`text-lg font-bold ${getRatingColor(rating)}`}>
-            {displayRating}
-        </div>
-    );
-};
+    // Function to determine the color based on the rating score
+    const getRatingColor = (rating) => {
+        if (rating >= 75) return 'bg-green-500';
+        if (rating >= 50) return 'bg-yellow-500';
+        return 'bg-red-500';
+    };
 
-const getRatingColor = (rating) => {
-    if (rating >= 75) return 'text-green-600';
-    if (rating >= 50) return 'text-yellow-600';
-    return 'text-red-600';
+    const ratingColor = getRatingColor(rating);
+
+    return (
+        rating && (
+            <div className={`rounded-md shadow-lg p-4 ${ratingColor} text-white text-center`}>
+                <div className="text-4xl font-bold" style={{ fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>
+                    {Math.ceil(displayRating)}
+                </div>            </div>
+        )
+    );
 };
 
 export default MetaCriticRatingComponent;
