@@ -154,7 +154,7 @@ function App() {
             salary: 5000, // Example fixed salary
             startYear: currentYear,
             startMonth: currentMonth,
-            projectId: null, // Not assigned to any project initially
+            projectId: null,
         };
         setEmployees([...employees, newEmployee]);
     }
@@ -163,14 +163,19 @@ function App() {
         'projectId1': [100, 90, 80, 70, 60, 50] // Weekly sales data for a project
     });
 
+    // Function to fire an employee
     const fireEmployee = (employeeId) => {
-        setEmployees(employees.filter(employee => employee.id !== employeeId));
+        setEmployees(prevEmployees => prevEmployees.filter(employee => employee.id !== employeeId));
     };
 
-    const assignToProject = (employeeId, projectId) => {
-        setEmployees(employees.map(employee =>
-            employee.id === employeeId ? { ...employee, projectId: projectId } : employee
-        ));
+
+    const assignToProject = (projectId, employeeIds) => {
+        setEmployees(prevEmployees => prevEmployees.map(employee => {
+            if (employeeIds.includes(employee.id)) {
+                return { ...employee, projectId: projectId };
+            }
+            return employee;
+        }));
     };
 
     const createProject = (projectData) => {
