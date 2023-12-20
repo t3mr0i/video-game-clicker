@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import FinanceComponent from './FinanceComponent';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClock, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 
-const TimeComponent = ({ currentYear, setCurrentYear, platforms, employees, updateConsoleSales, paySalaries, addNotification, updateWeeklySales, currentWeek, setCurrentWeek }) => {
+const TimeComponent = ({ currentYear, setCurrentYear, platforms, employees, updateConsoleSales, paySalaries, addNotification, updateWeeklySales, currentWeek, setCurrentWeek, salaryCosts, bankAccount }) => {
     const [currentMonth, setCurrentMonth] = useState(1);
     const [currentDay, setCurrentDay] = useState(1);
     const [monthProgress, setMonthProgress] = useState(0);
@@ -23,7 +26,6 @@ const TimeComponent = ({ currentYear, setCurrentYear, platforms, employees, upda
             newDay = 1;
             newMonth++;
             newWeek = 1;
-            setMonthProgress(0);
         }
 
         if (newMonth > 12) {
@@ -33,11 +35,10 @@ const TimeComponent = ({ currentYear, setCurrentYear, platforms, employees, upda
 
         if (newDay % 7 === 0) { // Advance the week every 7 days
             newWeek++;
-            setMonthProgress((newMonth % 4) * 25); // Update progress every week
-            updateWeeklySales(); // Update sales for all projects
-
         }
 
+        // Update progress every day
+        setMonthProgress((newDay / 30) * 100); // Progress based on day of the month
 
         updateConsoleSales(platforms, newYear, newMonth);
         if (newDay === 1 && newMonth === 1) {
@@ -53,6 +54,7 @@ const TimeComponent = ({ currentYear, setCurrentYear, platforms, employees, upda
         setCurrentYear(newYear);
     };
 
+
     const checkConsoleMarketChanges = (year, month) => {
         platforms.forEach(platform => {
             if (platform.releaseYear === year && month === 1) {
@@ -62,17 +64,26 @@ const TimeComponent = ({ currentYear, setCurrentYear, platforms, employees, upda
         });
     };
 
-
-
     return (
-        <div className="bg-gray-100 text-black p-4 rounded-lg shadow-md">
-            <h2 className="text-lg font-bold text-gray-700">
-                Current Time: {currentYear}-{String(currentMonth).padStart(2, '0')}-{String(currentDay).padStart(2, '0')}
-            </h2>
-            <div className="mt-2 bg-gray-200 rounded-full h-2.5">
-                <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${monthProgress}%`, transition: 'width 0.5s ease-in-out' }}></div>
+        <div className="flex items-center justify-between bg-gray-100 text-black p-4 rounded-lg shadow-md sticky top-0 z-10">
+            <div className="flex items-center space-x-3">
+                <div>
+                    <h2 className="text-lg font-bold text-gray-700">
+                        <span className="text-gray-600">{String(currentDay).padStart(2, '0')}</span>-
+                        <span className="text-gray-600">{String(currentMonth).padStart(2, '0')}</span>-
+                        <span className="text-gray-600">{currentYear}</span>
+                    </h2>
+                    <div className="flex items-center mt-2">
+                        <FontAwesomeIcon icon={faClock} className="text-sm text-gray-600 mr-2" />
+                        <div className="bg-gray-200 rounded-full h-2.5 w-full">
+                            <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${monthProgress}%`, transition: 'width 0.5s ease-in-out' }}></div>
+                        </div>
+                    </div>
+                    <p className="text-gray-600 mt-1">Week <span className="text-gray-600">{currentWeek}</span></p>
+                </div>
             </div>
-            <p className="text-gray-600 mt-1">Week {currentWeek}</p>
+            {/* Financial Overview */}
+            <FinanceComponent salaryCosts={salaryCosts} bankAccount={bankAccount} />
         </div>
     );
 };

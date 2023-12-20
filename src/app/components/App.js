@@ -14,6 +14,8 @@ function App() {
     const [currentWeek, setCurrentWeek] = useState(1);
     const [employees, setEmployees] = useState([]);
     const [projects, setProjects] = useState([]);
+    const [bankAccount, setBankAccount] = useState(10000); // Initialize with some starting value
+    const [salaryCosts, setSalaryCosts] = useState(0); // Initialize with some starting value
 
     // Function to safely get values from local storage
     const safeLocalStorageGet = (key, defaultValue) => {
@@ -135,8 +137,7 @@ function App() {
     { name: 'Management', popularity: 7, complexity: 4 },
     { name: 'Tactical', popularity: 8, complexity: 4 },
     { name: 'Card Game', popularity: 6, complexity: 3 },
-    { name: 'Board Game', popularity: 6, complexity: 3 },
-    { name: 'Nerd Game', popularity: 5, complexity: 6 }
+    { name: 'Board Game', popularity: 6, complexity: 2 },
     ]);
     const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
     const [selectedProjectForShipping, setSelectedProjectForShipping] = useState(null);
@@ -159,12 +160,15 @@ function App() {
         const newEmployee = {
             id: generateUniqueId(),
             type: type,
-            salary: 5000, // Example fixed salary
+            salary: 2500, // Example fixed salary
             startYear: currentYear,
             startMonth: currentMonth,
             projectId: null,
         };
         setEmployees([...employees, newEmployee]);
+
+        setSalaryCosts(prevSalaryCosts => prevSalaryCosts + newEmployee.salary);
+
     }
 
     const [projectSalesData, setProjectSalesData] = useState({
@@ -210,13 +214,17 @@ function App() {
     const updateWeeklySales = () => {
         const updatedProjects = projects.map(project => {
             if (project.shipped) {
+                console.log(project.shippingWeek + currentWeek)
                 const weeksOnMarket = currentWeek - project.shippingWeek;
-                const decayFactor = 0.75; // Adjust this value as needed
+                const decayFactor = 0.75; // Adjust as needed
                 const qualityFactor = 1 + project.metaCriticRating / 100;
 
                 let newSales = project.initialSales * Math.pow(decayFactor, weeksOnMarket) * qualityFactor;
                 project.sales[weeksOnMarket] = newSales;
-                project.revenue += newSales * 10;
+                project.revenue += newSales;
+
+                // Add revenue to bank account
+                setBankAccount(bankAccount + newSales); // For adding revenue
             }
             return project;
         });
@@ -224,12 +232,29 @@ function App() {
         setProjects(updatedProjects);
     };
 
-    const paySalaries = (employees, year) => {
+    const paySalaries = () => {
+        let totalSalaries = 0;
         employees.forEach(employee => {
-            const salary = calculateSalary(employee, year);
-            // Deduct salary from game balance or employee-specific account
+            const salaryToPay = calculateProRatedSalary(employee);
+            totalSalaries += salaryToPay;
         });
+
+        if (currentWeek % 4 === 0) {
+            setBankAccount(prevBankAccount => prevBankAccount - totalSalaries);
+            setSalaryCosts(totalSalaries);
+        }
     };
+
+    // Helper function to calculate pro-rated salary
+    const calculateProRatedSalary = (employee) => {
+        // Assuming 4 weeks in a month for simplification
+        const salaryPerWeek = employee.salary / 4;
+        // Calculate the number of weeks worked in the current month
+        const weeksWorked = (employee.startMonth === currentMonth && employee.startYear === currentYear)
+            ? 4 - Math.floor(employee.startDay / 7) : 4;
+        return salaryPerWeek * weeksWorked;
+    };
+
 
     const calculateUpfrontPayment = (project, publisher) => {
         const randomFactor = Math.random() * 0.5 + 0.75; // Random factor between 0.75 and 1.25
@@ -241,68 +266,52 @@ function App() {
         return baseRevenueShare + (publisher.reputation * 10); // Adjusted by publisher's reputation
     };
 
-    const salaryCosts = 5000;
-    const bankAccount = 100000;
-    const games = [{ name: 'Game 1', sales: [120, 90, 150], revenue: 1000 }];
-
 
     const shipGame = (projectId, publisherName) => {
+        // Find the project and publisher objects based on their names
         const project = projects.find(p => p.id === projectId);
         const publisher = publishers.find(p => p.name === publisherName);
 
+        // Error handling if project or publisher are not found
         if (!project || !publisher) {
             console.error("Project or Publisher not found.");
             return;
         }
 
-        // Check if the genre and platform are found in the respective arrays
+        // Error handling if genre or platform are not found
         const genre = genres.find(g => g.name === project.genre);
         const platform = platforms.find(p => p.name === project.platform);
-
         if (!genre || !platform) {
             console.error("Genre or Platform not found.");
             return;
         }
 
-        // Sales calculation logic
+        // Calculate the initial sales, MetaCritic score, etc.
         const genreFactor = genre.popularity;
         const sizeFactor = { 'A': 1, 'AA': 2, 'AAA': 3 }[project.size];
         const yearFactor = 1 + (currentYear - 1985) / 40;
         const marketingFactor = project.marketingPoints || 1;
         const randomFactor = Math.random() * 0.5 + 0.75;
-
-
-        // Initial sales calculation
         const initialSales = genreFactor * sizeFactor * yearFactor * marketingFactor * randomFactor;
-        project.sales = Array(currentWeek - 1).fill(0); // Fill previous weeks with 0 sales
-        project.sales[currentWeek - 1] = initialSales; // First week sales start at the current week
-        project.revenue = initialSales * 10; // Revenue calculation for the first week
-        project.shippingWeek = currentWeek; // Record the shipping week
+        const metaCriticScore = calculateMetaCriticScore(genre.complexity, platform.power, project.designPoints, project.progress, marketingFactor);
 
-        // MetaCritic score calculation logic
-        const designFactor = project.designPoints || 0;
-        const progressFactor = project.progress > 100 ? (project.progress / 600) : 1;
-        const metaCriticScore = calculateMetaCriticScore(genre.complexity, platform.power, designFactor, progressFactor, marketingFactor);
-        project.metaCriticRating = metaCriticScore;
-
-        // Simulating sales over weeks
-        project.initialSales = initialSales; // Store initial sales for future reference
-        project.sales[currentWeek] = initialSales; // Set initial sales for the current week
-        project.shippingWeek = currentWeek; // Record the week when the game is shipped
-
-        for (let i = 0; i < currentWeek; i++) {
-            project.sales[i] = 0;
-        }
-        // Update project status
+        // Set the project as shipped with initial sales and revenue
         project.shipped = true;
+        project.shippingWeek = currentWeek;
+        project.sales = Array(currentWeek).fill(0); // Fill previous weeks with 0 sales
+        project.sales[currentWeek - 1] = initialSales; // First week sales start at the current week
+        project.revenue = initialSales * 10; // Example revenue calculation for the first week
+        project.metaCriticRating = metaCriticScore;
         project.publisher = publisherName;
 
-        // Update state
+        // Update the state with the new project details
         setProjects(projects.map(p => p.id === projectId ? project : p));
-        setPublishers(publishers.map(p => p.name === publisherName ? publisher : p));
+        setPublishers(publishers.map(p => p.name === publisherName ? { ...p, dealHistory: [...p.dealHistory, project] } : p));
 
-        // Optional: Add a notification or other game logic
+        // Optional: Add a notification or other logic to handle the game shipping
+        // addNotification(`Successfully shipped ${project.name} with ${publisher.name}.`);
     };
+
 
 
     const calculateMetaCriticScore = (genreComplexity, consolePower, designFactor, progressFactor, marketingFactor) => {
@@ -336,8 +345,6 @@ function App() {
     return (
         <div className="App">
             <ToastContainer />
-            <FinanceComponent salaryCosts={salaryCosts} bankAccount={bankAccount} />
-
             <TimeComponent
                 updateWeeklySales={updateWeeklySales}
                 currentYear={currentYear}
@@ -349,6 +356,8 @@ function App() {
                 updateConsoleSales={updateConsoleSales}
                 paySalaries={paySalaries}
                 addNotification={addNotification}
+                salaryCosts={salaryCosts}
+                bankAccount={bankAccount}
             />
             <ProjectComponent
                 projects={projects}

@@ -35,6 +35,7 @@ const GameDisplayComponent = ({ game }) => {
             <div className="mt-4" style={{ width: '200px', height: '200px' }}>
                 <>
                     <Bar data={salesData} options={{ maintainAspectRatio: false, responsive: true }} key={game.id} />
+                    <p className="text-gray-700 mt-2">Total Revenue: ${game.revenue.toFixed(2)}</p>
                 </>
             </div>
         )

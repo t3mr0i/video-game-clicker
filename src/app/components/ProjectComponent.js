@@ -101,6 +101,7 @@ const ProjectComponent = ({ projects, setProjects, createProject, updateProjectP
                 maxPoints: maxPoints,
                 progress: 0,
                 developmentPoints: 0,
+                shippingWeek: 0,
                 sales: [], // Initialize with an empty array
                 revenue: 0, // Initialize revenue
                 shipped: false, // Initialize shipping status
@@ -199,7 +200,7 @@ const ProjectComponent = ({ projects, setProjects, createProject, updateProjectP
 
                 {selectedGenre && (
                     <div className="my-4 flex justify-center">
-                        <img src={`/images/genres/${selectedGenre.toUpperCase()}.png`} alt={selectedGenre} className="w-24 h-24 object-cover rounded-md" />
+                        <img src={`/images/genres/${selectedGenre.toUpperCase()}.png`} alt={selectedGenre} className="w-36 h-36 object-cover rounded-md" />
                     </div>
                 )}
 

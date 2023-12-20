@@ -172,9 +172,7 @@ const EmployeeComponent = ({
                 <button onClick={handleHireEmployee} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-5 mr-3 rounded">
                     Hire Employee
                 </button>
-                <button onClick={handleFireEmployee} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4  rounded">
-                    Fire Employee
-                </button>
+
             </div>
 
             {/* Project Cards */}
