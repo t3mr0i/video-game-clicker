@@ -14,6 +14,7 @@ const EmployeeComponent = ({
 }) => {
     const [selectedEmployeeType, setSelectedEmployeeType] = useState('Developer');
     const [employeeAssignments, setEmployeeAssignments] = useState({});
+    const activeProjects = projects.filter(project => !project.shipped);
 
     useEffect(() => {
         // Initialize employee assignments based on current projects
@@ -31,6 +32,11 @@ const EmployeeComponent = ({
     const handleFireEmployee = (employeeId) => {
         fireEmployee(employeeId);
     };
+
+    const countEmployeesInProject = (projectId) => {
+        return employees.filter(emp => emp.projectId === projectId && emp.type === selectedEmployeeType).length;
+    };
+
 
     const handleSliderChange = (projectId, value) => {
         // Filter out free employees of the selected type
@@ -53,25 +59,6 @@ const EmployeeComponent = ({
 
         // Return the first 'count' employees from the shuffled array
         return shuffled.slice(0, count);
-    };
-
-    const spreadEmployees = () => {
-        // Filter out free employees of the selected type
-        const freeEmployees = employees.filter(emp => emp.type === selectedEmployeeType && !emp.projectId);
-
-        // Distribute these employees evenly across projects
-        const assignments = distributeEmployees(freeEmployees, projects);
-
-        // Assign the employees to the projects
-        assignments.forEach(({ projectId, employeeIds }) => {
-            // Assign each employee to the project
-            employeeIds.forEach(employeeId => {
-                assignToProject(employeeId, projectId);
-            });
-        });
-
-        // Update the UI to reflect these new assignments
-        updateUIWithNewAssignments(assignments);
     };
 
     // Utility function to distribute employees evenly across projects
@@ -111,6 +98,45 @@ const EmployeeComponent = ({
         }));
     };
 
+    const handleAssignRemove = (projectId, isAssigning) => {
+        const freeEmployee = employees.find(emp => emp.type === selectedEmployeeType && !emp.projectId);
+        if (isAssigning && freeEmployee) {
+            assignToProject(freeEmployee.id, projectId);
+        } else if (!isAssigning) {
+            const assignedEmployee = employees.find(emp => emp.type === selectedEmployeeType && emp.projectId === projectId);
+            if (assignedEmployee) {
+                assignToProject(assignedEmployee.id, null);
+            }
+        }
+    };
+
+    const spreadEmployees = () => {
+        const freeEmployeeIds = employees
+            .filter(emp => emp.type === selectedEmployeeType && !emp.projectId)
+            .map(emp => emp.id);
+
+        projects.forEach((project, index) => {
+            if (freeEmployeeIds[index]) {
+                assignToProject(freeEmployeeIds[index], project.id);
+            }
+        });
+    };
+
+    const handleAddEmployeeToProject = (projectId) => {
+        const freeEmployee = employees.find(emp => emp.type === selectedEmployeeType && !emp.projectId);
+        if (freeEmployee) {
+            assignToProject(projectId, freeEmployee.id);
+        }
+    };
+
+    const handleRemoveEmployeeFromProject = (projectId) => {
+        const assignedEmployee = employees.find(emp => emp.projectId === projectId && emp.type === selectedEmployeeType);
+        if (assignedEmployee) {
+            assignToProject(null, assignedEmployee.id);
+        }
+    };
+
+
     const totalEmployees = employees.filter(emp => emp.type === selectedEmployeeType).length;
     const freeEmployees = employees.filter(emp => emp.type === selectedEmployeeType && !emp.projectId).length;
 
@@ -137,38 +163,45 @@ const EmployeeComponent = ({
                 </button>
             </div>
 
-            <div className="flex justify-between mb-4">
-                <div>Total {selectedEmployeeType}s: {totalEmployees}</div>
-                <div>Free {selectedEmployeeType}s: {freeEmployees}</div>
-                <button onClick={handleHireEmployee} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            {/* Employee Count Box */}
+            <div className="bg-white p-3 rounded-lg shadow-md mb-4 flex">
+                <div className="text-sm">
+                    <p>Total {selectedEmployeeType}s: {totalEmployees}</p>
+                    <p>Free {selectedEmployeeType}s: {freeEmployees}</p>
+                </div>
+                <button onClick={handleHireEmployee} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-5 mr-3 rounded">
                     Hire Employee
                 </button>
-                <button onClick={spreadEmployees} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                    Spread Employees
+                <button onClick={handleFireEmployee} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4  rounded">
+                    Fire Employee
                 </button>
             </div>
 
-            {/* Projects list with sliders */}
-            {projects.map((project) => (
-                <div key={project.id} className="bg-white p-3 rounded-lg shadow-md mb-2">
-                    <div className="flex justify-between items-center">
-                        <p>{project.name}</p>
-                        <div className="flex items-center">
+            {/* Project Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {activeProjects.map(project => (
+                    <div key={project.id} className="bg-white p-4 rounded-lg shadow-md">
+                        <h5 className="text-xl font-bold mb-2">{project.name}</h5>
+                        <div className="flex flex-col items-center mb-4">
                             <button
-                                onClick={() => handleDecrement(project.id)}
-                                className="text-sm bg-red-500 hover:bg-red-700 text-white font-medium py-1 px-2 rounded mr-2">
-                                <FontAwesomeIcon icon={faMinus} />
-                            </button>
-                            <span>{employeeAssignments[project.id] || 0}</span>
-                            <button
-                                onClick={() => handleIncrement(project.id)}
-                                className="text-sm bg-green-500 hover:bg-green-700 text-white font-medium py-1 px-2 rounded ml-2">
+                                onClick={() => handleAddEmployeeToProject(project.id)}
+                                className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded mb-2"
+                                disabled={freeEmployees === 0}
+                                title={freeEmployees === 0 ? "No free employees available" : "Add employee to project"}
+                            >
                                 <FontAwesomeIcon icon={faPlus} />
+                            </button>
+                            <span className="text-sm mb-2">Assigned: {countEmployeesInProject(project.id)}</span>
+                            <button
+                                onClick={() => handleRemoveEmployeeFromProject(project.id)}
+                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
+                            >
+                                <FontAwesomeIcon icon={faMinus} />
                             </button>
                         </div>
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
         </div>
     );
 };

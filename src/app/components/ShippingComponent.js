@@ -21,8 +21,7 @@ const ShippingComponent = ({ isModalOpen, closeModal, game, publishers, shipGame
 
                 return (
                     <div key={index} className="publisher-offer mb-4">
-                        {/* Placeholder for image */}
-                        <div className="mb-3 w-16 h-16 bg-gray-200 rounded-full"></div>
+                        <img src={`/images/publishers/${publisher.imageName}`} alt={publisher.name} className="mb-3 w-16 h-16 rounded-full" />
 
                         <h3 className="text-md font-semibold text-gray-800">{publisher.name}</h3>
                         <p className="text-gray-700">Upfront Payment: ${upfrontPayment.toFixed(2)}</p>

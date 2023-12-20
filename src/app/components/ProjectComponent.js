@@ -4,8 +4,11 @@ import GameDisplayComponent from './GameDisplayComponent';
 import MetaCriticRatingComponent from './MetaCriticRatingComponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShip } from '@fortawesome/free-solid-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faHammer } from '@fortawesome/free-solid-svg-icons';
+
 import classNames from 'classnames';
-const ProjectComponent = ({ projects, createProject, updateProjectProgress, currentYear, platforms, genres, employees, openShippingModal }) => {
+const ProjectComponent = ({ projects, setProjects, createProject, updateProjectProgress, currentYear, platforms, genres, employees, openShippingModal }) => {
     const [newProjectName, setNewProjectName] = useState('');
     const [selectedSize, setSelectedSize] = useState('A'); // A, AA, AAA
     const [selectedPlatform, setSelectedPlatform] = useState('');
@@ -34,7 +37,7 @@ const ProjectComponent = ({ projects, createProject, updateProjectProgress, curr
             const genreFactor = genre.complexity;
             const sizeFactor = gameSizes[selectedSize];
 
-            let points = (platformFactor + genreFactor) * sizeFactor;
+            let points = (platformFactor + genreFactor) * sizeFactor * 100;
             points *= 1 + (currentYear - 1985) / 100;
 
             setDevelopmentPoints(Math.round(points));
@@ -42,6 +45,43 @@ const ProjectComponent = ({ projects, createProject, updateProjectProgress, curr
             setDevelopmentPoints(0);
         }
     };
+    useEffect(() => {
+        const interval = setInterval(() => {
+            updateAllProjects();
+        }, 1000); // Every second
+
+        return () => clearInterval(interval);
+    }, [projects, employees]); // Rerun when projects or employees change
+
+    const updateAllProjects = () => {
+        const updatedProjects = projects.map(project => {
+            // Skip if project is already shipped
+            if (project.shipped) return project;
+
+            // Count the number of each type of employee assigned to the project
+            const numDevelopers = countEmployeesAssigned(project.id, 'Developer');
+            const numDesigners = countEmployeesAssigned(project.id, 'Designer');
+            const numMarketers = countEmployeesAssigned(project.id, 'Marketer');
+
+            // Define rates at which each type of employee contributes
+            const progressRate = 1; // Example rate at which developers contribute to progress
+            const designPointRate = 1 // Example rate for designers
+            const marketingPointRate = 1; // Example rate for marketers
+
+            // Update project metrics
+            project.progress += numDevelopers * progressRate;
+            project.designPoints = Math.floor((project.designPoints || 0)) + numDesigners * designPointRate;
+            project.marketingPoints = Math.floor((project.marketingPoints || 0)) + numMarketers * marketingPointRate;
+
+            // Ensure progress doesn't exceed 100%
+
+            return project;
+        });
+
+        // Update the projects array
+        setProjects(updatedProjects);
+    };
+
 
     const handleCreateProject = () => {
         const maxPoints = calculateDevelopmentPoints(selectedSize, selectedPlatform, selectedGenre);
@@ -56,6 +96,8 @@ const ProjectComponent = ({ projects, createProject, updateProjectProgress, curr
                 platform: selectedPlatform,
                 genre: selectedGenre,
                 requiredPoints: developmentPoints,
+                designPoints: 0,
+                marketingPoints: 0,
                 maxPoints: maxPoints,
                 progress: 0,
                 developmentPoints: 0,
@@ -90,9 +132,9 @@ const ProjectComponent = ({ projects, createProject, updateProjectProgress, curr
 
     const availablePlatforms = platforms.filter(platform => platform.releaseYear <= currentYear);
 
-    function renderProgressBars(progress) {
-        const cycleCount = Math.floor(progress / 100); // Number of complete cycles
-        const currentProgress = progress % 100; // Remaining progress after cycles
+    function renderProgress(progress, requiredPoints) {
+        const cycleCount = Math.floor(progress / requiredPoints); // Number of complete cycles
+        const currentProgress = (progress % requiredPoints) / requiredPoints * 100; // Remaining progress after cycles, scaled to a percentage
 
         // Define colors for each cycle, add more colors if needed
         const cycleColors = ['bg-green-500', 'bg-yellow-500', 'bg-red-500', 'bg-blue-500'];
@@ -102,24 +144,28 @@ const ProjectComponent = ({ projects, createProject, updateProjectProgress, curr
 
         // Return the progress bar with dynamic width and color
         return (
-            <div className="w-full bg-gray-200 rounded-full h-2.5">
+            <div className="w-full bg-gray-200 rounded-full h-2.5 md-2">
                 <div
-                    className={`${barColor} h-2.5 rounded-full transition-all duration-300 ease-in-out`}
+                    className={`${barColor} h-2.5 rounded-full transition-all duration-300 ease-in-out `}
                     style={{ width: `${currentProgress}%` }}
                 ></div>
             </div>
         );
     }
 
-
     return (
-        <div className="bg-gray-100 p-4 rounded-lg">
-            <button onClick={() => setIsModalOpen(true)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Create New Project
-            </button>
+        <div className="bg-gray-100 p-4 rounded-lg shadow-md">
+            <div className="flex justify-end mb-4">
+                <button onClick={openModal} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center">
+                    <FontAwesomeIcon icon={faPlus} className="mr-2" />
+                    Create New Project
+                </button>
+            </div>
 
-            <Modal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)} className="bg-white rounded-lg p-6 mx-auto my-12 border w-1/2">
-                <h2 className="text-lg font-bold mb-4">Create New Project</h2>
+            {/* Modal for creating new project */}
+            <Modal isOpen={isModalOpen} onRequestClose={closeModal} className="bg-white rounded-lg p-6 mx-auto my-12 border max-w-xl shadow-lg">
+                <h2 className="text-lg font-bold mb-4 text-gray-800">Create New Project</h2>
+
                 <input
                     type="text"
                     value={newProjectName}
@@ -127,84 +173,95 @@ const ProjectComponent = ({ projects, createProject, updateProjectProgress, curr
                     placeholder="Enter Project Name"
                     className="p-2 border text-gray-800 border-gray-300 rounded-md w-full mb-4"
                 />
+
                 <div className="flex justify-between mb-4">
                     <select value={selectedSize} onChange={(e) => setSelectedSize(e.target.value)} className="p-2 border text-gray-800 border-gray-300 rounded-md">
-                        {defaultOption}
+                        <option value="" disabled>---</option>
                         <option value="A">A</option>
                         <option value="AA">AA</option>
                         <option value="AAA">AAA</option>
                     </select>
+
                     <select value={selectedPlatform} onChange={(e) => setSelectedPlatform(e.target.value)} className="p-2 border text-gray-800 border-gray-300 rounded-md">
-                        {defaultOption}
+                        <option value="" disabled>---</option>
                         {availablePlatforms.map(platform => (
                             <option key={platform.name} value={platform.name}>{platform.name}</option>
                         ))}
                     </select>
+
                     <select value={selectedGenre} onChange={(e) => setSelectedGenre(e.target.value)} className="p-2 border text-gray-800 border-gray-300 rounded-md">
-                        {defaultOption}
+                        <option value="" disabled>---</option>
                         {genres.map(genre => (
                             <option key={genre.id} value={genre.name}>{genre.name}</option>
                         ))}
                     </select>
                 </div>
-                <h3 className="text-lg font-bold">{calculateDevelopmentPoints}</h3>
 
-                <button onClick={handleCreateProject} className="bg-green-500 hover:bg-green-700  text-white font-bold py-2 px-4 rounded w-full">
-                    Develop new Videogame
+                {selectedGenre && (
+                    <div className="my-4 flex justify-center">
+                        <img src={`/images/genres/${selectedGenre.toUpperCase()}.png`} alt={selectedGenre} className="w-24 h-24 object-cover rounded-md" />
+                    </div>
+                )}
+
+                <h3 className="text-lg font-bold mb-4">Development Points Required: {developmentPoints}</h3>
+
+                <button
+                    onClick={handleCreateProject}
+                    className={`bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full transition duration-300 ease-in-out ${(!selectedSize || !selectedPlatform || !selectedGenre || !newProjectName) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    disabled={!selectedSize || !selectedPlatform || !selectedGenre || !newProjectName}
+                >
+                    <FontAwesomeIcon icon={faShip} className="mr-2" />
+                    Develop New Game
                 </button>
             </Modal>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+
+            {/* Project Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {projects.map((project, index) => (
                     <div key={index} className="bg-white p-4 rounded-lg shadow-md">
-                        <div className="p-5">
-                            <div className="flex justify-between">
-                                <div>
-                                    <h5 className="text-xl font-bold mb-2" style={{ color: '#314455' }}>{project.name}</h5>
-                                    <p className="text-sm" style={{ color: '#7a8c99' }}>{project.platform} | {project.size} | {project.genre} | Start: {project.startDate}</p>
-                                </div>
-                                <div className="text-right">
-                                    <button onClick={() => handleWorkOnProject(project.id)} className="text-sm bg-[#f2a365] hover:bg-[#f4b880] text-white font-medium py-1 px-2 rounded">
-                                        Work
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="w-full bg-[#dae1e7] rounded-full h-2.5 my-3">
-                                {renderProgressBars(project.progress)}
-                            </div>
+                        <div className="flex justify-between items-center">
+                            <h5 className="text-xl font-bold mb-2" style={{ color: '#314455' }}>{project.name}</h5>
+                            <button onClick={() => handleWorkOnProject(project.id)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
+                                <FontAwesomeIcon icon={faHammer} className="mr-2" />
+                                Work
+                            </button>
+                        </div>
+                        <div className="text-xs my-2">
+                            <span>Start: {new Date(project.startDate).toLocaleDateString('de-DE')}</span>
+                            <span> | Genre: {project.genre} | Platform: {project.platform} | Size: {project.size}</span>
+                        </div>
 
-                            <div className="flex justify-between items-center">
-                                <span className="text-xs" style={{ color: '#314455' }}>Progress: {Math.round(project.progress)}%</span>
-                                <div className="text-xs text-right">
-                                    <span style={{ color: '#7a8c99' }}>Dev: {countEmployeesAssigned(project.id, 'Developer')}</span><br />
-                                    <span style={{ color: '#7a8c99' }}>Design: {countEmployeesAssigned(project.id, 'Designer')}</span><br />
-                                    <span style={{ color: '#7a8c99' }}>Marketing: {countEmployeesAssigned(project.id, 'Marketer')}</span>
-                                </div>
-                            </div>
+                        {renderProgress(project.progress, project.requiredPoints)}
+
+                        <div className="bg-gray-200 p-3 rounded-lg mt-2 mb-2">
+                            <p>Progress: {Math.round(project.progress)}/{Math.round(project.requiredPoints)}</p>
+                            <p>Design Points: {project.designPoints}</p>
+                            <p>Marketing Points: {project.marketingPoints}</p>
                         </div>
-                        <MetaCriticRatingComponent rating={project.metaCriticRating} />
-                        <div className="bg-[#dae1e7] p-4 text-center">
-                            <GameDisplayComponent game={project} />
-                            <p className="text-gray-700 mt-2">Total Revenue: ${project.revenue.toFixed(2)}</p>
+
+                        <div className="bg-gray-200 p-3 rounded-lg mb-2">
+                            <p>Developers: {countEmployeesAssigned(project.id, 'Developer')}</p>
+                            <p>Designers: {countEmployeesAssigned(project.id, 'Designer')}</p>
+                            <p>Marketers: {countEmployeesAssigned(project.id, 'Marketer')}</p>
                         </div>
+
+                        <div className="text-center mb-2">
+                            <MetaCriticRatingComponent rating={project.metaCriticRating} />
+                        </div>
+
+                        <GameDisplayComponent game={project} />
+
                         {project.progress >= 100 && !project.shipped && (
-                            <button
-                                onClick={() => openShippingModal(project.id)}
-                                className={classNames(
-                                    "mt-4 py-1 px-3 text-xs rounded", // Add absolute positioning
-                                    {
-                                        'bg-blue-500 hover:bg-blue-700 text-white': project.progress >= 100,
-                                        'bg-gray-500 text-gray-100 disabled:opacity-50': project.progress < 100,
-                                    }
-                                )}
-                            >
+                            <button onClick={() => openShippingModal(project.id)} className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded mt-2 w-full">
+                                <FontAwesomeIcon icon={faShip} className="mr-2" />
                                 Ship Game
                             </button>
                         )}
                     </div>
                 ))}
-
-            </div >
-        </div >
+            </div>
+        </div>
     );
 };
+
 export default ProjectComponent;

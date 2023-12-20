@@ -8,6 +8,14 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
+    // Initialize state with default values
+    const [currentYear, setCurrentYear] = useState(1985);
+    const [currentMonth, setCurrentMonth] = useState(1);
+    const [currentWeek, setCurrentWeek] = useState(1);
+    const [employees, setEmployees] = useState([]);
+    const [projects, setProjects] = useState([]);
+
+    // Function to safely get values from local storage
     const safeLocalStorageGet = (key, defaultValue) => {
         if (typeof window !== 'undefined' && window.localStorage) {
             const stored = localStorage.getItem(key);
@@ -17,15 +25,17 @@ function App() {
         }
         return defaultValue;
     };
-    const [currentYear, setCurrentYear] = useState(safeLocalStorageGet('currentYear', 1985));
-    const [currentMonth, setCurrentMonth] = useState(safeLocalStorageGet('currentMonth', 1));
-    const [currentWeek, setCurrentWeek] = useState(1);
 
-    const [employees, setEmployees] = useState(safeLocalStorageGet('employees', []));
-    const [projects, setProjects] = useState(safeLocalStorageGet('projects', []));
-    const [selectedPublisher, setSelectedPublisher] = useState(safeLocalStorageGet('publishers'), []);
+    // Use useEffect to set state from local storage once component mounts
+    useEffect(() => {
+        setCurrentYear(safeLocalStorageGet('currentYear', 1985));
+        setCurrentMonth(safeLocalStorageGet('currentMonth', 1));
+        setEmployees(safeLocalStorageGet('employees', []));
+        setProjects(safeLocalStorageGet('projects', []));
+        setPublishers(safeLocalStorageGet('publishers', []));
+    }, []);
 
-
+    // Update local storage whenever state changes
     useEffect(() => {
         if (typeof window !== 'undefined' && window.localStorage) {
             localStorage.setItem('currentYear', JSON.stringify(currentYear));
@@ -34,30 +44,29 @@ function App() {
             localStorage.setItem('projects', JSON.stringify(projects));
             localStorage.setItem('publishers', JSON.stringify(publishers));
         }
-    }, [currentYear, currentMonth, employees, projects, selectedPublisher]);
+    }, [currentYear, currentMonth, employees, projects]);
+
 
     const [publishers, setPublishers] = useState([
-        { name: 'Sony Interactive Entertainment', reputation: 0.9, dealHistory: [] },
-        { name: 'Microsoft Gaming', reputation: 0.85, dealHistory: [] },
-        { name: 'Apple', reputation: 0.8, dealHistory: [] },
-        { name: 'Nintendo', reputation: 0.9, dealHistory: [] },
-        { name: 'Electronic Arts', reputation: 0.75, dealHistory: [] },
-        { name: 'NetEase', reputation: 0.7, dealHistory: [] },
-        { name: 'Take-Two Interactive', reputation: 0.75, dealHistory: [] },
-        { name: 'Embracer Group', reputation: 0.65, dealHistory: [] },
-        { name: 'Bandai Namco Entertainment', reputation: 0.8, dealHistory: [] },
-        { name: 'Square Enix', reputation: 0.8, dealHistory: [] },
-        { name: 'Nexon', reputation: 0.7, dealHistory: [] },
-        { name: 'Ubisoft', reputation: 0.75, dealHistory: [] },
-        { name: 'Konami', reputation: 0.7, dealHistory: [] },
-        { name: 'Sega', reputation: 0.75, dealHistory: [] },
-        { name: 'Wizards of the Coast', reputation: 0.7, dealHistory: [] },
-        { name: 'Capcom', reputation: 0.8, dealHistory: [] },
-        { name: 'Psygnosis', reputation: 0.6, dealHistory: [] },
-        { name: 'Tiger Entertainment', reputation: 0.6, dealHistory: [] }
-        // Add other publishers here as needed
+        { name: 'Sony Interactive Entertainment', reputation: 0.9, dealHistory: [], imageName: 'PS.PNG' },
+        { name: 'Microsoft Gaming', reputation: 0.85, dealHistory: [], imageName: 'XBOX.PNG' },
+        { name: 'Apple', reputation: 0.8, dealHistory: [], imageName: 'APPLE.PNG' },
+        { name: 'Nintendo', reputation: 0.9, dealHistory: [], imageName: 'NINTENDO.PNG' },
+        { name: 'Electronic Arts', reputation: 0.75, dealHistory: [], imageName: 'EA.PNG' },
+        { name: 'NetEase', reputation: 0.7, dealHistory: [], imageName: 'NETEASE.PNG' },
+        { name: 'Take-Two Interactive', reputation: 0.75, dealHistory: [], imageName: 'TAKETWO.PNG' },
+        { name: 'Embracer Group', reputation: 0.65, dealHistory: [], imageName: 'EMBRACER.PNG' },
+        { name: 'Bandai Namco Entertainment', reputation: 0.8, dealHistory: [], imageName: 'BANDAI.PNG' },
+        { name: 'Square Enix', reputation: 0.8, dealHistory: [], imageName: 'SQUARE_ENIX.PNG' },
+        { name: 'Nexon', reputation: 0.7, dealHistory: [], imageName: 'NEXON.PNG' },
+        { name: 'Ubisoft', reputation: 0.75, dealHistory: [], imageName: 'UBISOFT.PNG' },
+        { name: 'Konami', reputation: 0.7, dealHistory: [], imageName: 'KONAMI.PNG' },
+        { name: 'Sega', reputation: 0.75, dealHistory: [], imageName: 'SEGA.PNG' },
+        { name: 'Wizards of the Coast', reputation: 0.7, dealHistory: [], imageName: 'WIZARD.PNG' },
+        { name: 'Capcom', reputation: 0.8, dealHistory: [], imageName: 'CAPCOM.PNG' },
+        { name: 'Psygnosis', reputation: 0.6, dealHistory: [], imageName: 'PSYGNOSIS.PNG' },
+        { name: 'Tiger Entertainment', reputation: 0.6, dealHistory: [], imageName: 'TIGER.PNG' }
     ]);
-
 
     const [currentOffers, setCurrentOffers] = useState([]);
     const [platforms, setPlatforms] = useState([{ name: 'NES', releaseYear: 1985, power: 5, difficulty: 3 },
@@ -118,7 +127,6 @@ function App() {
     { name: 'Stealth', popularity: 7, complexity: 3 },
     { name: 'Open World', popularity: 9, complexity: 5 },
     { name: 'Music', popularity: 6, complexity: 3 },
-    { name: 'Party', popularity: 6, complexity: 3 },
     { name: 'Educational', popularity: 5, complexity: 2 },
     { name: 'Casual', popularity: 6, complexity: 2 },
     { name: 'Visual Novel', popularity: 7, complexity: 3 },
@@ -169,14 +177,15 @@ function App() {
     };
 
 
-    const assignToProject = (projectId, employeeIds) => {
+    const assignToProject = (projectId, employeeId) => {
         setEmployees(prevEmployees => prevEmployees.map(employee => {
-            if (employeeIds.includes(employee.id)) {
+            if (employee.id === employeeId) {
                 return { ...employee, projectId: projectId };
             }
             return employee;
         }));
     };
+
 
     const createProject = (projectData) => {
         projectData.id = generateUniqueId();
@@ -198,17 +207,16 @@ function App() {
     const updateConsoleSales = (platforms, year, month) => {
         // Update sales figures for each console
     };
-
     const updateWeeklySales = () => {
         const updatedProjects = projects.map(project => {
             if (project.shipped) {
-                const weekNumber = currentWeek; // Assuming currentWeek is accessible here
+                const weeksOnMarket = currentWeek - project.shippingWeek;
                 const decayFactor = 0.75; // Adjust this value as needed
-                const qualityFactor = 1 + project.metaCriticRating / 100; // MetaCritic score influences sales
+                const qualityFactor = 1 + project.metaCriticRating / 100;
 
-                let newSales = (project.sales[weekNumber - 1] || project.initialSales) * decayFactor * qualityFactor;
-                project.sales[weekNumber] = newSales;
-                project.revenue += newSales * 10; // Update the revenue
+                let newSales = project.initialSales * Math.pow(decayFactor, weeksOnMarket) * qualityFactor;
+                project.sales[weeksOnMarket] = newSales;
+                project.revenue += newSales * 10;
             }
             return project;
         });
@@ -263,10 +271,13 @@ function App() {
         const marketingFactor = project.marketingPoints || 1;
         const randomFactor = Math.random() * 0.5 + 0.75;
 
+
         // Initial sales calculation
         const initialSales = genreFactor * sizeFactor * yearFactor * marketingFactor * randomFactor;
-        project.sales = [initialSales]; // First week sales
-        project.revenue = initialSales * 10; // Example revenue calculation for the first week
+        project.sales = Array(currentWeek - 1).fill(0); // Fill previous weeks with 0 sales
+        project.sales[currentWeek - 1] = initialSales; // First week sales start at the current week
+        project.revenue = initialSales * 10; // Revenue calculation for the first week
+        project.shippingWeek = currentWeek; // Record the shipping week
 
         // MetaCritic score calculation logic
         const designFactor = project.designPoints || 0;
@@ -277,8 +288,11 @@ function App() {
         // Simulating sales over weeks
         project.initialSales = initialSales; // Store initial sales for future reference
         project.sales[currentWeek] = initialSales; // Set initial sales for the current week
+        project.shippingWeek = currentWeek; // Record the week when the game is shipped
 
-
+        for (let i = 0; i < currentWeek; i++) {
+            project.sales[i] = 0;
+        }
         // Update project status
         project.shipped = true;
         project.publisher = publisherName;
@@ -339,13 +353,13 @@ function App() {
             <ProjectComponent
                 projects={projects}
                 createProject={createProject}
+                setProjects={setProjects}
                 updateProjectProgress={updateProjectProgress}
                 currentYear={currentYear}
                 platforms={platforms}
                 genres={genres}
                 employees={employees}
                 openShippingModal={openShippingModal}
-
             />
             <EmployeeComponent
                 employees={employees}
