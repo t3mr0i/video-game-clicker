@@ -141,8 +141,8 @@ const EmployeeComponent = ({
     const freeEmployees = employees.filter(emp => emp.type === selectedEmployeeType && !emp.projectId).length;
 
     return (
-        <div className="bg-gray-100 p-4 rounded-lg shadow-md">
-            <div className="flex mb-4 border-b">
+        <div className="bg-gray-100 p-4 rounded-lg shadow-md text-gray-800">
+            <div className="flex mb-4 border-b text-gray-800">
                 <button
                     onClick={() => setSelectedEmployeeType('Developer')}
                     className={`flex-1 py-2 ${selectedEmployeeType === 'Developer' ? 'text-blue-600 border-b-2 font-medium' : 'text-gray-500 hover:text-gray-700'}`}
@@ -176,14 +176,14 @@ const EmployeeComponent = ({
             </div>
 
             {/* Project Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 text-black lg:grid-cols-3 gap-4 text-gray-800">
                 {activeProjects.map(project => (
                     <div key={project.id} className="bg-white p-4 rounded-lg shadow-md">
-                        <h5 className="text-xl font-bold mb-2">{project.name}</h5>
-                        <div className="flex flex-col items-center mb-4">
+                        <h5 className="text-xl font-bold text-black mb-2">Project: {project.name}</h5>
+                        <div className="flex flex-col text-black items-center mb-4">
                             <button
                                 onClick={() => handleAddEmployeeToProject(project.id)}
-                                className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded mb-2"
+                                className="bg-green-500 hover:bg-green-700 text-black font-bold py-1 px-2 rounded mb-2"
                                 disabled={freeEmployees === 0}
                                 title={freeEmployees === 0 ? "No free employees available" : "Add employee to project"}
                             >
@@ -192,7 +192,7 @@ const EmployeeComponent = ({
                             <span className="text-sm mb-2">Assigned: {countEmployeesInProject(project.id)}</span>
                             <button
                                 onClick={() => handleRemoveEmployeeFromProject(project.id)}
-                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
+                                className="bg-red-500 hover:bg-red-700 text-black font-bold py-1 px-2 rounded"
                             >
                                 <FontAwesomeIcon icon={faMinus} />
                             </button>

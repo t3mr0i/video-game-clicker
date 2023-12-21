@@ -295,11 +295,12 @@ function App() {
         const initialSales = genreFactor * sizeFactor * yearFactor * marketingFactor * randomFactor;
         const metaCriticScore = calculateMetaCriticScore(genre.complexity, platform.power, project.designPoints, project.progress, marketingFactor);
 
+
         // Set the project as shipped with initial sales and revenue
         project.shipped = true;
         project.shippingWeek = currentWeek;
-        project.sales = Array(currentWeek).fill(0); // Fill previous weeks with 0 sales
-        project.sales[currentWeek - 1] = initialSales; // First week sales start at the current week
+        project.sales = Array.from({ length: currentWeek }, () => 0); // Fill weeks before shipping with 0 sales
+        project.sales[currentWeek - 1] = initialSales; // Start recording sales from the shipping week
         project.revenue = initialSales * 10; // Example revenue calculation for the first week
         project.metaCriticRating = metaCriticScore;
         project.publisher = publisherName;

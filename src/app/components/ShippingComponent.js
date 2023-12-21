@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import 'tailwindcss/tailwind.css';
 
-
 const ShippingComponent = ({ isModalOpen, closeModal, game, publishers, shipGame, calculateUpfrontPayment, calculateRevenueShare, addNotification }) => {
-    // Randomly select three publishers
-    const selectedPublishers = publishers.sort(() => 0.5 - Math.random()).slice(0, 3);
+    const [selectedPublishers, setSelectedPublishers] = useState([]);
+
+    useEffect(() => {
+        // Randomly select three publishers when the modal is opened
+        const selectPublishers = () => publishers.sort(() => 0.5 - Math.random()).slice(0, 3);
+        setSelectedPublishers(selectPublishers);
+    }, [isModalOpen, publishers]); // This effect should run only when the modal opens or publishers list changes
+
     const handleShipGame = (publisherName) => {
         shipGame(game.id, publisherName);
         closeModal(); // Close the modal after shipping
@@ -36,7 +41,7 @@ const ShippingComponent = ({ isModalOpen, closeModal, game, publishers, shipGame
                 );
             })}
             <button
-                onClick={() => shipGame(game.id, null)}
+                onClick={() => handleShipGame(null)}
                 className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-2"
             >
                 Self Publish

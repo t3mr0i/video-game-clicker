@@ -155,7 +155,7 @@ const ProjectComponent = ({ projects, setProjects, createProject, updateProjectP
     }
 
     return (
-        <div className="bg-gray-100 p-4 rounded-lg shadow-md">
+        <div className="bg-gray-100 p-4 rounded-lg shadow-md app">
             <div className="flex justify-end mb-4">
                 <button onClick={openModal} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center">
                     <FontAwesomeIcon icon={faPlus} className="mr-2" />
@@ -208,7 +208,7 @@ const ProjectComponent = ({ projects, setProjects, createProject, updateProjectP
 
                 <button
                     onClick={handleCreateProject}
-                    className={`bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full transition duration-300 ease-in-out ${(!selectedSize || !selectedPlatform || !selectedGenre || !newProjectName) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`bg-green-500 hover:bg-green-700 text-black font-bold py-2 px-4 rounded w-full transition duration-300 ease-in-out ${(!selectedSize || !selectedPlatform || !selectedGenre || !newProjectName) ? 'opacity-50 cursor-not-allowed' : ''}`}
                     disabled={!selectedSize || !selectedPlatform || !selectedGenre || !newProjectName}
                 >
                     <FontAwesomeIcon icon={faShip} className="mr-2" />
@@ -234,13 +234,13 @@ const ProjectComponent = ({ projects, setProjects, createProject, updateProjectP
 
                         {renderProgress(project.progress, project.requiredPoints)}
 
-                        <div className="bg-gray-200 p-3 rounded-lg mt-2 mb-2">
+                        <div className="bg-gray-200 text-gray-800 p-3 rounded-lg mt-2 mb-2">
                             <p>Progress: {Math.round(project.progress)}/{Math.round(project.requiredPoints)}</p>
-                            <p>Design Points: {project.designPoints}</p>
+                            <p >Design Points: {project.designPoints}</p>
                             <p>Marketing Points: {project.marketingPoints}</p>
                         </div>
 
-                        <div className="bg-gray-200 p-3 rounded-lg mb-2">
+                        <div className="bg-gray-200 p-3 text-gray-800 rounded-lg mb-2">
                             <p>Developers: {countEmployeesAssigned(project.id, 'Developer')}</p>
                             <p>Designers: {countEmployeesAssigned(project.id, 'Designer')}</p>
                             <p>Marketers: {countEmployeesAssigned(project.id, 'Marketer')}</p>
@@ -253,7 +253,7 @@ const ProjectComponent = ({ projects, setProjects, createProject, updateProjectP
                         <GameDisplayComponent game={project} />
 
                         {project.progress >= 100 && !project.shipped && (
-                            <button onClick={() => openShippingModal(project.id)} className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded mt-2 w-full">
+                            <button onClick={() => openShippingModal(project.id)} className="bg-green-500 hover:bg-green-700 text-black font-bold py-1 px-2 rounded mt-2 w-full">
                                 <FontAwesomeIcon icon={faShip} className="mr-2" />
                                 Ship Game
                             </button>
