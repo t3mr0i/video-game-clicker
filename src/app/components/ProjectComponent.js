@@ -252,7 +252,7 @@ const ProjectComponent = ({ projects, setProjects, createProject, updateProjectP
 
                         <GameDisplayComponent game={project} />
 
-                        {project.progress >= 100 && !project.shipped && (
+                        {project.developmentPoints >= project.requiredPoints && !project.shipped && (
                             <button onClick={() => openShippingModal(project.id)} className="bg-green-500 hover:bg-green-700 text-black font-bold py-1 px-2 rounded mt-2 w-full">
                                 <FontAwesomeIcon icon={faShip} className="mr-2" />
                                 Ship Game

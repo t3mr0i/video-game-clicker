@@ -65,7 +65,7 @@ const TimeComponent = ({ currentYear, setCurrentYear, platforms, employees, upda
     };
 
     return (
-        <div className="flex items-center justify-between bg-gray-100 text-black p-4 rounded-lg shadow-md  top-0 z-0">
+        <div className="flex items-center justify-between bg-gray-100 text-black p-4 rounded-lg shadow-md ">
             <div className="flex items-center space-x-3">
                 <div>
                     <h2 className="text-lg font-bold text-gray-700">
