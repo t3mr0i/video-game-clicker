@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import FinanceComponent from './FinanceComponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClock, faCalendarAlt, faFastForward, faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
+import { faClock, faCalendarAlt, faFastForward, faPause, faPlay, faBug, faSave } from '@fortawesome/free-solid-svg-icons';
 
 const TimeComponent = ({ 
     currentYear, 
@@ -18,7 +18,12 @@ const TimeComponent = ({
     setCurrentDay,
     salaryCosts, 
     bankAccount,
-    resetGame 
+    resetGame,
+    isDebugPanelOpen,
+    toggleDebugPanel,
+    manualSaveGame,
+    saveStatus,
+    lastSavedTime
 }) => {
     const [currentMonth, setCurrentMonth] = useState(1);
     const [monthProgress, setMonthProgress] = useState(0);
@@ -41,6 +46,28 @@ const TimeComponent = ({
 
     const togglePause = () => {
         setIsPaused(!isPaused);
+    };
+
+    const formatLastSaved = () => {
+        if (!lastSavedTime) return "Never saved";
+        
+        // Format time difference
+        const now = new Date();
+        const diff = now - lastSavedTime;
+        
+        // Less than a minute
+        if (diff < 60000) {
+            return "Just now";
+        }
+        
+        // Less than an hour
+        if (diff < 3600000) {
+            const minutes = Math.floor(diff / 60000);
+            return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+        }
+        
+        // Show time only
+        return lastSavedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
 
     const advanceTime = () => {
@@ -97,10 +124,10 @@ const TimeComponent = ({
     };
 
     return (
-        <div className="flex items-center justify-between bg-gray-100 text-black p-4 rounded-lg shadow-md ">
-            <div className="flex items-center space-x-3">
-                <div>
-                    <h2 className="text-lg font-bold text-gray-700">
+        <div className="w-full bg-gray-100 text-black p-4 rounded-lg shadow-md mb-4">
+            <div className="flex flex-col md:flex-row justify-between items-center">
+                <div className="w-full md:w-auto mb-4 md:mb-0">
+                    <h2 className="text-xl font-bold text-gray-700 flex items-center justify-center md:justify-start">
                         <span className="text-gray-600">{String(currentDay).padStart(2, '0')}</span>-
                         <span className="text-gray-600">{String(currentMonth).padStart(2, '0')}</span>-
                         <span className="text-gray-600">{currentYear}</span>
@@ -111,48 +138,73 @@ const TimeComponent = ({
                             <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${monthProgress}%`, transition: 'width 0.5s ease-in-out' }}></div>
                         </div>
                     </div>
-                    <p className="text-gray-600 mt-1">Week <span className="text-gray-600">{currentWeek}</span></p>
+                    <p className="text-center md:text-left text-gray-600 mt-1">Week <span className="font-medium">{currentWeek}</span></p>
                     
-                    <div className="flex mt-2 space-x-2">
+                    <div className="time-controls mt-3">
                         <button 
                             onClick={togglePause} 
-                            className="bg-blue-500 hover:bg-blue-700 text-white rounded px-2 py-1"
+                            className="bg-blue-500 hover:bg-blue-700 text-white rounded px-3 py-2"
+                            aria-label={isPaused ? "Resume game" : "Pause game"}
                         >
                             <FontAwesomeIcon icon={isPaused ? faPlay : faPause} />
                         </button>
                         <button 
                             onClick={() => handleSpeedChange(1400)} 
-                            className={`rounded px-2 py-1 ${gameSpeed === 1400 ? 'bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
+                            className={`rounded px-3 py-2 ${gameSpeed === 1400 ? 'bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
                             title="Normal Speed"
                         >
                             1x
                         </button>
                         <button 
                             onClick={() => handleSpeedChange(700)} 
-                            className={`rounded px-2 py-1 ${gameSpeed === 700 ? 'bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
+                            className={`rounded px-3 py-2 ${gameSpeed === 700 ? 'bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
                             title="Fast Speed"
                         >
                             2x
                         </button>
                         <button 
                             onClick={() => handleSpeedChange(350)} 
-                            className={`rounded px-2 py-1 ${gameSpeed === 350 ? 'bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
+                            className={`rounded px-3 py-2 ${gameSpeed === 350 ? 'bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
                             title="Very Fast Speed"
                         >
                             4x
                         </button>
                         <button 
+                            onClick={manualSaveGame} 
+                            className="save-button"
+                            title="Save Game"
+                        >
+                            <FontAwesomeIcon icon={faSave} className="mr-1" />
+                            Save
+                        </button>
+                        <button 
                             onClick={resetGame} 
-                            className="bg-red-500 hover:bg-red-700 text-white rounded px-2 py-1 ml-2"
+                            className="bg-red-500 hover:bg-red-700 text-white rounded px-3 py-2"
                             title="Reset Game"
                         >
                             Reset
                         </button>
+                        <button 
+                            onClick={toggleDebugPanel} 
+                            className={`rounded px-3 py-2 ${isDebugPanelOpen ? 'bg-purple-700 text-white' : 'bg-purple-500 hover:bg-purple-600 text-white'}`}
+                            title="Debug Panel"
+                        >
+                            <FontAwesomeIcon icon={faBug} />
+                        </button>
+                    </div>
+                    
+                    <div className="save-status mt-2 flex items-center justify-center md:justify-start">
+                        <span className="mr-1">Status:</span>
+                        <span className={`font-medium ${saveStatus === "Saved" ? "status-saved" : saveStatus === "Failed" ? "status-failed" : "text-blue-600"}`}>
+                            {saveStatus || "Not saved"}
+                        </span>
+                        <span className="last-saved">{formatLastSaved()}</span>
                     </div>
                 </div>
+                
+                {/* Financial Overview */}
+                <FinanceComponent salaryCosts={salaryCosts} bankAccount={bankAccount} />
             </div>
-            {/* Financial Overview */}
-            <FinanceComponent salaryCosts={salaryCosts} bankAccount={bankAccount} />
         </div>
     );
 };

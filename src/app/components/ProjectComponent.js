@@ -3,18 +3,19 @@ import Modal from 'react-modal';
 import GameDisplayComponent from './GameDisplayComponent';
 import MetaCriticRatingComponent from './MetaCriticRatingComponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShip } from '@fortawesome/free-solid-svg-icons';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { faHammer } from '@fortawesome/free-solid-svg-icons';
+import { faShip, faPlus, faHammer, faFire, faRocket, faCogs, faTrophy, faInfoCircle, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 
 import classNames from 'classnames';
-const ProjectComponent = ({ projects, setProjects, createProject, updateProjectProgress, currentYear, platforms, genres, employees, openShippingModal }) => {
+const ProjectComponent = ({ projects, setProjects, createProject, updateProjectProgress, currentYear, platforms, genres, employees, openShippingModal, gameEngines, trendingGenre, franchises }) => {
     const [newProjectName, setNewProjectName] = useState('');
     const [selectedSize, setSelectedSize] = useState('A'); // A, AA, AAA
     const [selectedPlatform, setSelectedPlatform] = useState('');
     const [selectedGenre, setSelectedGenre] = useState('');
+    const [selectedGameEngine, setSelectedGameEngine] = useState('');
+    const [selectedFranchise, setSelectedFranchise] = useState(''); // For creating a sequel
     const [developmentPoints, setDevelopmentPoints] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [showTooltip, setShowTooltip] = useState(null);
     const defaultOption = <option value="" disabled>---</option>;
 
     const gameSizes = {
@@ -23,10 +24,9 @@ const ProjectComponent = ({ projects, setProjects, createProject, updateProjectP
         'AAA': 3
     };
 
-
     useEffect(() => {
         calculateDevelopmentPoints();
-    }, [selectedSize, selectedPlatform, selectedGenre, currentYear]);
+    }, [selectedSize, selectedPlatform, selectedGenre, currentYear, selectedFranchise]);
 
     const calculateDevelopmentPoints = () => {
         const platform = platforms.find(p => p.name === selectedPlatform);
@@ -37,14 +37,33 @@ const ProjectComponent = ({ projects, setProjects, createProject, updateProjectP
             const genreFactor = genre.complexity;
             const sizeFactor = gameSizes[selectedSize];
 
+            // Base points calculation
             let points = (platformFactor + genreFactor) * sizeFactor * 100;
+            
+            // Year adjustment - games become more complex over time
             points *= 1 + (currentYear - 1985) / 100;
+            
+            // Genre popularity adjustment
+            // Popular genres are more competitive and require more effort
+            const popularityAdjustment = (genre.popularity - 6) * 0.05; // -0.1 to +0.15 modifier
+            points *= (1 + popularityAdjustment);
+
+            // If this is a sequel, apply franchise development bonus
+            if (selectedFranchise) {
+                const franchise = franchises.find(f => f.id === selectedFranchise);
+                if (franchise) {
+                    const sequelNumber = franchise.games.length;
+                    const devBonus = Math.min(20, sequelNumber * 5); // 5% per sequel, max 20%
+                    points = points * (1 - devBonus/100); // Reduce required points
+                }
+            }
 
             setDevelopmentPoints(Math.round(points));
         } else {
             setDevelopmentPoints(0);
         }
     };
+    
     useEffect(() => {
         const interval = setInterval(() => {
             updateAllProjects();
@@ -79,24 +98,42 @@ const ProjectComponent = ({ projects, setProjects, createProject, updateProjectP
             return project;
         });
 
-        // Update the projects array
+        // Update the projects array with the new state
         setProjects(updatedProjects);
     };
 
-
     const handleCreateProject = () => {
-        const maxPoints = calculateDevelopmentPoints(selectedSize, selectedPlatform, selectedGenre);
+        const maxPoints = developmentPoints;
+        
+        // Find the selected engine if one was chosen
+        const engine = gameEngines.find(engine => engine.id === selectedGameEngine);
+        
+        // Calculate development boosts from the engine
+        const engineEfficiency = engine ? engine.efficiency : 1.0;
+        const engineBoost = engine ? `Using ${engine.name} Engine` : null;
 
-        console.log("Selected Genre:", selectedGenre);
-        console.log("Selected Platform:", selectedPlatform);
+        // Check if this genre is trending
+        const isTrendingGenre = trendingGenre && trendingGenre.name === selectedGenre;
 
-        if (newProjectName.trim() !== '') {
+        // Get franchise information if this is a sequel
+        let franchiseId = null;
+        if (selectedFranchise) {
+            franchiseId = selectedFranchise;
+        }
+
+        if (newProjectName.trim() !== '' && selectedPlatform && selectedGenre) {
             const newProject = {
+                id: Math.random().toString(36).substr(2, 9), // Simple ID generation
                 name: newProjectName,
                 size: selectedSize,
                 platform: selectedPlatform,
                 genre: selectedGenre,
-                requiredPoints: developmentPoints,
+                engineId: selectedGameEngine,
+                engineName: engine ? engine.name : null,
+                engineEfficiency: engineEfficiency,
+                franchiseId: franchiseId,
+                isTrendingGenre: isTrendingGenre,
+                requiredPoints: Math.round(developmentPoints / engineEfficiency), // Engine reduces required points
                 designPoints: 0,
                 marketingPoints: 0,
                 maxPoints: maxPoints,
@@ -110,16 +147,17 @@ const ProjectComponent = ({ projects, setProjects, createProject, updateProjectP
             };
 
             createProject(newProject);
-            console.log("Created Project:", newProject);
 
             setNewProjectName('');
+            setSelectedPlatform('');
+            setSelectedGenre('');
+            setSelectedGameEngine('');
+            setSelectedFranchise('');
             setIsModalOpen(false);
         } else {
-            // Handle the case where the project name is empty
-            console.error("Project name is required.");
+            alert("Please fill out all required fields (name, platform, and genre)");
         }
     };
-
 
     const handleWorkOnProject = (projectId) => {
         updateProjectProgress(projectId, 0.1);
@@ -133,6 +171,50 @@ const ProjectComponent = ({ projects, setProjects, createProject, updateProjectP
     const closeModal = () => setIsModalOpen(false);
 
     const availablePlatforms = platforms.filter(platform => platform.releaseYear <= currentYear);
+
+    // Helper function to check if a genre is trending
+    const isGenreTrending = (genreName) => {
+        return trendingGenre && trendingGenre.name === genreName;
+    };
+
+    // Get franchise name from ID
+    const getFranchiseName = (franchiseId) => {
+        if (!franchiseId) return null;
+        const franchise = franchises.find(f => f.id === franchiseId);
+        return franchise ? franchise.name : null;
+    };
+
+    // Show tooltip with explanation for buttons and options
+    const displayTooltip = (id) => {
+        setShowTooltip(id);
+    };
+
+    // Hide tooltip
+    const hideTooltip = () => {
+        setShowTooltip(null);
+    };
+
+    // Tooltip content based on ID
+    const getTooltipContent = (id) => {
+        switch (id) {
+            case 'size':
+                return "Game size affects development complexity and potential market. A=Small, AA=Medium, AAA=Large.";
+            case 'platform':
+                return "Select a platform for your game. More powerful platforms offer better sales but are harder to develop for.";
+            case 'genre':
+                return "Select your game's genre. Stars indicate popularity (★★★★★ = most popular).";
+            case 'engine':
+                return "Using an engine can speed up development. Better engines provide more efficiency.";
+            case 'franchise':
+                return "Create a sequel to an existing game franchise to leverage existing fans.";
+            case 'work':
+                return "Manually add development progress to this project.";
+            case 'ship':
+                return "Ship your game when it's complete to start earning revenue.";
+            default:
+                return "";
+        }
+    };
 
     function renderProgress(progress, requiredPoints) {
         const cycleCount = Math.floor(progress / requiredPoints); // Number of complete cycles
@@ -157,111 +239,325 @@ const ProjectComponent = ({ projects, setProjects, createProject, updateProjectP
 
     return (
         <div className="bg-gray-100 p-4 rounded-lg shadow-md app">
-            <div className="flex justify-end mb-4">
+            <div className="flex justify-between mb-4">
+                <div>
+                    <h2 className="text-xl font-bold">Projects</h2>
+                    {trendingGenre && (
+                        <div className="text-orange-500 mt-1 flex items-center">
+                            <FontAwesomeIcon icon={faFire} className="mr-1" />
+                            <span>Trending Genre: {trendingGenre.name} (+{Math.round((trendingGenre.boost-1)*100)}% sales)</span>
+                        </div>
+                    )}
+                </div>
                 <button onClick={openModal} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center">
                     <FontAwesomeIcon icon={faPlus} className="mr-2" />
                     Create New Project
                 </button>
             </div>
 
+            {/* Projects list */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {projects.length === 0 ? (
+                    <div className="col-span-full text-center p-4 border-2 border-dashed border-gray-300 rounded-lg">
+                        <FontAwesomeIcon icon={faRocket} className="text-3xl text-gray-400 mb-2" />
+                        <p className="text-gray-500">No projects yet. Create your first game project!</p>
+                    </div>
+                ) : (
+                    projects.map(project => (
+                        <div key={project.id} className={`bg-white p-4 rounded-lg shadow border-l-4 ${project.shipped ? 'border-green-500' : 'border-blue-500'}`}>
+                            <div className="flex justify-between items-start mb-2">
+                                <h3 className="font-bold text-lg">{project.name}</h3>
+                                <div className="flex space-x-1">
+                                    {project.progress >= 100 && !project.shipped && (
+                                        <button 
+                                            className="bg-green-500 hover:bg-green-700 text-white rounded p-1"
+                                            onClick={() => openShippingModal(project.id)}
+                                            onMouseEnter={() => displayTooltip('ship')}
+                                            onMouseLeave={hideTooltip}
+                                        >
+                                            <FontAwesomeIcon icon={faShip} />
+                                        </button>
+                                    )}
+                                    {!project.shipped && (
+                                        <button 
+                                            className="bg-blue-500 hover:bg-blue-700 text-white rounded p-1"
+                                            onClick={() => handleWorkOnProject(project.id)}
+                                            onMouseEnter={() => displayTooltip('work')}
+                                            onMouseLeave={hideTooltip}
+                                        >
+                                            <FontAwesomeIcon icon={faHammer} />
+                                        </button>
+                                    )}
+                                    {showTooltip === 'ship' && (
+                                        <div className="absolute bg-black text-white text-xs p-1 rounded mt-6 z-10">
+                                            Ship your game
+                                        </div>
+                                    )}
+                                    {showTooltip === 'work' && (
+                                        <div className="absolute bg-black text-white text-xs p-1 rounded mt-6 z-10">
+                                            Work on project
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            
+                            <div className="text-sm mb-2">
+                                <span className="inline-block bg-gray-200 rounded px-2 py-1 mr-1 mb-1">{project.platform}</span>
+                                <span className="inline-block bg-gray-200 rounded px-2 py-1 mr-1 mb-1">{project.genre}</span>
+                                <span className="inline-block bg-gray-200 rounded px-2 py-1 mb-1">{project.size}</span>
+                                {project.isTrendingGenre && (
+                                    <span className="inline-block bg-orange-200 text-orange-700 rounded px-2 py-1 mb-1 ml-1">
+                                        <FontAwesomeIcon icon={faFire} className="mr-1" />
+                                        Trending
+                                    </span>
+                                )}
+                            </div>
+                            
+                            {project.franchiseId && (
+                                <div className="text-sm text-gray-600 mb-2">
+                                    <FontAwesomeIcon icon={faTrophy} className="mr-1 text-yellow-500" />
+                                    Franchise: {getFranchiseName(project.franchiseId)}
+                                </div>
+                            )}
+                            
+                            {project.engineName && (
+                                <div className="text-sm text-gray-600 mb-2">
+                                    <FontAwesomeIcon icon={faCogs} className="mr-1" />
+                                    Engine: {project.engineName}
+                                </div>
+                            )}
+                            
+                            {!project.shipped ? (
+                                <div className="mb-2">
+                                    <div className="flex justify-between text-xs text-gray-600 mb-1">
+                                        <span>Progress: {Math.round(project.progress)}%</span>
+                                        <span>Dev: {project.developmentPoints?.toFixed(0) || 0}/{project.requiredPoints}</span>
+                                    </div>
+                                    <div className="w-full bg-gray-200 rounded-full h-2">
+                                        <div className="bg-blue-600 rounded-full h-2" style={{ width: `${project.progress}%` }}></div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="mb-2">
+                                    <MetaCriticRatingComponent score={project.metaCriticRating || 0} />
+                                    <div className="text-sm mt-1">
+                                        <span className="font-semibold">Revenue:</span> ${(project.revenue || 0).toLocaleString()}
+                                    </div>
+                                    <div className="text-sm">
+                                        <span className="font-semibold">Sales:</span> {project.sales?.length || 0} weeks
+                                    </div>
+                                </div>
+                            )}
+                            
+                            <div className="text-xs text-gray-500">
+                                <div><span className="font-semibold">Design:</span> {project.designPoints || 0}</div>
+                                <div><span className="font-semibold">Marketing:</span> {project.marketingPoints || 0}</div>
+                                <div className="flex items-center">
+                                    <span className="font-semibold mr-1">Team:</span>
+                                    <span className="mr-2">👨‍💻 {countEmployeesAssigned(project.id, 'Developer')}</span>
+                                    <span className="mr-2">🎨 {countEmployeesAssigned(project.id, 'Designer')}</span>
+                                    <span>📢 {countEmployeesAssigned(project.id, 'Marketer')}</span>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                )}
+            </div>
+
             {/* Modal for creating new project */}
             <Modal isOpen={isModalOpen} onRequestClose={closeModal} className="bg-white rounded-lg p-6 mx-auto my-12 border max-w-xl shadow-lg">
                 <h2 className="text-lg font-bold mb-4 text-gray-800">Create New Project</h2>
 
-                <input
-                    type="text"
-                    value={newProjectName}
-                    onChange={(e) => setNewProjectName(e.target.value)}
-                    placeholder="Enter Project Name"
-                    className="p-2 border text-gray-800 border-gray-300 rounded-md w-full mb-4"
-                />
-
-                <div className="flex justify-between mb-4">
-                    <select value={selectedSize} onChange={(e) => setSelectedSize(e.target.value)} className="p-2 border text-gray-800 border-gray-300 rounded-md">
-                        <option value="" disabled>---</option>
-                        <option value="A">A</option>
-                        <option value="AA">AA</option>
-                        <option value="AAA">AAA</option>
-                    </select>
-
-                    <select value={selectedPlatform} onChange={(e) => setSelectedPlatform(e.target.value)} className="p-2 border text-gray-800 border-gray-300 rounded-md">
-                        <option value="" disabled>---</option>
-                        {availablePlatforms.map(platform => (
-                            <option key={platform.name} value={platform.name}>{platform.name}</option>
-                        ))}
-                    </select>
-
-                    <select value={selectedGenre} onChange={(e) => setSelectedGenre(e.target.value)} className="p-2 border text-gray-800 border-gray-300 rounded-md">
-                        <option value="" disabled>---</option>
-                        {genres.map(genre => (
-                            <option key={genre.id} value={genre.name}>{genre.name}</option>
-                        ))}
-                    </select>
+                <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Project Name</label>
+                    <input
+                        type="text"
+                        value={newProjectName}
+                        onChange={(e) => setNewProjectName(e.target.value)}
+                        placeholder="Enter Project Name"
+                        className="p-2 border text-gray-800 border-gray-300 rounded-md w-full"
+                    />
                 </div>
 
-                {selectedGenre && (
-                    <div className="my-4 flex justify-center">
-                        <img src={`/images/genres/${selectedGenre.toUpperCase()}.png`} alt={selectedGenre} className="w-36 h-36 object-cover rounded-md" />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <div className="flex items-center">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Size</label>
+                            <FontAwesomeIcon 
+                                icon={faQuestionCircle} 
+                                className="ml-1 text-gray-400 cursor-pointer" 
+                                onMouseEnter={() => displayTooltip('size')}
+                                onMouseLeave={hideTooltip}
+                            />
+                        </div>
+                        {showTooltip === 'size' && (
+                            <div className="bg-black text-white text-xs p-2 rounded mb-2 z-10">
+                                {getTooltipContent('size')}
+                            </div>
+                        )}
+                        <select 
+                            value={selectedSize} 
+                            onChange={(e) => setSelectedSize(e.target.value)} 
+                            className="p-2 border text-gray-800 border-gray-300 rounded-md w-full"
+                        >
+                            <option value="A">A (Small)</option>
+                            <option value="AA">AA (Medium)</option>
+                            <option value="AAA">AAA (Large)</option>
+                        </select>
                     </div>
-                )}
 
-                <h3 className="text-lg font-bold mb-4">Development Points Required: {developmentPoints}</h3>
-
-                <button
-                    onClick={handleCreateProject}
-                    className={`bg-green-500 hover:bg-green-700 text-black font-bold py-2 px-4 rounded w-full transition duration-300 ease-in-out ${(!selectedSize || !selectedPlatform || !selectedGenre || !newProjectName) ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    disabled={!selectedSize || !selectedPlatform || !selectedGenre || !newProjectName}
-                >
-                    <FontAwesomeIcon icon={faShip} className="mr-2" />
-                    Develop New Game
-                </button>
-            </Modal>
-
-            {/* Project Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {projects.map((project, index) => (
-                    <div key={index} className="bg-white p-4 rounded-lg shadow-md">
-                        <div className="flex justify-between items-center">
-                            <h5 className="text-xl font-bold mb-2" style={{ color: '#314455' }}>{project.name}</h5>
-                            <button onClick={() => handleWorkOnProject(project.id)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded">
-                                <FontAwesomeIcon icon={faHammer} className="mr-2" />
-                                Work
-                            </button>
+                    <div>
+                        <div className="flex items-center">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Platform</label>
+                            <FontAwesomeIcon 
+                                icon={faQuestionCircle} 
+                                className="ml-1 text-gray-400 cursor-pointer" 
+                                onMouseEnter={() => displayTooltip('platform')}
+                                onMouseLeave={hideTooltip}
+                            />
                         </div>
-                        <div className="text-xs my-2">
-                            <span>Start: {new Date(project.startDate).toLocaleDateString('de-DE')}</span>
-                            <span> | Genre: {project.genre} | Platform: {project.platform} | Size: {project.size}</span>
+                        {showTooltip === 'platform' && (
+                            <div className="bg-black text-white text-xs p-2 rounded mb-2 z-10">
+                                {getTooltipContent('platform')}
+                            </div>
+                        )}
+                        <select 
+                            value={selectedPlatform} 
+                            onChange={(e) => setSelectedPlatform(e.target.value)} 
+                            className="p-2 border text-gray-800 border-gray-300 rounded-md w-full"
+                        >
+                            <option value="" disabled>Select Platform</option>
+                            {availablePlatforms.map(platform => (
+                                <option key={platform.name} value={platform.name}>
+                                    {platform.name} (Power: {platform.power})
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div>
+                        <div className="flex items-center">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Genre</label>
+                            <FontAwesomeIcon 
+                                icon={faQuestionCircle} 
+                                className="ml-1 text-gray-400 cursor-pointer" 
+                                onMouseEnter={() => displayTooltip('genre')}
+                                onMouseLeave={hideTooltip}
+                            />
                         </div>
+                        {showTooltip === 'genre' && (
+                            <div className="bg-black text-white text-xs p-2 rounded mb-2 z-10">
+                                {getTooltipContent('genre')}
+                            </div>
+                        )}
+                        <select 
+                            value={selectedGenre} 
+                            onChange={(e) => setSelectedGenre(e.target.value)} 
+                            className="p-2 border text-gray-800 border-gray-300 rounded-md w-full"
+                        >
+                            <option value="" disabled>Select Genre</option>
+                            {genres.map(genre => {
+                                // Format genre popularity stars (1-9 scale)
+                                const popularityStars = '★'.repeat(Math.floor(genre.popularity/2)) + '☆'.repeat(Math.ceil(5-genre.popularity/2));
+                                
+                                return (
+                                    <option key={genre.id} value={genre.name}>
+                                        {genre.name} {isGenreTrending(genre.name) ? "🔥" : ""} ({popularityStars})
+                                    </option>
+                                );
+                            })}
+                        </select>
+                    </div>
+                </div>
 
-                        {renderProgress(project.progress, project.requiredPoints)}
-
-                        <div className="bg-gray-200 text-gray-800 p-3 rounded-lg mt-2 mb-2">
-                            <p>Progress: {Math.round(project.progress)}/{Math.round(project.requiredPoints)}</p>
-                            <p >Design Points: {project.designPoints}</p>
-                            <p>Marketing Points: {project.marketingPoints}</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <div className="flex items-center">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Game Engine (Optional)</label>
+                            <FontAwesomeIcon 
+                                icon={faQuestionCircle} 
+                                className="ml-1 text-gray-400 cursor-pointer" 
+                                onMouseEnter={() => displayTooltip('engine')}
+                                onMouseLeave={hideTooltip}
+                            />
                         </div>
+                        {showTooltip === 'engine' && (
+                            <div className="bg-black text-white text-xs p-2 rounded mb-2 z-10">
+                                {getTooltipContent('engine')}
+                            </div>
+                        )}
+                        <select 
+                            value={selectedGameEngine} 
+                            onChange={(e) => setSelectedGameEngine(e.target.value)} 
+                            className="p-2 border text-gray-800 border-gray-300 rounded-md w-full"
+                        >
+                            <option value="">No Engine</option>
+                            {gameEngines.map(engine => (
+                                <option key={engine.id} value={engine.id}>
+                                    {engine.name} (Efficiency: {(engine.efficiency * 100).toFixed(0)}%)
+                                </option>
+                            ))}
+                        </select>
+                    </div>
 
-                        <div className="bg-gray-200 p-3 text-gray-800 rounded-lg mb-2">
-                            <p>Developers: {countEmployeesAssigned(project.id, 'Developer')}</p>
-                            <p>Designers: {countEmployeesAssigned(project.id, 'Designer')}</p>
-                            <p>Marketers: {countEmployeesAssigned(project.id, 'Marketer')}</p>
+                    <div>
+                        <div className="flex items-center">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Franchise (Optional)</label>
+                            <FontAwesomeIcon 
+                                icon={faQuestionCircle} 
+                                className="ml-1 text-gray-400 cursor-pointer" 
+                                onMouseEnter={() => displayTooltip('franchise')}
+                                onMouseLeave={hideTooltip}
+                            />
                         </div>
+                        {showTooltip === 'franchise' && (
+                            <div className="bg-black text-white text-xs p-2 rounded mb-2 z-10">
+                                {getTooltipContent('franchise')}
+                            </div>
+                        )}
+                        <select 
+                            value={selectedFranchise} 
+                            onChange={(e) => setSelectedFranchise(e.target.value)} 
+                            className="p-2 border text-gray-800 border-gray-300 rounded-md w-full"
+                        >
+                            <option value="">New IP</option>
+                            {franchises.map(franchise => (
+                                <option key={franchise.id} value={franchise.id}>
+                                    {franchise.name} (Games: {franchise.games.length})
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
 
-                        <div className="text-center mb-2">
-                            <MetaCriticRatingComponent rating={project.metaCriticRating} />
-                        </div>
-
-                        <GameDisplayComponent game={project} />
-
-                        {project.developmentPoints >= project.requiredPoints && !project.shipped && (
-                            <button onClick={() => openShippingModal(project.id)} className="bg-green-500 hover:bg-green-700 text-black font-bold py-1 px-2 rounded mt-2 w-full">
-                                <FontAwesomeIcon icon={faShip} className="mr-2" />
-                                Ship Game
-                            </button>
+                <div className="mb-6 bg-gray-100 p-3 rounded-lg">
+                    <h3 className="font-medium text-sm mb-2">Development Estimates:</h3>
+                    <div className="flex justify-between text-sm">
+                        <div><span className="font-medium">Required Points:</span> {developmentPoints}</div>
+                        {selectedGameEngine && (
+                            <div>
+                                <span className="font-medium">With Engine:</span> {Math.round(developmentPoints / (gameEngines.find(e => e.id === selectedGameEngine)?.efficiency || 1))}
+                            </div>
                         )}
                     </div>
-                ))}
-            </div>
+                </div>
+
+                <div className="flex justify-end space-x-3">
+                    <button 
+                        onClick={closeModal} 
+                        className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        onClick={handleCreateProject} 
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        disabled={!newProjectName || !selectedPlatform || !selectedGenre}
+                    >
+                        Create Project
+                    </button>
+                </div>
+            </Modal>
         </div>
     );
 };
