@@ -30,7 +30,9 @@ const EmployeeComponent = ({
     };
 
     const handleFireEmployee = (employeeId) => {
-        fireEmployee(employeeId);
+        if (window.confirm('Are you sure you want to fire this employee?')) {
+            fireEmployee(employeeId);
+        }
     };
 
     const countEmployeesInProject = (projectId) => {

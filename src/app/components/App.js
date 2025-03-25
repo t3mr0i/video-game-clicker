@@ -12,6 +12,7 @@ function App() {
     const [currentYear, setCurrentYear] = useState(1985);
     const [currentMonth, setCurrentMonth] = useState(1);
     const [currentWeek, setCurrentWeek] = useState(1);
+    const [currentDay, setCurrentDay] = useState(1);
     const [employees, setEmployees] = useState([]);
     const [projects, setProjects] = useState([]);
     const [bankAccount, setBankAccount] = useState(10000); // Initialize with some starting value
@@ -32,9 +33,13 @@ function App() {
     useEffect(() => {
         setCurrentYear(safeLocalStorageGet('currentYear', 1985));
         setCurrentMonth(safeLocalStorageGet('currentMonth', 1));
+        setCurrentWeek(safeLocalStorageGet('currentWeek', 1));
+        setCurrentDay(safeLocalStorageGet('currentDay', 1));
         setEmployees(safeLocalStorageGet('employees', []));
         setProjects(safeLocalStorageGet('projects', []));
         setPublishers(safeLocalStorageGet('publishers', []));
+        setBankAccount(safeLocalStorageGet('bankAccount', 10000));
+        setSalaryCosts(safeLocalStorageGet('salaryCosts', 0));
     }, []);
 
     // Update local storage whenever state changes
@@ -42,11 +47,15 @@ function App() {
         if (typeof window !== 'undefined' && window.localStorage) {
             localStorage.setItem('currentYear', JSON.stringify(currentYear));
             localStorage.setItem('currentMonth', JSON.stringify(currentMonth));
+            localStorage.setItem('currentWeek', JSON.stringify(currentWeek));
+            localStorage.setItem('currentDay', JSON.stringify(currentDay));
             localStorage.setItem('employees', JSON.stringify(employees));
             localStorage.setItem('projects', JSON.stringify(projects));
             localStorage.setItem('publishers', JSON.stringify(publishers));
+            localStorage.setItem('bankAccount', JSON.stringify(bankAccount));
+            localStorage.setItem('salaryCosts', JSON.stringify(salaryCosts));
         }
-    }, [currentYear, currentMonth, employees, projects]);
+    }, [currentYear, currentMonth, currentWeek, currentDay, employees, projects, publishers, bankAccount, salaryCosts]);
 
 
     const [publishers, setPublishers] = useState([
@@ -113,31 +122,32 @@ function App() {
     { name: 'N-Gage', releaseYear: 2003, power: 4, difficulty: 4 },
     { name: 'Tapwave Zodiac', releaseYear: 2003, power: 3, difficulty: 4 },
     { name: 'Sega 32X', releaseYear: 1994, power: 7, difficulty: 6 },]); // Initialize this with your platform data
-    const [genres, setGenres] = useState([{ name: 'Action', popularity: 8, complexity: 3 },
-    { name: 'Adventure', popularity: 7, complexity: 2 },
-    { name: 'Strategy', popularity: 7, complexity: 4 },
-    { name: 'Simulation', popularity: 6, complexity: 3 },
-    { name: 'RPG', popularity: 9, complexity: 5 },
-    { name: 'Sports', popularity: 7, complexity: 3 },
-    { name: 'Puzzle', popularity: 6, complexity: 2 },
-    { name: 'Shooter', popularity: 8, complexity: 4 },
-    { name: 'Platformer', popularity: 7, complexity: 3 },
-    { name: 'Racing', popularity: 7, complexity: 3 },
-    { name: 'Fighting', popularity: 8, complexity: 4 },
-    { name: 'Horror', popularity: 8, complexity: 4 },
-    { name: 'Survival', popularity: 8, complexity: 4 },
-    { name: 'Stealth', popularity: 7, complexity: 3 },
-    { name: 'Open World', popularity: 9, complexity: 5 },
-    { name: 'Music', popularity: 6, complexity: 3 },
-    { name: 'Educational', popularity: 5, complexity: 2 },
-    { name: 'Casual', popularity: 6, complexity: 2 },
-    { name: 'Visual Novel', popularity: 7, complexity: 3 },
-    { name: 'Simulation', popularity: 6, complexity: 3 },
-    { name: 'Tycoon', popularity: 7, complexity: 4 },
-    { name: 'Management', popularity: 7, complexity: 4 },
-    { name: 'Tactical', popularity: 8, complexity: 4 },
-    { name: 'Card Game', popularity: 6, complexity: 3 },
-    { name: 'Board Game', popularity: 6, complexity: 2 },
+    const [genres, setGenres] = useState([
+        { id: 1, name: 'Action', popularity: 8, complexity: 3 },
+        { id: 2, name: 'Adventure', popularity: 7, complexity: 2 },
+        { id: 3, name: 'Strategy', popularity: 7, complexity: 4 },
+        { id: 4, name: 'Simulation', popularity: 6, complexity: 3 },
+        { id: 5, name: 'RPG', popularity: 9, complexity: 5 },
+        { id: 6, name: 'Sports', popularity: 7, complexity: 3 },
+        { id: 7, name: 'Puzzle', popularity: 6, complexity: 2 },
+        { id: 8, name: 'Shooter', popularity: 8, complexity: 4 },
+        { id: 9, name: 'Platformer', popularity: 7, complexity: 3 },
+        { id: 10, name: 'Racing', popularity: 7, complexity: 3 },
+        { id: 11, name: 'Fighting', popularity: 8, complexity: 4 },
+        { id: 12, name: 'Horror', popularity: 8, complexity: 4 },
+        { id: 13, name: 'Survival', popularity: 8, complexity: 4 },
+        { id: 14, name: 'Stealth', popularity: 7, complexity: 3 },
+        { id: 15, name: 'Open World', popularity: 9, complexity: 5 },
+        { id: 16, name: 'Music', popularity: 6, complexity: 3 },
+        { id: 17, name: 'Educational', popularity: 5, complexity: 2 },
+        { id: 18, name: 'Casual', popularity: 6, complexity: 2 },
+        { id: 19, name: 'Visual Novel', popularity: 7, complexity: 3 },
+        { id: 20, name: 'Simulation', popularity: 6, complexity: 3 },
+        { id: 21, name: 'Tycoon', popularity: 7, complexity: 4 },
+        { id: 22, name: 'Management', popularity: 7, complexity: 4 },
+        { id: 23, name: 'Tactical', popularity: 8, complexity: 4 },
+        { id: 24, name: 'Card Game', popularity: 6, complexity: 3 },
+        { id: 25, name: 'Board Game', popularity: 6, complexity: 2 },
     ]);
     const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
     const [selectedProjectForShipping, setSelectedProjectForShipping] = useState(null);
@@ -154,6 +164,33 @@ function App() {
 
     const addNotification = (message, type) => {
         toast(message, { type });
+    };
+
+    const resetGame = () => {
+        // Reset all game state to initial values
+        setCurrentYear(1985);
+        setCurrentMonth(1);
+        setCurrentWeek(1);
+        setCurrentDay(1);
+        setEmployees([]);
+        setProjects([]);
+        setBankAccount(10000);
+        setSalaryCosts(0);
+        
+        // Clear local storage
+        if (typeof window !== 'undefined' && window.localStorage) {
+            localStorage.removeItem('currentYear');
+            localStorage.removeItem('currentMonth');
+            localStorage.removeItem('currentWeek');
+            localStorage.removeItem('currentDay');
+            localStorage.removeItem('employees');
+            localStorage.removeItem('projects');
+            localStorage.removeItem('publishers');
+            localStorage.removeItem('bankAccount');
+            localStorage.removeItem('salaryCosts');
+        }
+        
+        addNotification('Game has been reset', 'success');
     };
 
     function hireEmployee(type) {
@@ -182,12 +219,24 @@ function App() {
 
 
     const assignToProject = (projectId, employeeId) => {
-        setEmployees(prevEmployees => prevEmployees.map(employee => {
-            if (employee.id === employeeId) {
-                return { ...employee, projectId: projectId };
-            }
-            return employee;
-        }));
+        // Handle both single employeeId and arrays of employeeIds
+        if (Array.isArray(employeeId)) {
+            // If an array is provided, update all employees in the array
+            setEmployees(prevEmployees => prevEmployees.map(employee => {
+                if (employeeId.includes(employee.id)) {
+                    return { ...employee, projectId: projectId };
+                }
+                return employee;
+            }));
+        } else {
+            // If a single employeeId is provided, update just that employee
+            setEmployees(prevEmployees => prevEmployees.map(employee => {
+                if (employee.id === employeeId) {
+                    return { ...employee, projectId: projectId };
+                }
+                return employee;
+            }));
+        }
     };
 
 
@@ -214,17 +263,24 @@ function App() {
     const updateWeeklySales = () => {
         const updatedProjects = projects.map(project => {
             if (project.shipped) {
-                console.log(project.shippingWeek + currentWeek)
-                const weeksOnMarket = currentWeek - project.shippingWeek;
-                const decayFactor = 0.75; // Adjust as needed
-                const qualityFactor = 1 + project.metaCriticRating / 100;
-
-                let newSales = project.initialSales * Math.pow(decayFactor, weeksOnMarket) * qualityFactor;
-                project.sales[weeksOnMarket] = newSales;
+                const weeksOnMarket = project.sales.length; // Number of weeks since shipping
+                const decayFactor = 0.9; // Adjust as needed (less steep decline)
+                const qualityFactor = 1 + (project.metaCriticRating / 100);
+                
+                // Base sales calculation
+                let baseSales = project.sales[0]; // Initial sales
+                
+                // Calculate new sales based on decay and quality
+                let newSales = baseSales * Math.pow(decayFactor, weeksOnMarket) * qualityFactor;
+                
+                // Add the new sales to the sales array
+                project.sales.push(newSales);
+                
+                // Update total revenue
                 project.revenue += newSales;
 
                 // Add revenue to bank account
-                setBankAccount(bankAccount + newSales); // For adding revenue
+                setBankAccount(prevBankAccount => prevBankAccount + newSales);
             }
             return project;
         });
@@ -299,8 +355,8 @@ function App() {
         // Set the project as shipped with initial sales and revenue
         project.shipped = true;
         project.shippingWeek = currentWeek;
-        project.sales = Array.from({ length: currentWeek }, () => 0); // Fill weeks before shipping with 0 sales
-        project.sales[currentWeek - 1] = initialSales; // Start recording sales from the shipping week
+        project.sales = []; // Initialize an empty sales array to track sales week by week after shipping
+        project.sales.push(initialSales); // Start recording sales from the shipping week
         project.revenue = initialSales * 10; // Example revenue calculation for the first week
         project.metaCriticRating = metaCriticScore;
         project.publisher = publisherName;
@@ -338,9 +394,19 @@ function App() {
         return salaryToPay;
     };
 
-    // Utility function to generate unique IDs (placeholder)
+    // Utility function to generate unique IDs
     const generateUniqueId = () => {
-        return Math.random().toString(36).substr(2, 9);
+        const newId = Math.random().toString(36).substr(2, 9);
+        // Check if this ID already exists in any object that uses IDs
+        const idExists = projects.some(project => project.id === newId) || 
+                         employees.some(employee => employee.id === newId);
+        
+        // If ID already exists, recursively generate a new one
+        if (idExists) {
+            return generateUniqueId();
+        }
+        
+        return newId;
     };
 
     return (
@@ -352,6 +418,8 @@ function App() {
                 setCurrentYear={setCurrentYear}
                 currentWeek={currentWeek}
                 setCurrentWeek={setCurrentWeek}
+                currentDay={currentDay}
+                setCurrentDay={setCurrentDay}
                 platforms={platforms}
                 employees={employees}
                 updateConsoleSales={updateConsoleSales}
@@ -359,6 +427,7 @@ function App() {
                 addNotification={addNotification}
                 salaryCosts={salaryCosts}
                 bankAccount={bankAccount}
+                resetGame={resetGame}
             />
             <ProjectComponent
                 projects={projects}

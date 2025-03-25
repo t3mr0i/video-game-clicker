@@ -1,20 +1,47 @@
 import React, { useEffect, useState } from 'react';
 import FinanceComponent from './FinanceComponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faClock, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
+import { faClock, faCalendarAlt, faFastForward, faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 
-const TimeComponent = ({ currentYear, setCurrentYear, platforms, employees, updateConsoleSales, paySalaries, addNotification, updateWeeklySales, currentWeek, setCurrentWeek, salaryCosts, bankAccount }) => {
+const TimeComponent = ({ 
+    currentYear, 
+    setCurrentYear, 
+    platforms, 
+    employees, 
+    updateConsoleSales, 
+    paySalaries, 
+    addNotification, 
+    updateWeeklySales, 
+    currentWeek, 
+    setCurrentWeek, 
+    currentDay,
+    setCurrentDay,
+    salaryCosts, 
+    bankAccount,
+    resetGame 
+}) => {
     const [currentMonth, setCurrentMonth] = useState(1);
-    const [currentDay, setCurrentDay] = useState(1);
     const [monthProgress, setMonthProgress] = useState(0);
+    const [gameSpeed, setGameSpeed] = useState(1400); // Default speed: 1400ms
+    const [isPaused, setIsPaused] = useState(false);
 
     useEffect(() => {
+        if (isPaused) return;
+        
         const timer = setInterval(() => {
             advanceTime();
-        }, 1400); // Adjust the interval to control game speed
+        }, gameSpeed); // Adjust the interval to control game speed
 
         return () => clearInterval(timer);
-    }, [currentDay, currentMonth, currentYear, currentWeek]);
+    }, [currentDay, currentMonth, currentYear, currentWeek, gameSpeed, isPaused]);
+
+    const handleSpeedChange = (speed) => {
+        setGameSpeed(speed);
+    };
+
+    const togglePause = () => {
+        setIsPaused(!isPaused);
+    };
 
     const advanceTime = () => {
         let newDay = currentDay + 1;
@@ -46,6 +73,11 @@ const TimeComponent = ({ currentYear, setCurrentYear, platforms, employees, upda
         }
         if (newDay === 1) {
             checkConsoleMarketChanges(newYear, newMonth);
+        }
+        
+        // Update weekly sales when the week advances
+        if (newDay % 7 === 0) {
+            updateWeeklySales();
         }
 
         setCurrentDay(newDay);
@@ -80,6 +112,43 @@ const TimeComponent = ({ currentYear, setCurrentYear, platforms, employees, upda
                         </div>
                     </div>
                     <p className="text-gray-600 mt-1">Week <span className="text-gray-600">{currentWeek}</span></p>
+                    
+                    <div className="flex mt-2 space-x-2">
+                        <button 
+                            onClick={togglePause} 
+                            className="bg-blue-500 hover:bg-blue-700 text-white rounded px-2 py-1"
+                        >
+                            <FontAwesomeIcon icon={isPaused ? faPlay : faPause} />
+                        </button>
+                        <button 
+                            onClick={() => handleSpeedChange(1400)} 
+                            className={`rounded px-2 py-1 ${gameSpeed === 1400 ? 'bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
+                            title="Normal Speed"
+                        >
+                            1x
+                        </button>
+                        <button 
+                            onClick={() => handleSpeedChange(700)} 
+                            className={`rounded px-2 py-1 ${gameSpeed === 700 ? 'bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
+                            title="Fast Speed"
+                        >
+                            2x
+                        </button>
+                        <button 
+                            onClick={() => handleSpeedChange(350)} 
+                            className={`rounded px-2 py-1 ${gameSpeed === 350 ? 'bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
+                            title="Very Fast Speed"
+                        >
+                            4x
+                        </button>
+                        <button 
+                            onClick={resetGame} 
+                            className="bg-red-500 hover:bg-red-700 text-white rounded px-2 py-1 ml-2"
+                            title="Reset Game"
+                        >
+                            Reset
+                        </button>
+                    </div>
                 </div>
             </div>
             {/* Financial Overview */}

@@ -74,6 +74,7 @@ const ProjectComponent = ({ projects, setProjects, createProject, updateProjectP
             project.marketingPoints = Math.floor((project.marketingPoints || 0)) + numMarketers * marketingPointRate;
 
             // Ensure progress doesn't exceed 100%
+            project.progress = Math.min(project.progress, 100);
 
             return project;
         });
