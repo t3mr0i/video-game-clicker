@@ -87,7 +87,7 @@ const ProjectComponent = ({
         const engineBoost = engine ? `Using ${engine.name} Engine` : null;
 
         // Check if this genre is trending
-        const isTrendingGenre = false; // Removed trendingGenre check as the prop is not available
+        const isTrendingGenre = getBestGenre && getBestGenre()?.name === selectedGenre;
 
         // Get franchise information if this is a sequel
         let franchiseId = null;
@@ -120,6 +120,7 @@ const ProjectComponent = ({
                 startDate: `${currentYear}-${String(new Date().getMonth() + 1).padStart(2, '0')}`
             };
 
+            console.log("Creating new project:", newProject);
             startNewProject(newProject);
 
             setNewProjectName('');
@@ -133,7 +134,11 @@ const ProjectComponent = ({
         }
     };
 
-    const openModal = () => setIsModalOpen(true);
+    const openModal = () => {
+        console.log("Opening create project modal");
+        setIsModalOpen(true);
+    };
+    
     const closeModal = () => setIsModalOpen(false);
 
     const availablePlatforms = platforms.filter(platform => platform.releaseYear <= currentYear);
@@ -190,16 +195,22 @@ const ProjectComponent = ({
 
     // Handle shipping a project
     const handleShipGame = (projectId) => {
+        console.log("Shipping game with ID:", projectId);
         // Use the openShippingModal prop directly
         if (openShippingModal && typeof openShippingModal === 'function') {
             openShippingModal(projectId);
         } else {
             console.error("openShippingModal is not available");
+            if (shipGame && typeof shipGame === 'function') {
+                // Fallback to direct shipping if modal function not available
+                shipGame(projectId);
+            }
         }
     };
 
     // Handle canceling a project
     const handleCancelProject = (projectId) => {
+        console.log("Attempting to cancel project:", projectId);
         if (window.confirm("Are you sure you want to cancel this project? All progress will be lost.")) {
             cancelProject(projectId);
         }
@@ -217,9 +228,9 @@ const ProjectComponent = ({
 
         // Return the progress bar with dynamic width and color
         return (
-            <div className="w-full bg-gray-200 rounded-full h-2.5 md-2">
+            <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
-                    className={`${barColor} h-2.5 rounded-full transition-all duration-300 ease-in-out `}
+                    className={`${barColor} h-2 rounded-full transition-all duration-300 ease-in-out`}
                     style={{ width: `${currentProgress}%` }}
                 ></div>
             </div>
@@ -227,54 +238,57 @@ const ProjectComponent = ({
     }
 
     return (
-        <div className="bg-gray-100 p-4 rounded-lg shadow-md app">
-            <div className="flex justify-between mb-4">
+        <>
+            <div className="flex justify-between items-center mb-3">
                 <div>
-                    <h2 className="text-xl font-bold text-gray-800">Projects</h2>
+                    <h2 className="text-base font-bold text-gray-800">Projects</h2>
                     {getBestGenre && getBestGenre() && (
-                        <div className="text-orange-500 mt-1 flex items-center">
+                        <div className="text-orange-500 text-xs flex items-center">
                             <FontAwesomeIcon icon={faFire} className="mr-1" />
-                            <span>Trending Genre: {getBestGenre().name} (+20% sales)</span>
+                            <span>Trending: {getBestGenre().name}</span>
                         </div>
                     )}
                 </div>
-                <button onClick={openModal} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center">
-                    <FontAwesomeIcon icon={faPlus} className="mr-2" />
-                    Create New Project
+                <button 
+                    onClick={openModal} 
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm flex items-center"
+                >
+                    <FontAwesomeIcon icon={faPlus} className="mr-1" />
+                    Create New
                 </button>
             </div>
 
             {/* Projects list */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {projects.length === 0 ? (
-                    <div className="col-span-full text-center p-4 border-2 border-dashed border-gray-300 rounded-lg">
-                        <FontAwesomeIcon icon={faRocket} className="text-3xl text-gray-400 mb-2" />
-                        <p className="text-gray-500">No projects yet. Create your first game project!</p>
+            <div className="grid grid-cols-1 gap-2">
+                {!projects || projects.length === 0 ? (
+                    <div className="text-center p-3 border-2 border-dashed border-gray-300 rounded-lg">
+                        <FontAwesomeIcon icon={faRocket} className="text-2xl text-gray-400 mb-2" />
+                        <p className="text-gray-500 text-sm">No projects yet. Create your first game project!</p>
                     </div>
                 ) : (
                     projects.map(project => (
-                        <div key={project.id} className={`bg-white p-4 rounded-lg shadow border-l-4 ${project.shipped ? 'border-green-500' : 'border-blue-500'}`}>
-                            <div className="flex justify-between items-start mb-2">
-                                <h3 className="font-bold text-lg text-gray-800">{project.name}</h3>
+                        <div key={project.id} className={`bg-white p-2 rounded-lg shadow-sm border-l-4 ${project.shipped ? 'border-green-500' : 'border-blue-500'}`}>
+                            <div className="flex justify-between items-start mb-1">
+                                <h3 className="font-semibold text-gray-800">{project.name}</h3>
                                 <div className="flex space-x-1">
                                     {project.progress >= 100 && !project.shipped && (
                                         <button 
-                                            className="bg-green-500 hover:bg-green-700 text-white rounded p-1"
+                                            className="bg-green-500 hover:bg-green-700 text-white rounded-full p-1 h-6 w-6 flex items-center justify-center"
                                             onClick={() => handleShipGame(project.id)}
                                             onMouseEnter={() => displayTooltip(`ship-${project.id}`)}
                                             onMouseLeave={hideTooltip}
                                         >
-                                            <FontAwesomeIcon icon={faShip} />
+                                            <FontAwesomeIcon icon={faShip} className="text-xs" />
                                         </button>
                                     )}
                                     {!project.shipped && (
                                         <button 
-                                            className="bg-red-500 hover:bg-red-700 text-white rounded p-1"
+                                            className="bg-red-500 hover:bg-red-700 text-white rounded-full p-1 h-6 w-6 flex items-center justify-center"
                                             onClick={() => handleCancelProject(project.id)}
                                             onMouseEnter={() => displayTooltip(`cancel-${project.id}`)}
                                             onMouseLeave={hideTooltip}
                                         >
-                                            <FontAwesomeIcon icon={faTimes} />
+                                            <FontAwesomeIcon icon={faTimes} className="text-xs" />
                                         </button>
                                     )}
                                     {showTooltip === `ship-${project.id}` && (
@@ -290,12 +304,12 @@ const ProjectComponent = ({
                                 </div>
                             </div>
                             
-                            <div className="text-sm mb-2">
-                                <span className="inline-block bg-gray-200 rounded px-2 py-1 mr-1 mb-1 text-gray-800">{project.platform}</span>
-                                <span className="inline-block bg-gray-200 rounded px-2 py-1 mr-1 mb-1 text-gray-800">{project.genre}</span>
-                                <span className="inline-block bg-gray-200 rounded px-2 py-1 mb-1 text-gray-800">{project.size}</span>
+                            <div className="text-xs mb-1 flex flex-wrap gap-1">
+                                <span className="inline-block bg-gray-200 rounded px-1 py-0.5 text-gray-800">{project.platform}</span>
+                                <span className="inline-block bg-gray-200 rounded px-1 py-0.5 text-gray-800">{project.genre}</span>
+                                <span className="inline-block bg-gray-200 rounded px-1 py-0.5 text-gray-800">{project.size}</span>
                                 {project.isTrendingGenre && (
-                                    <span className="inline-block bg-orange-200 text-orange-700 rounded px-2 py-1 mb-1 ml-1">
+                                    <span className="inline-block bg-orange-200 text-orange-700 rounded px-1 py-0.5">
                                         <FontAwesomeIcon icon={faFire} className="mr-1" />
                                         Trending
                                     </span>
@@ -303,44 +317,37 @@ const ProjectComponent = ({
                             </div>
 
                             {/* Project details */}
-                            <div className="text-sm text-gray-700 mb-2">
+                            <div className="text-xs text-gray-700 mb-1">
                                 <div className="flex justify-between">
-                                    <span>Progress:</span>
-                                    <span>{Math.min(100, Math.round(project.progress))}%</span>
+                                    <span>Progress: {Math.min(100, Math.round(project.progress))}%</span>
+                                    {!project.shipped && (
+                                        <span className="text-gray-800">{Math.round(project.developmentPoints)}/{project.requiredPoints} pts</span>
+                                    )}
                                 </div>
                                 {renderProgress(project.progress, 100)}
                                 
-                                {!project.shipped && (
-                                    <div className="mt-2">
-                                        <span className="text-gray-800">Dev Points: {Math.round(project.developmentPoints)}/{project.requiredPoints}</span>
-                                    </div>
-                                )}
-                                
-                                {project.engineName && (
-                                    <div className="mt-1 text-blue-600">
-                                        <FontAwesomeIcon icon={faCogs} className="mr-1" />
-                                        {project.engineName} Engine
-                                    </div>
-                                )}
-                                
-                                {project.franchiseId && (
-                                    <div className="mt-1 text-purple-600">
-                                        <FontAwesomeIcon icon={faTrophy} className="mr-1" />
-                                        {getFranchiseName(project.franchiseId)} Franchise
-                                    </div>
-                                )}
+                                <div className="mt-1 flex flex-wrap gap-1">
+                                    {project.engineName && (
+                                        <span className="text-blue-600">
+                                            <FontAwesomeIcon icon={faCogs} className="mr-1" />
+                                            {project.engineName}
+                                        </span>
+                                    )}
+                                    
+                                    {project.franchiseId && (
+                                        <span className="text-purple-600">
+                                            <FontAwesomeIcon icon={faTrophy} className="mr-1" />
+                                            {getFranchiseName(project.franchiseId)}
+                                        </span>
+                                    )}
+                                </div>
                             </div>
                             
                             {/* For shipped games, show the sales and revenue */}
                             {project.shipped && (
-                                <div className="mt-2">
-                                    <div className="text-sm text-gray-800">Total Sales: {project.sales ? project.sales.reduce((sum, sale) => sum + sale, 0).toLocaleString() : 0} units</div>
-                                    <div className="text-sm text-green-600">Revenue: ${project.revenue ? project.revenue.toLocaleString() : 0}</div>
-                                    {project.metaCriticScore && (
-                                        <div className="mt-1">
-                                            <MetaCriticRatingComponent score={project.metaCriticScore} />
-                                        </div>
-                                    )}
+                                <div className="text-xs mt-1 border-t pt-1 border-gray-200">
+                                    <div className="text-gray-800">Sales: {project.sales ? project.sales.reduce((sum, sale) => sum + sale, 0).toLocaleString() : 0}</div>
+                                    <div className="text-green-600">Revenue: ${project.revenue ? project.revenue.toLocaleString() : 0}</div>
                                 </div>
                             )}
                         </div>
@@ -353,18 +360,19 @@ const ProjectComponent = ({
                 isOpen={isModalOpen}
                 onRequestClose={closeModal}
                 contentLabel="Create New Project"
-                className="bg-white rounded-lg p-6 mx-auto my-12 border max-w-lg"
+                className="bg-white rounded-lg p-4 mx-auto my-8 border max-w-md shadow-lg"
                 overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+                ariaHideApp={false}
             >
-                <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-bold text-gray-800">Create New Project</h2>
+                <div className="flex justify-between items-center mb-3">
+                    <h2 className="text-lg font-bold text-gray-800">Create New Project</h2>
                     <button onClick={closeModal} className="text-gray-500 hover:text-gray-700">
                         <FontAwesomeIcon icon={faTimes} />
                     </button>
                 </div>
                 
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="projectName">
+                <div className="mb-3">
+                    <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="projectName">
                         Project Name
                     </label>
                     <input
@@ -376,8 +384,8 @@ const ProjectComponent = ({
                     />
                 </div>
                 
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2">
+                <div className="mb-3">
+                    <label className="block text-gray-700 text-sm font-bold mb-1">
                         Game Size
                         <button className="ml-1 text-blue-500" onMouseEnter={() => displayTooltip('size')} onMouseLeave={hideTooltip}>
                             <FontAwesomeIcon icon={faQuestionCircle} />
@@ -385,40 +393,40 @@ const ProjectComponent = ({
                     </label>
                     <div className="flex space-x-2">
                         <button
-                            className={`flex-1 py-2 px-4 rounded ${selectedSize === 'A' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}
+                            className={`flex-1 py-1 px-3 rounded ${selectedSize === 'A' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}
                             onClick={() => setSelectedSize('A')}
                         >
                             A
                         </button>
                         <button
-                            className={`flex-1 py-2 px-4 rounded ${selectedSize === 'AA' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}
+                            className={`flex-1 py-1 px-3 rounded ${selectedSize === 'AA' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}
                             onClick={() => setSelectedSize('AA')}
                         >
                             AA
                         </button>
                         <button
-                            className={`flex-1 py-2 px-4 rounded ${selectedSize === 'AAA' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}
+                            className={`flex-1 py-1 px-3 rounded ${selectedSize === 'AAA' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}
                             onClick={() => setSelectedSize('AAA')}
                         >
                             AAA
                         </button>
                     </div>
                     {showTooltip === 'size' && (
-                        <div className="mt-1 text-sm text-gray-600 bg-gray-100 p-2 rounded">
+                        <div className="mt-1 text-xs text-gray-600 bg-gray-100 p-1 rounded">
                             {getTooltipContent('size')}
                         </div>
                     )}
                 </div>
                 
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2">
+                <div className="mb-3">
+                    <label className="block text-gray-700 text-sm font-bold mb-1">
                         Platform
                         <button className="ml-1 text-blue-500" onMouseEnter={() => displayTooltip('platform')} onMouseLeave={hideTooltip}>
                             <FontAwesomeIcon icon={faQuestionCircle} />
                         </button>
                     </label>
                     <select
-                        className="shadow border rounded w-full py-2 px-3 text-gray-700 bg-white"
+                        className="shadow border rounded w-full py-1 px-2 text-gray-700 bg-white"
                         value={selectedPlatform}
                         onChange={(e) => setSelectedPlatform(e.target.value)}
                     >
@@ -430,21 +438,21 @@ const ProjectComponent = ({
                         ))}
                     </select>
                     {showTooltip === 'platform' && (
-                        <div className="mt-1 text-sm text-gray-600 bg-gray-100 p-2 rounded">
+                        <div className="mt-1 text-xs text-gray-600 bg-gray-100 p-1 rounded">
                             {getTooltipContent('platform')}
                         </div>
                     )}
                 </div>
                 
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2">
+                <div className="mb-3">
+                    <label className="block text-gray-700 text-sm font-bold mb-1">
                         Genre
                         <button className="ml-1 text-blue-500" onMouseEnter={() => displayTooltip('genre')} onMouseLeave={hideTooltip}>
                             <FontAwesomeIcon icon={faQuestionCircle} />
                         </button>
                     </label>
                     <select
-                        className="shadow border rounded w-full py-2 px-3 text-gray-700 bg-white"
+                        className="shadow border rounded w-full py-1 px-2 text-gray-700 bg-white"
                         value={selectedGenre}
                         onChange={(e) => setSelectedGenre(e.target.value)}
                     >
@@ -460,22 +468,22 @@ const ProjectComponent = ({
                         })}
                     </select>
                     {showTooltip === 'genre' && (
-                        <div className="mt-1 text-sm text-gray-600 bg-gray-100 p-2 rounded">
+                        <div className="mt-1 text-xs text-gray-600 bg-gray-100 p-1 rounded">
                             {getTooltipContent('genre')}
                         </div>
                     )}
                 </div>
 
                 {gameEngines.length > 0 && (
-                    <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2">
+                    <div className="mb-3">
+                        <label className="block text-gray-700 text-sm font-bold mb-1">
                             Game Engine
                             <button className="ml-1 text-blue-500" onMouseEnter={() => displayTooltip('engine')} onMouseLeave={hideTooltip}>
                                 <FontAwesomeIcon icon={faQuestionCircle} />
                             </button>
                         </label>
                         <select
-                            className="shadow border rounded w-full py-2 px-3 text-gray-700 bg-white"
+                            className="shadow border rounded w-full py-1 px-2 text-gray-700 bg-white"
                             value={selectedGameEngine}
                             onChange={(e) => setSelectedGameEngine(e.target.value)}
                         >
@@ -487,7 +495,7 @@ const ProjectComponent = ({
                             ))}
                         </select>
                         {showTooltip === 'engine' && (
-                            <div className="mt-1 text-sm text-gray-600 bg-gray-100 p-2 rounded">
+                            <div className="mt-1 text-xs text-gray-600 bg-gray-100 p-1 rounded">
                                 {getTooltipContent('engine')}
                             </div>
                         )}
@@ -495,36 +503,36 @@ const ProjectComponent = ({
                 )}
 
                 {franchises.length > 0 && (
-                    <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2">
+                    <div className="mb-3">
+                        <label className="block text-gray-700 text-sm font-bold mb-1">
                             Franchise (Optional)
                             <button className="ml-1 text-blue-500" onMouseEnter={() => displayTooltip('franchise')} onMouseLeave={hideTooltip}>
                                 <FontAwesomeIcon icon={faQuestionCircle} />
                             </button>
                         </label>
                         <select
-                            className="shadow border rounded w-full py-2 px-3 text-gray-700 bg-white"
+                            className="shadow border rounded w-full py-1 px-2 text-gray-700 bg-white"
                             value={selectedFranchise}
                             onChange={(e) => setSelectedFranchise(e.target.value)}
                         >
                             <option value="">New IP (No Franchise)</option>
                             {franchises.map((franchise) => (
                                 <option key={franchise.id} value={franchise.id}>
-                                    {franchise.name} (Games: {franchise.games.length}, Fans: {franchise.fanbase.toLocaleString()})
+                                    {franchise.name} (Games: {franchise.games.length})
                                 </option>
                             ))}
                         </select>
                         {showTooltip === 'franchise' && (
-                            <div className="mt-1 text-sm text-gray-600 bg-gray-100 p-2 rounded">
+                            <div className="mt-1 text-xs text-gray-600 bg-gray-100 p-1 rounded">
                                 {getTooltipContent('franchise')}
                             </div>
                         )}
                     </div>
                 )}
 
-                <div className="mb-4 p-3 bg-gray-100 rounded-lg">
-                    <h3 className="font-bold text-gray-700 mb-2">Development Estimate</h3>
-                    <div className="flex justify-between text-gray-800">
+                <div className="mb-3 p-2 bg-gray-100 rounded-lg">
+                    <h3 className="font-bold text-gray-700 text-sm mb-1">Development Estimate</h3>
+                    <div className="flex justify-between text-gray-800 text-sm">
                         <span>Required Development Points:</span>
                         <span>{developmentPoints}</span>
                     </div>
@@ -533,20 +541,20 @@ const ProjectComponent = ({
                 <div className="flex justify-end space-x-2">
                     <button
                         onClick={closeModal}
-                        className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+                        className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-1 px-3 rounded text-sm"
                     >
                         Cancel
                     </button>
                     <button
                         onClick={handleCreateProject}
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm"
                         disabled={!newProjectName || !selectedPlatform || !selectedGenre}
                     >
                         Create Project
                     </button>
                 </div>
             </Modal>
-        </div>
+        </>
     );
 };
 

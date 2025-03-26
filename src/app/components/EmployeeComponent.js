@@ -211,193 +211,165 @@ const EmployeeComponent = ({
     };
 
     return (
-        <div className="bg-gray-100 p-4 rounded-lg shadow-md">
-            <div className="mb-4">
-                <h2 className="text-xl font-bold text-gray-800 mb-2">Employees</h2>
-                <div className="flex justify-between items-center">
-                    <div className="tab-container flex border-b border-gray-300 mb-4">
-                        <button
-                            className={`py-2 px-4 mr-2 ${selectedEmployeeType === 'Developer' ? 'border-b-2 border-blue-500 text-blue-500 font-medium' : 'text-gray-700'}`}
-                            onClick={() => setSelectedEmployeeType('Developer')}
+        <>
+            <div className="p-3">
+                <div className="flex justify-between items-center mb-3">
+                    <h2 className="text-base font-bold text-gray-800">Employees</h2>
+                    <div className="flex items-center space-x-2">
+                        <select 
+                            className="text-sm rounded border py-1 px-2 bg-white text-gray-800"
+                            value={selectedEmployeeType}
+                            onChange={(e) => setSelectedEmployeeType(e.target.value)}
                         >
-                            Developer
-                        </button>
-                        <button
-                            className={`py-2 px-4 mr-2 ${selectedEmployeeType === 'Designer' ? 'border-b-2 border-blue-500 text-blue-500 font-medium' : 'text-gray-700'}`}
-                            onClick={() => setSelectedEmployeeType('Designer')}
+                            <option value="Developer">Developers</option>
+                            <option value="Designer">Designers</option>
+                            <option value="Marketer">Marketers</option>
+                        </select>
+                        <button 
+                            onClick={handleHireEmployee} 
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm flex items-center"
                         >
-                            Designer
-                        </button>
-                        <button
-                            className={`py-2 px-4 ${selectedEmployeeType === 'Marketer' ? 'border-b-2 border-blue-500 text-blue-500 font-medium' : 'text-gray-700'}`}
-                            onClick={() => setSelectedEmployeeType('Marketer')}
-                        >
-                            Marketer
+                            <FontAwesomeIcon icon={faPlus} className="mr-1" />
+                            Hire
                         </button>
                     </div>
-                    <button
-                        onClick={handleHireEmployee}
-                        className="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-3 rounded"
-                    >
-                        Hire Employee
-                    </button>
                 </div>
-            </div>
-
-            <div className="employee-roster">
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">Employee Roster</h3>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {employees.filter(employee => employee.type === selectedEmployeeType).map(employee => (
-                        <div key={employee.id} className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
-                            <div className="flex justify-between items-start mb-2">
-                                <div>
-                                    <h4 className="font-semibold text-gray-800">{employee.name}</h4>
-                                    <p className="text-sm text-gray-600">{employee.type}</p>
-                                </div>
-                                <div>
-                                    <button
-                                        onClick={() => handleFireEmployee(employee.id)}
-                                        className="text-red-500 hover:text-red-700"
-                                        title="Fire Employee"
-                                    >
-                                        ❌
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <div className="text-sm space-y-1 mb-2">
-                                {renderSkillIcons(employee)}
-                                {employee.skillPoints > 0 && (
-                                    <div className="mt-1 text-blue-600 font-semibold">
-                                        Skill Points Available: {employee.skillPoints}
-                                    </div>
-                                )}
-                            </div>
-                            
-                            {employee.projectId ? (
-                                <div className="mt-2 text-sm">
-                                    <span className="text-gray-700 font-medium">Assigned to:</span> 
-                                    <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded ml-1">
-                                        {projects.find(p => p.id === employee.projectId)?.name || 'Unknown Project'}
-                                    </span>
-                                </div>
-                            ) : (
-                                <div className="mt-2 text-sm text-gray-500 italic">Available for assignment</div>
-                            )}
-                            
-                            <div className="mt-2 flex justify-between">
-                                <button
+                {employees.length === 0 ? (
+                    <div className="text-center py-3 border-2 border-dashed border-gray-300 rounded-lg">
+                        <p className="text-gray-500 text-sm">No employees yet. Hire some staff!</p>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 gap-2">
+                        {employees
+                            .filter(employee => employee.type === selectedEmployeeType)
+                            .map(employee => (
+                                <div 
+                                    key={employee.id} 
+                                    className="bg-white p-2 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
                                     onClick={() => openEmployeeDetails(employee)}
-                                    className="bg-blue-500 hover:bg-blue-700 text-white text-xs py-1 px-2 rounded"
                                 >
-                                    Details
-                                </button>
-                                {employee.skillPoints > 0 && (
-                                    <button
-                                        onClick={() => openEmployeeDetails(employee)}
-                                        className="bg-purple-500 hover:bg-purple-700 text-white text-xs py-1 px-2 rounded"
-                                    >
-                                        Improve Skills
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-                    ))}
-                    
-                    {employees.filter(employee => employee.type === selectedEmployeeType).length === 0 && (
-                        <div className="col-span-full text-center p-4 border-2 border-dashed border-gray-300 rounded-lg">
-                            <p className="text-gray-500">No {selectedEmployeeType}s hired yet.</p>
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            {activeProjects.length > 0 && (
-                <div className="project-assignment mt-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2">Project Assignments</h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {activeProjects.map(project => (
-                            <div key={project.id} className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
-                                <h4 className="font-semibold text-gray-800">{project.name}</h4>
-                                <div className="text-sm text-gray-600 mb-2">
-                                    <span className="inline-block bg-gray-200 rounded px-2 py-1 mr-1 mt-1 text-gray-800">{project.platform}</span>
-                                    <span className="inline-block bg-gray-200 rounded px-2 py-1 mr-1 mt-1 text-gray-800">{project.genre}</span>
-                                </div>
-                                
-                                <div className="flex items-center justify-between mt-3">
-                                    <div className="text-sm text-gray-800">
-                                        <span className="font-medium">{countEmployeesInProject(project.id)}</span> {selectedEmployeeType}(s) assigned
+                                    <div className="flex justify-between items-start">
+                                        <h3 className="font-semibold text-gray-800">{employee.name}</h3>
+                                        <div className="text-xs font-medium px-2 py-0.5 rounded bg-gray-200 text-gray-700">
+                                            {employee.type}
+                                        </div>
                                     </div>
-                                    <div className="flex space-x-2">
-                                        <button 
-                                            onClick={() => handleAddEmployeeToProject(project.id)}
-                                            className="bg-green-500 hover:bg-green-600 text-white rounded-full h-8 w-8 flex items-center justify-center"
-                                            title={`Add ${selectedEmployeeType}`}
-                                        >
-                                            <FontAwesomeIcon icon={faPlus} />
-                                        </button>
+                                    
+                                    <div className="text-xs text-gray-700 mt-1 space-y-1">
+                                        {renderSkillIcons(employee)}
+                                        
+                                        <div className="mt-1 flex justify-between items-center">
+                                            <div className="text-gray-800">
+                                                {employee.skillPoints > 0 && (
+                                                    <span className="bg-yellow-100 text-yellow-800 px-1 rounded">
+                                                        {employee.skillPoints} skill points
+                                                    </span>
+                                                )}
+                                            </div>
+                                            
+                                            <div className="text-gray-800">
+                                                {employee.projectId ? (
+                                                    <div className="flex items-center">
+                                                        <span className="mr-1">Assigned to:</span>
+                                                        <span className="font-medium text-blue-600">
+                                                            {projects.find(p => p.id === employee.projectId)?.name || 'Unknown'}
+                                                        </span>
+                                                    </div>
+                                                ) : (
+                                                    <span className="text-green-600">Available</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                    </div>
+                )}
+                
+                {activeProjects.length > 0 && (
+                    <div className="mt-4">
+                        <h3 className="text-sm font-bold text-gray-800 mb-2">Project Assignments</h3>
+                        <div className="grid grid-cols-1 gap-2">
+                            {activeProjects.map(project => (
+                                <div key={project.id} className="flex justify-between items-center p-2 bg-gray-100 rounded-lg">
+                                    <div className="text-sm text-gray-800">{project.name}</div>
+                                    <div className="flex items-center space-x-2">
+                                        <span className="text-xs text-gray-700">
+                                            {countEmployeesInProject(project.id)} {selectedEmployeeType}(s)
+                                        </span>
                                         <button 
                                             onClick={() => handleRemoveEmployeeFromProject(project.id)}
-                                            className="bg-red-500 hover:bg-red-600 text-white rounded-full h-8 w-8 flex items-center justify-center"
+                                            className="bg-red-500 hover:bg-red-700 text-white rounded-full h-5 w-5 flex items-center justify-center"
                                             title={`Remove ${selectedEmployeeType}`}
-                                            disabled={countEmployeesInProject(project.id) === 0}
                                         >
-                                            <FontAwesomeIcon icon={faMinus} />
+                                            <FontAwesomeIcon icon={faMinus} className="text-xs" />
+                                        </button>
+                                        <button 
+                                            onClick={() => handleAddEmployeeToProject(project.id)}
+                                            className="bg-green-500 hover:bg-green-700 text-white rounded-full h-5 w-5 flex items-center justify-center"
+                                            title={`Add ${selectedEmployeeType}`}
+                                        >
+                                            <FontAwesomeIcon icon={faPlus} className="text-xs" />
                                         </button>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
-                </div>
-            )}
-
-            {/* Employee Details Modal */}
-            <Modal
-                isOpen={isEmployeeModalOpen}
-                onRequestClose={closeEmployeeDetails}
-                contentLabel="Employee Details"
-                className="bg-white rounded-lg p-6 mx-auto my-12 border max-w-md"
-                overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
-            >
-                {selectedEmployee && (
-                    <>
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-xl font-bold text-gray-800">{selectedEmployee.name}</h2>
-                            <button onClick={closeEmployeeDetails} className="text-gray-500 hover:text-gray-700">✕</button>
-                        </div>
-                        
-                        <div className="mb-4">
-                            <p className="text-gray-700"><span className="font-medium">Type:</span> {selectedEmployee.type}</p>
-                            <p className="text-gray-700"><span className="font-medium">Experience:</span> {selectedEmployee.experience || 0} XP</p>
-                            {selectedEmployee.projectId && (
-                                <p className="text-gray-700">
-                                    <span className="font-medium">Assigned to:</span> {projects.find(p => p.id === selectedEmployee.projectId)?.name || 'Unknown'}
-                                </p>
-                            )}
-                        </div>
-                        
-                        <div className="mb-4">
-                            <h3 className="font-semibold text-gray-800 mb-2">Skills</h3>
-                            <div className="space-y-2">
-                                {renderSkillIcons(selectedEmployee)}
-                            </div>
-                        </div>
-                        
-                        {selectedEmployee.skillPoints > 0 && (
-                            <div className="mb-4">
-                                <h3 className="font-semibold text-gray-800 mb-2">
-                                    Skill Points Available: {selectedEmployee.skillPoints}
-                                </h3>
-                                {renderSkillUpgradeButtons()}
-                            </div>
-                        )}
-                    </>
                 )}
-            </Modal>
-        </div>
+                
+                <Modal
+                    isOpen={isEmployeeModalOpen}
+                    onRequestClose={closeEmployeeDetails}
+                    contentLabel="Employee Details"
+                    className="bg-white rounded-lg p-4 mx-auto my-10 border max-w-md shadow-lg"
+                    overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+                    ariaHideApp={false}
+                >
+                    {selectedEmployee && (
+                        <>
+                            <div className="flex justify-between items-center mb-3">
+                                <h2 className="text-lg font-bold text-gray-800">{selectedEmployee.name}</h2>
+                                <button className="text-gray-500 hover:text-gray-700" onClick={closeEmployeeDetails}>×</button>
+                            </div>
+                            
+                            <div className="text-sm text-gray-800 mb-2">
+                                <div>{selectedEmployee.type}</div>
+                                <div>Experience: {selectedEmployee.experience || 0} years</div>
+                                <div>Skill Points: {selectedEmployee.skillPoints || 0}</div>
+                            </div>
+                            
+                            <div className="mt-2 text-sm">
+                                <h3 className="font-bold text-gray-700 mb-1">Skills</h3>
+                                <div className="space-y-1">
+                                    {renderSkillIcons(selectedEmployee)}
+                                </div>
+                            </div>
+                            
+                            {selectedEmployee.skillPoints > 0 && (
+                                <div className="mt-2">
+                                    <h3 className="font-bold text-gray-700 mb-1">Improve Skills</h3>
+                                    {renderSkillUpgradeButtons()}
+                                </div>
+                            )}
+                            
+                            <div className="mt-4 flex justify-end">
+                                <button
+                                    onClick={() => {
+                                        handleFireEmployee(selectedEmployee.id);
+                                        closeEmployeeDetails();
+                                    }}
+                                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm"
+                                >
+                                    Fire Employee
+                                </button>
+                            </div>
+                        </>
+                    )}
+                </Modal>
+            </div>
+        </>
     );
 };
 

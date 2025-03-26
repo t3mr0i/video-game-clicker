@@ -29,20 +29,84 @@ const generateStudioName = () => {
 };
 
 function App() {
-    // Initialize state with default values
-    const [currentYear, setCurrentYear] = useState(1985);
-    const [currentMonth, setCurrentMonth] = useState(1);
-    const [currentWeek, setCurrentWeek] = useState(1);
-    const [currentDay, setCurrentDay] = useState(1);
-    const [employees, setEmployees] = useState([]);
+    // Game state
+    const [studioName, setStudioName] = useState(generateStudioName());
     const [projects, setProjects] = useState([]);
-    const [bankAccount, setBankAccount] = useState(10000); // Initialize with some starting value
-    const [salaryCosts, setSalaryCosts] = useState(0); // Initialize with some starting value
-    const [studioReputation, setStudioReputation] = useState(0); // Studio reputation (0-100)
-    const [studioName, setStudioName] = useState(generateStudioName()); // Studio name
-    const [studioLevel, setStudioLevel] = useState(1); // Studio level
-    const [studioExp, setStudioExp] = useState(0); // Studio experience points
-    const [studioExpToNextLevel, setStudioExpToNextLevel] = useState(1000); // Exp needed for next level
+    const [employees, setEmployees] = useState([]);
+    const [genres, setGenres] = useState([
+        { id: 1, name: 'Action', popularity: 8, complexity: 3 },
+        { id: 2, name: 'Adventure', popularity: 7, complexity: 2 },
+        { id: 3, name: 'Strategy', popularity: 7, complexity: 4 },
+        { id: 4, name: 'Simulation', popularity: 6, complexity: 3 },
+        { id: 5, name: 'RPG', popularity: 9, complexity: 5 },
+        { id: 6, name: 'Sports', popularity: 7, complexity: 3 },
+        { id: 7, name: 'Puzzle', popularity: 6, complexity: 2 },
+        { id: 8, name: 'Shooter', popularity: 8, complexity: 4 },
+        { id: 9, name: 'Platformer', popularity: 7, complexity: 3 },
+        { id: 10, name: 'Racing', popularity: 7, complexity: 3 },
+        { id: 11, name: 'Fighting', popularity: 8, complexity: 4 },
+        { id: 12, name: 'Horror', popularity: 8, complexity: 4 },
+        { id: 13, name: 'Survival', popularity: 8, complexity: 4 },
+        { id: 14, name: 'Stealth', popularity: 7, complexity: 3 },
+        { id: 15, name: 'Open World', popularity: 9, complexity: 5 },
+        { id: 16, name: 'Music', popularity: 6, complexity: 3 },
+        { id: 17, name: 'Educational', popularity: 5, complexity: 2 },
+        { id: 18, name: 'Casual', popularity: 6, complexity: 2 },
+        { id: 19, name: 'Visual Novel', popularity: 7, complexity: 3 },
+        { id: 20, name: 'Simulation', popularity: 6, complexity: 3 },
+        { id: 21, name: 'Tycoon', popularity: 7, complexity: 4 },
+        { id: 22, name: 'Management', popularity: 7, complexity: 4 },
+        { id: 23, name: 'Tactical', popularity: 8, complexity: 4 },
+        { id: 24, name: 'Card Game', popularity: 6, complexity: 3 },
+        { id: 25, name: 'Board Game', popularity: 6, complexity: 2 },
+    ]);
+    const [platforms, setPlatforms] = useState([
+        { name: 'EnterTech', releaseYear: 1985, power: 5, difficulty: 3 },
+        { name: 'SuperTech', releaseYear: 1990, power: 7, difficulty: 4 },
+        { name: 'N-Cube', releaseYear: 1996, power: 8, difficulty: 5 },
+        { name: 'Portable Play', releaseYear: 1989, power: 3, difficulty: 2 },
+        { name: 'Portable Play Color', releaseYear: 1998, power: 4, difficulty: 3 },
+        { name: 'Portable Play Plus', releaseYear: 2001, power: 5, difficulty: 3 },
+        { name: 'Venus System', releaseYear: 1989, power: 6, difficulty: 4 },
+        { name: 'Venus Saturn', releaseYear: 1994, power: 7, difficulty: 5 },
+        { name: 'Venus Vision', releaseYear: 1998, power: 8, difficulty: 6 },
+        { name: 'GameStation', releaseYear: 1994, power: 7, difficulty: 4 },
+        { name: 'GameStation 2', releaseYear: 2000, power: 9, difficulty: 5 },
+        { name: 'GameStation 3', releaseYear: 2006, power: 11, difficulty: 7 },
+        { name: 'GameStation 4', releaseYear: 2013, power: 13, difficulty: 6 },
+        { name: 'GameStation 5', releaseYear: 2020, power: 16, difficulty: 5 },
+        { name: 'M-Box', releaseYear: 2001, power: 10, difficulty: 6 },
+        { name: 'M-Box 360', releaseYear: 2005, power: 12, difficulty: 6 },
+        { name: 'M-Box One', releaseYear: 2013, power: 14, difficulty: 5 },
+        { name: 'M-Box X', releaseYear: 2020, power: 17, difficulty: 4 },
+        { name: 'Apollo 2600', releaseYear: 1977, power: 2, difficulty: 2 },
+        { name: 'Apollo Cougar', releaseYear: 1989, power: 4, difficulty: 3 },
+        { name: 'NeoStar', releaseYear: 1990, power: 9, difficulty: 7 },
+        { name: 'TurboExpress', releaseYear: 1987, power: 6, difficulty: 5 },
+        { name: 'PlayCube', releaseYear: 2001, power: 8, difficulty: 5 },
+        { name: 'PlayMe', releaseYear: 2006, power: 7, difficulty: 4 },
+        { name: 'PlayUs', releaseYear: 2012, power: 9, difficulty: 4 },
+        { name: 'FlipSide', releaseYear: 2017, power: 10, difficulty: 4 },
+        { name: 'Venus Master', releaseYear: 1985, power: 4, difficulty: 3 },
+        { name: 'Venus CD', releaseYear: 1992, power: 7, difficulty: 5 },
+        { name: 'Apollo Panther', releaseYear: 1993, power: 6, difficulty: 6 },
+        { name: 'GizPro', releaseYear: 2005, power: 3, difficulty: 9 },
+        { name: 'Trio Interactive', releaseYear: 1993, power: 7, difficulty: 6 },
+        { name: 'VectorPlay', releaseYear: 1982, power: 3, difficulty: 3 },
+        { name: 'IntelliPlay', releaseYear: 1979, power: 3, difficulty: 3 }
+    ]);
+    const [currentDay, setCurrentDay] = useState(1);
+    const [currentWeek, setCurrentWeek] = useState(1);
+    const [currentMonth, setCurrentMonth] = useState(1);
+    const [currentYear, setCurrentYear] = useState(1980);
+    const [bankAccount, setBankAccount] = useState(50000); // Start with $50,000
+    const [monthProgress, setMonthProgress] = useState(0);
+    const [gameSpeed, setGameSpeed] = useState(1); // Game speed multiplier
+    const [paused, setPaused] = useState(false); // Game paused state
+    const [studioLevel, setStudioLevel] = useState(1);
+    const [studioExp, setStudioExp] = useState(0);
+    const [studioExpToNextLevel, setStudioExpToNextLevel] = useState(1000);
+    const [gameEngines, setGameEngines] = useState([]);
     const [technologies, setTechnologies] = useState([
         { id: 'tech-1', name: 'Version Control System', description: 'Improves developer productivity by 10%', cost: 5000, unlocked: false, effect: { type: 'productivity', employeeType: 'Developer', multiplier: 1.1 }, requiredLevel: 1 },
         { id: 'tech-2', name: 'Agile Development', description: 'Reduces development time by 15%', cost: 8000, unlocked: false, effect: { type: 'devTime', multiplier: 0.85 }, requiredLevel: 2 },
@@ -55,12 +119,100 @@ function App() {
         { id: 'tech-9', name: 'Quantum Computing', description: 'Doubles all development speed', cost: 100000, unlocked: false, effect: { type: 'globalDevSpeed', multiplier: 2.0 }, requiredLevel: 10 },
         
     ]);
-    const [gameEngines, setGameEngines] = useState([]);
+    const [publishers, setPublishers] = useState([
+        { name: 'Helios Interactive', reputation: 0.9, dealHistory: [], imageName: 'PS.PNG' },
+        { name: 'Macrosoft Gaming', reputation: 0.85, dealHistory: [], imageName: 'XBOX.PNG' },
+        { name: 'Pear Inc', reputation: 0.8, dealHistory: [], imageName: 'APPLE.PNG' },
+        { name: 'Nintenda', reputation: 0.9, dealHistory: [], imageName: 'NINTENDO.PNG' },
+        { name: 'Digital Athletics', reputation: 0.75, dealHistory: [], imageName: 'EA.PNG' },
+        { name: 'EastNet Games', reputation: 0.7, dealHistory: [], imageName: 'NETEASE.PNG' },
+        { name: 'Double-Take Interactive', reputation: 0.75, dealHistory: [], imageName: 'TAKETWO.PNG' },
+        { name: 'Amalgam Group', reputation: 0.65, dealHistory: [], imageName: 'EMBRACER.PNG' },
+        { name: 'Tsunami Entertainment', reputation: 0.8, dealHistory: [], imageName: 'BANDAI.PNG' },
+        { name: 'Cube Phoenix', reputation: 0.8, dealHistory: [], imageName: 'SQUARE_ENIX.PNG' },
+        { name: 'Hexon', reputation: 0.7, dealHistory: [], imageName: 'NEXON.PNG' },
+        { name: 'Omnisoft', reputation: 0.75, dealHistory: [], imageName: 'UBISOFT.PNG' },
+        { name: 'Monami', reputation: 0.7, dealHistory: [], imageName: 'KONAMI.PNG' },
+        { name: 'Vega', reputation: 0.75, dealHistory: [], imageName: 'SEGA.PNG' },
+        { name: 'Wizards of the Realm', reputation: 0.7, dealHistory: [], imageName: 'WIZARD.PNG' },
+        { name: 'Jaguar Games', reputation: 0.8, dealHistory: [], imageName: 'CAPCOM.PNG' },
+        { name: 'Psychonosis', reputation: 0.6, dealHistory: [], imageName: 'PSYGNOSIS.PNG' },
+        { name: 'Dragon Entertainment', reputation: 0.6, dealHistory: [], imageName: 'TIGER.PNG' }
+    ]);
+    const [franchises, setFranchises] = useState([]);
     const [isResearchModalOpen, setIsResearchModalOpen] = useState(false);
     const [isCreateEngineModalOpen, setIsCreateEngineModalOpen] = useState(false);
     const [newEngineName, setNewEngineName] = useState('');
     const [selectedEngineType, setSelectedEngineType] = useState('');
-    const [randomEvents, setRandomEvents] = useState([
+    
+    // UI state
+    const [notifications, setNotifications] = useState([]);
+    const [isDebugPanelOpen, setIsDebugPanelOpen] = useState(false);
+    const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
+    const [selectedProjectForShipping, setSelectedProjectForShipping] = useState(null);
+    const [lastSavedTime, setLastSavedTime] = useState(null);
+    const [saveStatus, setSaveStatus] = useState('Not saved');
+    
+    // Studio culture
+    const [culturalValues, setCulturalValues] = useState([
+        {
+            id: 'quality-first',
+            name: 'Quality First',
+            description: 'Focus on delivering high quality games at all costs',
+            bonuses: { qualityBonus: 0.15, developmentSpeed: -0.05 },
+            icon: 'trophy'
+        },
+        {
+            id: 'crunch-culture',
+            name: 'Fast Development',
+            description: 'Push for quicker development cycles',
+            bonuses: { developmentSpeed: 0.20, employeeRetention: -0.10, qualityBonus: -0.05 },
+            icon: 'bolt'
+        },
+        {
+            id: 'innovation',
+            name: 'Innovation Focus',
+            description: 'Encourage experimental and innovative game design',
+            bonuses: { innovationBonus: 0.15, marketingEfficiency: -0.05 },
+            icon: 'lightbulb'
+        },
+        {
+            id: 'marketing-driven',
+            name: 'Marketing Driven',
+            description: 'Focus on marketability and commercial success',
+            bonuses: { marketingEfficiency: 0.15, innovationBonus: -0.05 },
+            icon: 'bullhorn'
+        },
+        {
+            id: 'employee-wellness',
+            name: 'Employee Wellness',
+            description: 'Prioritize employee satisfaction and well-being',
+            bonuses: { employeeRetention: 0.15, employeeProductivity: 0.10, developmentSpeed: -0.05 },
+            icon: 'heart'
+        },
+        {
+            id: 'technical-excellence',
+            name: 'Technical Excellence',
+            description: 'Focus on technical innovation and optimization',
+            bonuses: { employeeProductivity: 0.10, qualityBonus: 0.05 },
+            icon: 'code'
+        }
+    ]);
+    const [studioCulture, setStudioCulture] = useState({
+        focus: 'balanced', // balanced, quality, speed, innovation, marketing
+        values: [],
+        bonuses: {
+            employeeProductivity: 1.0,
+            qualityBonus: 1.0,
+            marketingEfficiency: 1.0,
+            developmentSpeed: 1.0,
+            innovationBonus: 1.0,
+            employeeRetention: 1.0
+        }
+    });
+    
+    // Random events
+    const [activeEvents, setActiveEvents] = useState([
         {
             id: 'event-market-crash',
             title: 'Gaming Market Crash',
@@ -117,96 +269,20 @@ function App() {
             minimumYear: 2000
         }
     ]);
-    const [activeEvents, setActiveEvents] = useState([]);
-    const [trendingGenre, setTrendingGenre] = useState(null);
-    const [nextGameSalesBoost, setNextGameSalesBoost] = useState(1.0);
-    const [isDebugPanelOpen, setIsDebugPanelOpen] = useState(false);
+    const [eventCooldown, setEventCooldown] = useState(0);
 
-    // State for IP franchises
-    const [franchises, setFranchises] = useState([]);
+    // Function to toggle game pause state
+    const togglePaused = () => {
+        setPaused(prevPaused => !prevPaused);
+    };
 
-    // Publishers state
-    const [publishers, setPublishers] = useState([
-        { name: 'Helios Interactive', reputation: 0.9, dealHistory: [], imageName: 'PS.PNG' },
-        { name: 'Macrosoft Gaming', reputation: 0.85, dealHistory: [], imageName: 'XBOX.PNG' },
-        { name: 'Pear Inc', reputation: 0.8, dealHistory: [], imageName: 'APPLE.PNG' },
-        { name: 'Nintenda', reputation: 0.9, dealHistory: [], imageName: 'NINTENDO.PNG' },
-        { name: 'Digital Athletics', reputation: 0.75, dealHistory: [], imageName: 'EA.PNG' },
-        { name: 'EastNet Games', reputation: 0.7, dealHistory: [], imageName: 'NETEASE.PNG' },
-        { name: 'Double-Take Interactive', reputation: 0.75, dealHistory: [], imageName: 'TAKETWO.PNG' },
-        { name: 'Amalgam Group', reputation: 0.65, dealHistory: [], imageName: 'EMBRACER.PNG' },
-        { name: 'Tsunami Entertainment', reputation: 0.8, dealHistory: [], imageName: 'BANDAI.PNG' },
-        { name: 'Cube Phoenix', reputation: 0.8, dealHistory: [], imageName: 'SQUARE_ENIX.PNG' },
-        { name: 'Hexon', reputation: 0.7, dealHistory: [], imageName: 'NEXON.PNG' },
-        { name: 'Omnisoft', reputation: 0.75, dealHistory: [], imageName: 'UBISOFT.PNG' },
-        { name: 'Monami', reputation: 0.7, dealHistory: [], imageName: 'KONAMI.PNG' },
-        { name: 'Vega', reputation: 0.75, dealHistory: [], imageName: 'SEGA.PNG' },
-        { name: 'Wizards of the Realm', reputation: 0.7, dealHistory: [], imageName: 'WIZARD.PNG' },
-        { name: 'Jaguar Games', reputation: 0.8, dealHistory: [], imageName: 'CAPCOM.PNG' },
-        { name: 'Psychonosis', reputation: 0.6, dealHistory: [], imageName: 'PSYGNOSIS.PNG' },
-        { name: 'Dragon Entertainment', reputation: 0.6, dealHistory: [], imageName: 'TIGER.PNG' }
-    ]);
-    const [currentOffers, setCurrentOffers] = useState([]);
-
-    // Studio culture state
-    const [studioCulture, setStudioCulture] = useState({
-        focus: 'balanced', // balanced, quality, speed, innovation, marketing
-        values: [],
-        bonuses: {
-            employeeProductivity: 1.0,
-            qualityBonus: 1.0,
-            marketingEfficiency: 1.0,
-            developmentSpeed: 1.0,
-            innovationBonus: 1.0,
-            employeeRetention: 1.0
-        }
-    });
-    
-    // Cultural values that can be adopted
-    const culturalValues = [
-        {
-            id: 'quality-first',
-            name: 'Quality First',
-            description: 'Focus on delivering high quality games at all costs',
-            bonuses: { qualityBonus: 0.15, developmentSpeed: -0.05 },
-            icon: 'trophy'
-        },
-        {
-            id: 'crunch-culture',
-            name: 'Fast Development',
-            description: 'Push for quicker development cycles',
-            bonuses: { developmentSpeed: 0.20, employeeRetention: -0.10, qualityBonus: -0.05 },
-            icon: 'bolt'
-        },
-        {
-            id: 'innovation',
-            name: 'Innovation Focus',
-            description: 'Encourage experimental and innovative game design',
-            bonuses: { innovationBonus: 0.15, marketingEfficiency: -0.05 },
-            icon: 'lightbulb'
-        },
-        {
-            id: 'marketing-driven',
-            name: 'Marketing Driven',
-            description: 'Focus on marketability and commercial success',
-            bonuses: { marketingEfficiency: 0.15, innovationBonus: -0.05 },
-            icon: 'bullhorn'
-        },
-        {
-            id: 'employee-wellness',
-            name: 'Employee Wellness',
-            description: 'Prioritize employee satisfaction and well-being',
-            bonuses: { employeeRetention: 0.15, employeeProductivity: 0.10, developmentSpeed: -0.05 },
-            icon: 'heart'
-        },
-        {
-            id: 'technical-excellence',
-            name: 'Technical Excellence',
-            description: 'Focus on technical innovation and optimization',
-            bonuses: { employeeProductivity: 0.10, qualityBonus: 0.05 },
-            icon: 'code'
-        }
-    ];
+    // Function to manually trigger a game save
+    const manualSaveGame = () => {
+        setSaveStatus('Saving...');
+        saveGameState();
+        setShowSaveNotification(true);
+        setLastSavedTime(new Date());
+    };
 
     // Function to safely get values from local storage
     const safeLocalStorageGet = (key, defaultValue) => {
@@ -244,11 +320,9 @@ function App() {
                 studioLevel,
                 studioExp,
                 studioExpToNextLevel,
-                studioReputation,
                 
                 // Financial data
                 bankAccount,
-                salaryCosts,
                 
                 // Game elements
                 employees: employees.map(emp => ({
@@ -272,8 +346,6 @@ function App() {
                 
                 // Events & boosts
                 activeEvents,
-                trendingGenre,
-                nextGameSalesBoost,
                 
                 // Studio culture
                 studioCulture
@@ -313,21 +385,13 @@ function App() {
     };
     
     // State for manual save status
-    const [saveStatus, setSaveStatus] = useState("");
     const [showSaveNotification, setShowSaveNotification] = useState(false);
-    const [lastSavedTime, setLastSavedTime] = useState(null);
-    
-    // Function to manually trigger save
-    const manualSaveGame = () => {
-        setShowSaveNotification(true);
-        saveGameState();
-    };
     
     // Load saved data when component mounts
     useEffect(() => {
         try {
             // Load game time data
-            setCurrentYear(safeLocalStorageGet('currentYear', 1985));
+            setCurrentYear(safeLocalStorageGet('currentYear', 1980));
             setCurrentMonth(safeLocalStorageGet('currentMonth', 1));
             setCurrentWeek(safeLocalStorageGet('currentWeek', 1));
             setCurrentDay(safeLocalStorageGet('currentDay', 1));
@@ -337,11 +401,9 @@ function App() {
             setStudioLevel(safeLocalStorageGet('studioLevel', 1));
             setStudioExp(safeLocalStorageGet('studioExp', 0));
             setStudioExpToNextLevel(safeLocalStorageGet('studioExpToNextLevel', 1000));
-            setStudioReputation(safeLocalStorageGet('studioReputation', 0));
             
             // Load financial data
-            setBankAccount(safeLocalStorageGet('bankAccount', 10000));
-            setSalaryCosts(safeLocalStorageGet('salaryCosts', 0));
+            setBankAccount(safeLocalStorageGet('bankAccount', 50000));
             
             // Load game elements
             setEmployees(safeLocalStorageGet('employees', []));
@@ -362,8 +424,6 @@ function App() {
             
             // Load events & boosts
             setActiveEvents(safeLocalStorageGet('activeEvents', []));
-            setTrendingGenre(safeLocalStorageGet('trendingGenre', null));
-            setNextGameSalesBoost(safeLocalStorageGet('nextGameSalesBoost', 1.0));
             
             // Load studio culture
             setStudioCulture(safeLocalStorageGet('studioCulture', {
@@ -410,79 +470,18 @@ function App() {
             window.removeEventListener('blur', autoSave);
         };
     }, [currentYear, currentMonth, currentWeek, currentDay, employees, projects, 
-        publishers, bankAccount, salaryCosts, studioReputation, studioName, 
-        studioLevel, studioExp, studioExpToNextLevel, technologies, gameEngines, 
-        activeEvents, trendingGenre, nextGameSalesBoost, franchises, studioCulture]);
+        publishers, bankAccount, studioLevel, studioExp, studioExpToNextLevel, technologies, gameEngines, 
+        activeEvents, studioCulture]);
     
     // Also save when important state changes (less frequent than the regular autosave)
     useEffect(() => {
         saveGameState();
     }, [currentWeek, employees.length, projects.length, bankAccount, studioLevel]);
 
-    const [platforms, setPlatforms] = useState([
-        { name: 'EnterTech', releaseYear: 1985, power: 5, difficulty: 3 },
-        { name: 'SuperTech', releaseYear: 1990, power: 7, difficulty: 4 },
-        { name: 'N-Cube', releaseYear: 1996, power: 8, difficulty: 5 },
-        { name: 'Portable Play', releaseYear: 1989, power: 3, difficulty: 2 },
-        { name: 'Portable Play Color', releaseYear: 1998, power: 4, difficulty: 3 },
-        { name: 'Portable Play Plus', releaseYear: 2001, power: 5, difficulty: 3 },
-        { name: 'Venus System', releaseYear: 1989, power: 6, difficulty: 4 },
-        { name: 'Venus Saturn', releaseYear: 1994, power: 7, difficulty: 5 },
-        { name: 'Venus Vision', releaseYear: 1998, power: 8, difficulty: 6 },
-        { name: 'GameStation', releaseYear: 1994, power: 7, difficulty: 4 },
-        { name: 'GameStation 2', releaseYear: 2000, power: 9, difficulty: 5 },
-        { name: 'GameStation 3', releaseYear: 2006, power: 11, difficulty: 7 },
-        { name: 'GameStation 4', releaseYear: 2013, power: 13, difficulty: 6 },
-        { name: 'GameStation 5', releaseYear: 2020, power: 16, difficulty: 5 },
-        { name: 'M-Box', releaseYear: 2001, power: 10, difficulty: 6 },
-        { name: 'M-Box 360', releaseYear: 2005, power: 12, difficulty: 6 },
-        { name: 'M-Box One', releaseYear: 2013, power: 14, difficulty: 5 },
-        { name: 'M-Box X', releaseYear: 2020, power: 17, difficulty: 4 },
-        { name: 'Apollo 2600', releaseYear: 1977, power: 2, difficulty: 2 },
-        { name: 'Apollo Cougar', releaseYear: 1989, power: 4, difficulty: 3 },
-        { name: 'NeoStar', releaseYear: 1990, power: 9, difficulty: 7 },
-        { name: 'TurboExpress', releaseYear: 1987, power: 6, difficulty: 5 },
-        { name: 'PlayCube', releaseYear: 2001, power: 8, difficulty: 5 },
-        { name: 'PlayMe', releaseYear: 2006, power: 7, difficulty: 4 },
-        { name: 'PlayUs', releaseYear: 2012, power: 9, difficulty: 4 },
-        { name: 'FlipSide', releaseYear: 2017, power: 10, difficulty: 4 },
-        { name: 'Venus Master', releaseYear: 1985, power: 4, difficulty: 3 },
-        { name: 'Venus CD', releaseYear: 1992, power: 7, difficulty: 5 },
-        { name: 'Apollo Panther', releaseYear: 1993, power: 6, difficulty: 6 },
-        { name: 'GizPro', releaseYear: 2005, power: 3, difficulty: 9 },
-        { name: 'Trio Interactive', releaseYear: 1993, power: 7, difficulty: 6 },
-        { name: 'VectorPlay', releaseYear: 1982, power: 3, difficulty: 3 },
-        { name: 'IntelliPlay', releaseYear: 1979, power: 3, difficulty: 3 }
-    ]);
-    const [genres, setGenres] = useState([
-        { id: 1, name: 'Action', popularity: 8, complexity: 3 },
-        { id: 2, name: 'Adventure', popularity: 7, complexity: 2 },
-        { id: 3, name: 'Strategy', popularity: 7, complexity: 4 },
-        { id: 4, name: 'Simulation', popularity: 6, complexity: 3 },
-        { id: 5, name: 'RPG', popularity: 9, complexity: 5 },
-        { id: 6, name: 'Sports', popularity: 7, complexity: 3 },
-        { id: 7, name: 'Puzzle', popularity: 6, complexity: 2 },
-        { id: 8, name: 'Shooter', popularity: 8, complexity: 4 },
-        { id: 9, name: 'Platformer', popularity: 7, complexity: 3 },
-        { id: 10, name: 'Racing', popularity: 7, complexity: 3 },
-        { id: 11, name: 'Fighting', popularity: 8, complexity: 4 },
-        { id: 12, name: 'Horror', popularity: 8, complexity: 4 },
-        { id: 13, name: 'Survival', popularity: 8, complexity: 4 },
-        { id: 14, name: 'Stealth', popularity: 7, complexity: 3 },
-        { id: 15, name: 'Open World', popularity: 9, complexity: 5 },
-        { id: 16, name: 'Music', popularity: 6, complexity: 3 },
-        { id: 17, name: 'Educational', popularity: 5, complexity: 2 },
-        { id: 18, name: 'Casual', popularity: 6, complexity: 2 },
-        { id: 19, name: 'Visual Novel', popularity: 7, complexity: 3 },
-        { id: 20, name: 'Simulation', popularity: 6, complexity: 3 },
-        { id: 21, name: 'Tycoon', popularity: 7, complexity: 4 },
-        { id: 22, name: 'Management', popularity: 7, complexity: 4 },
-        { id: 23, name: 'Tactical', popularity: 8, complexity: 4 },
-        { id: 24, name: 'Card Game', popularity: 6, complexity: 3 },
-        { id: 25, name: 'Board Game', popularity: 6, complexity: 2 },
-    ]);
-    const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
-    const [selectedProjectForShipping, setSelectedProjectForShipping] = useState(null);
+    const [salaryCosts, setSalaryCosts] = useState(0);
+    const [studioReputation, setStudioReputation] = useState(0);
+    const [trendingGenre, setTrendingGenre] = useState(null);
+    const [nextGameSalesBoost, setNextGameSalesBoost] = useState(1.0);
 
     const openShippingModal = (projectId) => {
         setSelectedProjectForShipping(projects.find(p => p.id === projectId));
@@ -500,13 +499,13 @@ function App() {
 
     const resetGame = () => {
         // Reset all game state to initial values
-        setCurrentYear(1985);
+        setCurrentYear(1980);
         setCurrentMonth(1);
         setCurrentWeek(1);
         setCurrentDay(1);
         setEmployees([]);
         setProjects([]);
-        setBankAccount(10000);
+        setBankAccount(50000);
         setSalaryCosts(0);
         setStudioReputation(0);
         setStudioName(generateStudioName());
@@ -1371,7 +1370,7 @@ function App() {
         // Force a specific event when debugging is enabled
         const debugEvent = localStorage.getItem('debugEvent');
         if (debugEvent) {
-            const event = randomEvents.find(e => e.id === debugEvent);
+            const event = activeEvents.find(e => e.id === debugEvent);
             if (event) {
                 triggerRandomEvent(event);
                 localStorage.removeItem('debugEvent'); // Clear debug event after triggering
@@ -1381,7 +1380,7 @@ function App() {
         }
         
         // Shuffle events to prevent bias toward earlier events
-        const shuffledEvents = [...randomEvents].sort(() => Math.random() - 0.5);
+        const shuffledEvents = [...activeEvents].sort(() => Math.random() - 0.5);
         
         // Check each event with weighted probability
         for (const event of shuffledEvents) {
@@ -1543,7 +1542,7 @@ function App() {
 
     // Debug function to trigger a specific event (for testing)
     const debugTriggerEvent = (eventId) => {
-        const event = randomEvents.find(e => e.id === eventId);
+        const event = activeEvents.find(e => e.id === eventId);
         if (event) {
             triggerRandomEvent(event);
             return true;
@@ -1898,127 +1897,137 @@ function App() {
         <div className="App">
             <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop closeOnClick pauseOnFocusLoss draggable pauseOnHover />
             
-            <div className="main-container">
+            <div className="main-container p-2">
                 <TimeComponent
-                    updateWeeklySales={updateWeeklySales}
                     currentYear={currentYear}
                     setCurrentYear={setCurrentYear}
+                    currentMonth={currentMonth}
+                    setCurrentMonth={setCurrentMonth}
                     currentWeek={currentWeek}
                     setCurrentWeek={setCurrentWeek}
                     currentDay={currentDay}
                     setCurrentDay={setCurrentDay}
+                    updateWeeklySales={updateWeeklySales}
                     platforms={platforms}
                     employees={employees}
                     updateConsoleSales={updateConsoleSales}
                     paySalaries={paySalaries}
                     addNotification={addNotification}
-                    salaryCosts={salaryCosts}
-                    bankAccount={bankAccount}
                     resetGame={resetGame}
                     isDebugPanelOpen={isDebugPanelOpen}
                     toggleDebugPanel={toggleDebugPanel}
                     manualSaveGame={manualSaveGame}
                     saveStatus={saveStatus}
                     lastSavedTime={lastSavedTime}
-                />
-                <EventsComponent 
-                    events={activeEvents} 
-                    currentYear={currentWeek} 
+                    paused={paused}
+                    togglePaused={togglePaused}
+                    gameSpeed={gameSpeed}
+                    setGameSpeed={setGameSpeed}
+                    monthProgress={monthProgress}
                 />
                 
-                <div className="game-panel">
-                    <ProjectComponent
-                        startNewProject={createProject}
-                        projects={projects}
-                        gameEngines={gameEngines}
-                        genres={genres}
-                        platforms={platforms}
-                        currentYear={currentYear}
-                        cancelProject={cancelProject}
-                        getBestGenre={getBestGenre}
-                        shipGame={shipGame}
-                        franchises={franchises}
-                        openShippingModal={openShippingModal}
-                    />
+                <div className="card-grid">
+                    <div className="game-card">
+                        <FinanceComponent 
+                            salaryCosts={salaryCosts} 
+                            bankAccount={bankAccount}
+                        />
+                    </div>
+                
+                    <div className="game-card">
+                        <ProjectComponent
+                            startNewProject={createProject}
+                            projects={projects}
+                            gameEngines={gameEngines}
+                            genres={genres}
+                            platforms={platforms}
+                            currentYear={currentYear}
+                            cancelProject={cancelProject}
+                            getBestGenre={getBestGenre}
+                            shipGame={shipGame}
+                            franchises={franchises}
+                            openShippingModal={openShippingModal}
+                        />
+                    </div>
+                    
+                    <div className="game-card">
+                        <EmployeeComponent
+                            employees={employees}
+                            hireEmployee={hireEmployee}
+                            fireEmployee={fireEmployee}
+                            bankAccount={bankAccount}
+                            genres={genres}
+                            studioLevel={studioLevel}
+                            projects={projects}
+                            assignToProject={assignToProject}
+                            improveEmployeeSkill={improveEmployeeSkill}
+                        />
+                    </div>
+                    
+                    <div className="game-card">
+                        <ResearchComponent
+                            technologies={technologies}
+                            researchTechnology={researchTechnology}
+                            showResearchModal={() => setIsResearchModalOpen(true)}
+                            isResearchModalOpen={isResearchModalOpen}
+                            closeResearchModal={() => setIsResearchModalOpen(false)}
+                            showCreateEngineModal={() => setIsCreateEngineModalOpen(true)}
+                            isCreateEngineModalOpen={isCreateEngineModalOpen}
+                            closeCreateEngineModal={() => setIsCreateEngineModalOpen(false)}
+                            newEngineName={newEngineName}
+                            setNewEngineName={setNewEngineName}
+                            selectedEngineType={selectedEngineType}
+                            setSelectedEngineType={setSelectedEngineType}
+                            createGameEngine={createGameEngine}
+                            gameEngines={gameEngines}
+                            upgradeGameEngine={upgradeGameEngine}
+                            bankAccount={bankAccount}
+                            studioLevel={studioLevel}
+                        />
+                    </div>
+                    
+                    <div className="game-card">
+                        <FranchisesComponent 
+                            franchises={franchises} 
+                            currentYear={currentYear}
+                        />
+                    </div>
+                    
+                    <div className="game-card">
+                        <StudioCultureComponent
+                            culturalValues={culturalValues}
+                            studioCulture={studioCulture}
+                            adoptCulturalValue={adoptCulturalValue}
+                            removeCulturalValue={removeCulturalValue}
+                            studioLevel={studioLevel}
+                        />
+                    </div>
                 </div>
                 
-                <div className="game-panel">
-                    <EmployeeComponent
-                        employees={employees}
-                        hireEmployee={hireEmployee}
-                        fireEmployee={fireEmployee}
-                        bankAccount={bankAccount}
-                        genres={genres}
-                        studioLevel={studioLevel}
-                        projects={projects}
-                        assignToProject={assignToProject}
-                        improveEmployeeSkill={improveEmployeeSkill}
-                    />
-                </div>
-                
-                <div className="game-panel">
+                {isShippingModalOpen && (
                     <ShippingComponent
                         isModalOpen={isShippingModalOpen}
                         closeModal={() => setIsShippingModalOpen(false)}
-                        game={selectedProjectForShipping ? projects.find(p => p.id === selectedProjectForShipping) || null : null}
+                        game={selectedProjectForShipping ? projects.find(p => p.id === selectedProjectForShipping) : null}
                         publishers={publishers}
                         shipGame={shipGame}
                         calculateUpfrontPayment={calculateUpfrontPayment}
                         calculateRevenueShare={calculateRevenueShare}
                         addNotification={addNotification}
                     />
-                </div>
+                )}
                 
-                <div className="game-panel">
-                    <ResearchComponent
-                        technologies={technologies}
-                        researchTechnology={researchTechnology}
-                        showResearchModal={() => setIsResearchModalOpen(true)}
-                        isResearchModalOpen={isResearchModalOpen}
-                        closeResearchModal={() => setIsResearchModalOpen(false)}
-                        showCreateEngineModal={() => setIsCreateEngineModalOpen(true)}
-                        isCreateEngineModalOpen={isCreateEngineModalOpen}
-                        closeCreateEngineModal={() => setIsCreateEngineModalOpen(false)}
-                        newEngineName={newEngineName}
-                        setNewEngineName={setNewEngineName}
-                        selectedEngineType={selectedEngineType}
-                        setSelectedEngineType={setSelectedEngineType}
-                        createGameEngine={createGameEngine}
-                        gameEngines={gameEngines}
-                        upgradeGameEngine={upgradeGameEngine}
-                        bankAccount={bankAccount}
-                        studioLevel={studioLevel}
+                {isDebugPanelOpen && (
+                    <DebugPanel
+                        addMoney={addMoney}
+                        addExperience={addExperience}
+                        advanceYear={() => setCurrentYear(currentYear + 1)}
+                        addFreeEmployee={addFreeEmployee}
+                        unlockAllTechnologies={unlockAllTechnologies}
+                        addNotification={addNotification}
                     />
-                </div>
-                
-                <div className="game-panel">
-                    <FranchisesComponent 
-                        franchises={franchises} 
-                        currentYear={currentYear}
-                    />
-                </div>
-                
-                <div className="game-panel">
-                    <StudioCultureComponent
-                        culturalValues={culturalValues}
-                        studioCulture={studioCulture}
-                        adoptCulturalValue={adoptCulturalValue}
-                        removeCulturalValue={removeCulturalValue}
-                        studioLevel={studioLevel}
-                    />
-                </div>
+                )}
             </div>
-            
-            {isDebugPanelOpen && (
-                <DebugPanel
-                    addMoney={addMoney}
-                    addExperience={addExperience}
-                    advanceYear={() => setCurrentYear(currentYear + 1)}
-                    addFreeEmployee={addFreeEmployee}
-                    unlockAllTechnologies={unlockAllTechnologies}
-                    addNotification={addNotification}
-                />
-            )}
         </div>
     );
 }
