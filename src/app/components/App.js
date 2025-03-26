@@ -226,68 +226,90 @@ function App() {
     // Function to save game state to localStorage
     const saveGameState = () => {
         try {
-            if (typeof window !== 'undefined' && window.localStorage) {
-                // Save game state timestamp
-                const saveTime = new Date().toISOString();
-                localStorage.setItem('lastSaved', saveTime);
-                
-                // Game time data
-                localStorage.setItem('currentYear', JSON.stringify(currentYear));
-                localStorage.setItem('currentMonth', JSON.stringify(currentMonth));
-                localStorage.setItem('currentWeek', JSON.stringify(currentWeek));
-                localStorage.setItem('currentDay', JSON.stringify(currentDay));
+            if (typeof window === 'undefined' || !window.localStorage) {
+                console.error('localStorage not available');
+                return false;
+            }
+
+            // Create a complete game state object
+            const gameState = {
+                // Time data
+                currentYear,
+                currentMonth,
+                currentWeek,
+                currentDay,
                 
                 // Studio data
-                localStorage.setItem('studioName', JSON.stringify(studioName));
-                localStorage.setItem('studioLevel', JSON.stringify(studioLevel));
-                localStorage.setItem('studioExp', JSON.stringify(studioExp));
-                localStorage.setItem('studioExpToNextLevel', JSON.stringify(studioExpToNextLevel));
-                localStorage.setItem('studioReputation', JSON.stringify(studioReputation));
+                studioName,
+                studioLevel,
+                studioExp,
+                studioExpToNextLevel,
+                studioReputation,
                 
                 // Financial data
-                localStorage.setItem('bankAccount', JSON.stringify(bankAccount));
-                localStorage.setItem('salaryCosts', JSON.stringify(salaryCosts));
+                bankAccount,
+                salaryCosts,
                 
                 // Game elements
-                localStorage.setItem('employees', JSON.stringify(employees));
-                localStorage.setItem('projects', JSON.stringify(projects));
-                localStorage.setItem('publishers', JSON.stringify(publishers));
-                localStorage.setItem('franchises', JSON.stringify(franchises));
-                localStorage.setItem('genres', JSON.stringify(genres));
-                localStorage.setItem('platforms', JSON.stringify(platforms));
+                employees: employees.map(emp => ({
+                    ...emp,
+                    projectId: emp.projectId || null // Ensure projectId is explicitly null if not set
+                })),
+                projects: projects.map(proj => ({
+                    ...proj,
+                    maxPoints: proj.maxPoints || 100, // Ensure maxPoints has a default value
+                    developmentPoints: proj.developmentPoints || 0,
+                    progress: proj.progress || 0
+                })),
+                publishers,
+                franchises,
+                genres,
+                platforms,
                 
                 // Technology & research
-                localStorage.setItem('technologies', JSON.stringify(technologies));
-                localStorage.setItem('gameEngines', JSON.stringify(gameEngines));
+                technologies,
+                gameEngines,
                 
                 // Events & boosts
-                localStorage.setItem('activeEvents', JSON.stringify(activeEvents));
-                localStorage.setItem('trendingGenre', JSON.stringify(trendingGenre));
-                localStorage.setItem('nextGameSalesBoost', JSON.stringify(nextGameSalesBoost));
+                activeEvents,
+                trendingGenre,
+                nextGameSalesBoost,
                 
                 // Studio culture
-                localStorage.setItem('studioCulture', JSON.stringify(studioCulture));
-                
-                // Show save notification if it's a manual save
-                if (showSaveNotification) {
-                    addNotification("Game progress saved!", "success");
+                studioCulture
+            };
+
+            // Save each section of state
+            Object.entries(gameState).forEach(([key, value]) => {
+                try {
+                    localStorage.setItem(key, JSON.stringify(value));
+                } catch (error) {
+                    console.error(`Failed to save ${key}:`, error);
+                    addNotification(`Failed to save ${key}`, 'error');
                 }
-                
-                setSaveStatus("Saved");
-                
-                // Reset save notification flag
+            });
+
+            // Save timestamp
+            const saveTime = new Date().toISOString();
+            localStorage.setItem('lastSaved', saveTime);
+            
+            // Update save status
+            setSaveStatus("Saved");
+            setLastSavedTime(new Date(saveTime));
+            
+            // Show save notification if it's a manual save
+            if (showSaveNotification) {
+                addNotification("Game progress saved!", "success");
                 setShowSaveNotification(false);
-                
-                return true;
             }
+            
+            return true;
         } catch (error) {
             console.error("Failed to save game state:", error);
             addNotification("Failed to save game progress", "error");
             setSaveStatus("Failed");
             return false;
         }
-        
-        return false;
     };
     
     // State for manual save status
@@ -373,12 +395,24 @@ function App() {
     
     // Auto-save periodically (every minute)
     useEffect(() => {
-        const autoSaveInterval = setInterval(() => {
+        const autoSave = () => {
             saveGameState();
-        }, 60000); // Save every minute
-        
-        return () => clearInterval(autoSaveInterval);
-    }, [currentYear, currentMonth, currentWeek, currentDay, employees, projects, publishers, bankAccount, salaryCosts, studioReputation, studioName, studioLevel, studioExp, studioExpToNextLevel, technologies, gameEngines, activeEvents, trendingGenre, nextGameSalesBoost, franchises, studioCulture]);
+        };
+
+        // Save every minute
+        const autoSaveInterval = setInterval(autoSave, 60000);
+
+        // Save on window blur (when user switches tabs/windows)
+        window.addEventListener('blur', autoSave);
+
+        return () => {
+            clearInterval(autoSaveInterval);
+            window.removeEventListener('blur', autoSave);
+        };
+    }, [currentYear, currentMonth, currentWeek, currentDay, employees, projects, 
+        publishers, bankAccount, salaryCosts, studioReputation, studioName, 
+        studioLevel, studioExp, studioExpToNextLevel, technologies, gameEngines, 
+        activeEvents, trendingGenre, nextGameSalesBoost, franchises, studioCulture]);
     
     // Also save when important state changes (less frequent than the regular autosave)
     useEffect(() => {
@@ -738,7 +772,13 @@ function App() {
     };
 
 
-    const assignToProject = (projectId, employeeId) => {
+    const assignToProject = (employeeId, projectId) => {
+        // Validate parameters
+        if (!employeeId) {
+            console.error('No employeeId provided to assignToProject');
+            return;
+        }
+
         // Handle both single employeeId and arrays of employeeIds
         if (Array.isArray(employeeId)) {
             // If an array is provided, update all employees in the array
@@ -757,22 +797,70 @@ function App() {
                 return employee;
             }));
         }
+
+        // Save the updated state immediately
+        saveGameState();
     };
 
 
     const createProject = (projectData) => {
+        // Validate project data
+        if (!projectData) {
+            console.error('No project data provided to createProject');
+            return;
+        }
+
         // If project name is empty or matches default, generate a name based on genre
         if (!projectData.name || projectData.name.trim() === '' || projectData.name === 'New Project') {
             projectData.name = generateGameTitle(projectData.genre);
         }
         
-        projectData.id = generateUniqueId();
-        setProjects([...projects, projectData]);
+        // Ensure all required properties are set
+        const newProject = {
+            ...projectData,
+            id: generateUniqueId(),
+            maxPoints: projectData.maxPoints || calculateMaxPoints(projectData.size),
+            developmentPoints: 0,
+            progress: 0,
+            shipped: false,
+            marketingPoints: projectData.marketingPoints || 0,
+            revenue: 0,
+            sales: []
+        };
+        
+        setProjects(prevProjects => [...prevProjects, newProject]);
+        
+        // Save immediately after creating a new project
+        saveGameState();
+    };
+
+    // Helper function to calculate maxPoints based on project size
+    const calculateMaxPoints = (size) => {
+        switch (size) {
+            case 'AAA':
+                return 1000;
+            case 'AA':
+                return 500;
+            case 'A':
+            default:
+                return 250;
+        }
     };
 
     const updateProjectProgress = (projectId, increment = 1) => {
-        setProjects(projects.map(project => {
+        if (!projectId) {
+            console.error('No projectId provided to updateProjectProgress');
+            return;
+        }
+
+        setProjects(prevProjects => prevProjects.map(project => {
             if (project.id === projectId) {
+                // Ensure project has required properties
+                if (!project.maxPoints) {
+                    console.error(`Project ${project.id} has no maxPoints defined`);
+                    return project;
+                }
+
                 // Apply game engine efficiency boost if project uses an engine
                 let engineBoost = 1.0;
                 if (project.engineId) {
@@ -815,8 +903,8 @@ function App() {
                 // Calculate progress with all boosts applied
                 const boostedIncrement = increment * engineBoost * techBoost * developmentSpeedBonus * franchiseBonus;
                 const newDevelopmentPoints = (project.developmentPoints || 0) + boostedIncrement;
-                const maxPoints = project.maxPoints > 0 ? project.maxPoints : 1; // Avoid division by zero
-                const progressPercentage = (newDevelopmentPoints / maxPoints) * 100;
+                const maxPoints = Math.max(project.maxPoints, 1); // Ensure maxPoints is at least 1
+                const progressPercentage = Math.min((newDevelopmentPoints / maxPoints) * 100, 100); // Cap at 100%
                 
                 return { 
                     ...project, 
@@ -826,6 +914,9 @@ function App() {
             }
             return project;
         }));
+
+        // Save the updated state
+        saveGameState();
     };
 
     const updateConsoleSales = (platforms, year, month) => {
@@ -852,8 +943,9 @@ function App() {
                 
                 // Apply trending genre bonus if applicable
                 let weeklyMultiplier = 1.0;
-                if (trendingGenre && project.genre === trendingGenre.name) {
-                    weeklyMultiplier *= trendingGenre.boost;
+                const bestGenre = getBestGenre();
+                if (bestGenre && project.genre === bestGenre.name) {
+                    weeklyMultiplier *= 1.2; // 20% boost for trending genre
                 }
                 
                 // Apply global sales modifiers from active events
@@ -958,17 +1050,18 @@ function App() {
         
         // Apply any active sales boost from events
         let initialSalesBoost = nextGameSalesBoost;
+
+        // Apply trending genre boost
+        const bestGenre = getBestGenre();
+        if (bestGenre && project.genre === bestGenre.name) {
+            initialSalesBoost *= 1.2; // 20% boost for trending genre
+            addNotification(`Your game is in the trending ${bestGenre.name} genre! Sales boosted by 20%`, 'success');
+        }
         
         // Reset the next game sales boost after applying it
         if (nextGameSalesBoost !== 1.0) {
             setNextGameSalesBoost(1.0);
             addNotification(`Your viral marketing campaign boosted initial sales by ${Math.round((nextGameSalesBoost - 1) * 100)}%!`, 'success');
-        }
-        
-        // Apply trending genre bonus if applicable
-        if (trendingGenre && project.genre === trendingGenre.name) {
-            initialSalesBoost *= trendingGenre.boost;
-            addNotification(`Your game is in the trending ${trendingGenre.name} genre! Sales boosted by ${Math.round((trendingGenre.boost - 1) * 100)}%`, 'success');
         }
         
         // Apply franchise bonus if applicable
@@ -1666,6 +1759,141 @@ function App() {
         }
     }, [currentWeek]);
 
+    // Function to cancel a project
+    const cancelProject = (projectId) => {
+        // Find the project to cancel
+        const projectToCancel = projects.find(p => p.id === projectId);
+        
+        if (!projectToCancel) {
+            addNotification('Project not found', 'error');
+            return;
+        }
+        
+        // Unassign any employees from this project
+        setEmployees(prevEmployees => 
+            prevEmployees.map(employee => 
+                employee.projectId === projectId 
+                    ? { ...employee, projectId: null } 
+                    : employee
+            )
+        );
+        
+        // Remove the project from state
+        setProjects(prevProjects => prevProjects.filter(p => p.id !== projectId));
+        
+        addNotification(`Project "${projectToCancel.name}" has been cancelled`, 'info');
+    };
+    
+    // Function to get the best genre based on current popularity
+    const getBestGenre = () => {
+        if (!genres || genres.length === 0) return null;
+        
+        // Sort by popularity (highest first) and return the top genre
+        return [...genres].sort((a, b) => b.popularity - a.popularity)[0];
+    };
+    
+    // Filter projects to get shipped games for the ShippingComponent
+    const shippedGames = projects.filter(project => project.shipped);
+    
+    // Function to add money (for debug purposes)
+    const addMoney = (amount) => {
+        setBankAccount(prevAmount => prevAmount + amount);
+        addNotification(`Added ${amount} to bank account`, 'success');
+    };
+    
+    // Function to add experience (for debug purposes)
+    const addExperience = (amount) => {
+        setStudioExp(prevExp => {
+            const newExp = prevExp + amount;
+            
+            // Check for studio level up
+            if (newExp >= studioExpToNextLevel) {
+                setStudioLevel(prevLevel => prevLevel + 1);
+                setStudioExpToNextLevel(prevExpToNextLevel => prevExpToNextLevel * 2);
+                addNotification(`Studio leveled up to level ${studioLevel + 1}!`, 'success');
+                return newExp - studioExpToNextLevel;
+            }
+            
+            return newExp;
+        });
+        addNotification(`Added ${amount} experience points`, 'success');
+    };
+    
+    // Function to add a free employee (for debug purposes)
+    const addFreeEmployee = (type) => {
+        hireEmployee(type);
+        addNotification(`Added a free ${type}`, 'success');
+    };
+    
+    // Function to unlock all technologies (for debug purposes)
+    const unlockAllTechnologies = () => {
+        setTechnologies(prevTechs => 
+            prevTechs.map(tech => ({ ...tech, unlocked: true }))
+        );
+        addNotification('All technologies unlocked', 'success');
+    };
+    
+    // Function to upgrade game engine (for research component)
+    const upgradeGameEngine = (engineId) => {
+        setGameEngines(prevEngines => 
+            prevEngines.map(engine => {
+                if (engine.id === engineId) {
+                    // Upgrade stats based on current engine level
+                    const upgradeCost = 5000 * engine.version;
+                    
+                    if (bankAccount < upgradeCost) {
+                        addNotification(`Not enough funds to upgrade ${engine.name}`, 'error');
+                        return engine;
+                    }
+                    
+                    // Deduct cost
+                    setBankAccount(prevBalance => prevBalance - upgradeCost);
+                    
+                    // Upgrade engine
+                    return {
+                        ...engine,
+                        version: engine.version + 0.1,
+                        efficiency: engine.efficiency * 1.1 // 10% improvement
+                    };
+                }
+                return engine;
+            })
+        );
+    };
+    
+    // Function to research technology
+    const researchTechnology = (techId) => {
+        unlockTechnology(techId);
+    };
+
+    // Add this useEffect to apply employee work to projects
+    useEffect(() => {
+        // Check if we have employees and projects
+        if (employees.length === 0 || projects.length === 0) return;
+        
+        // Find active (unshipped) projects
+        const activeProjects = projects.filter(project => !project.shipped);
+        
+        // Process each active project
+        activeProjects.forEach(project => {
+            // Find employees assigned to this project
+            const assignedEmployees = employees.filter(emp => emp.projectId === project.id);
+            
+            // If we have assigned employees, update the project progress
+            if (assignedEmployees.length > 0) {
+                // Calculate total productivity of assigned employees
+                const totalProductivity = assignedEmployees.reduce((sum, employee) => {
+                    return sum + calculateEmployeeProductivity(employee.type, employee.skills);
+                }, 0);
+                
+                // Update project progress with the calculated productivity
+                if (totalProductivity > 0) {
+                    updateProjectProgress(project.id, totalProductivity);
+                }
+            }
+        });
+    }, [currentWeek]); // Run this effect when the week changes
+
     return (
         <div className="App">
             <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop closeOnClick pauseOnFocusLoss draggable pauseOnHover />
@@ -1695,12 +1923,12 @@ function App() {
                 />
                 <EventsComponent 
                     events={activeEvents} 
-                    currentYear={currentYear} 
+                    currentYear={currentWeek} 
                 />
                 
                 <div className="game-panel">
                     <ProjectComponent
-                        startNewProject={startNewProject}
+                        startNewProject={createProject}
                         projects={projects}
                         gameEngines={gameEngines}
                         genres={genres}
@@ -1710,6 +1938,7 @@ function App() {
                         getBestGenre={getBestGenre}
                         shipGame={shipGame}
                         franchises={franchises}
+                        openShippingModal={openShippingModal}
                     />
                 </div>
                 
@@ -1721,16 +1950,22 @@ function App() {
                         bankAccount={bankAccount}
                         genres={genres}
                         studioLevel={studioLevel}
+                        projects={projects}
+                        assignToProject={assignToProject}
+                        improveEmployeeSkill={improveEmployeeSkill}
                     />
                 </div>
                 
                 <div className="game-panel">
                     <ShippingComponent
-                        shippedGames={shippedGames}
-                        platforms={platforms}
-                        genres={genres}
+                        isModalOpen={isShippingModalOpen}
+                        closeModal={() => setIsShippingModalOpen(false)}
+                        game={selectedProjectForShipping ? projects.find(p => p.id === selectedProjectForShipping) || null : null}
                         publishers={publishers}
-                        currentYear={currentYear}
+                        shipGame={shipGame}
+                        calculateUpfrontPayment={calculateUpfrontPayment}
+                        calculateRevenueShare={calculateRevenueShare}
+                        addNotification={addNotification}
                     />
                 </div>
                 

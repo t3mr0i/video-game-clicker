@@ -2,8 +2,8 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle, faCheckCircle, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 
-const EventsComponent = ({ activeEvents, currentWeek }) => {
-    if (activeEvents.length === 0) {
+const EventsComponent = ({ events, currentYear }) => {
+    if (!events || events.length === 0) {
         return null;
     }
 
@@ -11,8 +11,8 @@ const EventsComponent = ({ activeEvents, currentWeek }) => {
         <div className="bg-white rounded-lg shadow-md p-4 mb-4">
             <h2 className="text-lg font-semibold mb-3">Active Events</h2>
             <div className="space-y-3">
-                {activeEvents.map(event => {
-                    const weeksRemaining = event.endWeek - currentWeek;
+                {events.map(event => {
+                    const weeksRemaining = event.endWeek - currentYear;
                     const isPositive = event.type === 'positive';
                     
                     return (
@@ -30,7 +30,7 @@ const EventsComponent = ({ activeEvents, currentWeek }) => {
                             <p className="text-sm ml-6 text-gray-600">{event.description}</p>
                             <div className="flex items-center mt-2 ml-6 text-sm text-gray-500">
                                 <FontAwesomeIcon icon={faCalendarAlt} className="mr-1" />
-                                <span>{weeksRemaining} {weeksRemaining === 1 ? 'week' : 'weeks'} remaining</span>
+                                <span>{weeksRemaining > 0 ? `${weeksRemaining} ${weeksRemaining === 1 ? 'week' : 'weeks'} remaining` : 'Ending soon'}</span>
                             </div>
                         </div>
                     );

@@ -3,10 +3,22 @@ import Modal from 'react-modal';
 import GameDisplayComponent from './GameDisplayComponent';
 import MetaCriticRatingComponent from './MetaCriticRatingComponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShip, faPlus, faHammer, faFire, faRocket, faCogs, faTrophy, faInfoCircle, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import { faShip, faPlus, faHammer, faFire, faRocket, faCogs, faTrophy, faInfoCircle, faQuestionCircle, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 import classNames from 'classnames';
-const ProjectComponent = ({ projects, setProjects, createProject, updateProjectProgress, currentYear, platforms, genres, employees, openShippingModal, gameEngines, trendingGenre, franchises }) => {
+const ProjectComponent = ({ 
+    projects, 
+    startNewProject, 
+    gameEngines, 
+    genres, 
+    platforms, 
+    currentYear, 
+    cancelProject, 
+    getBestGenre, 
+    shipGame, 
+    franchises,
+    openShippingModal
+}) => {
     const [newProjectName, setNewProjectName] = useState('');
     const [selectedSize, setSelectedSize] = useState('A'); // A, AA, AAA
     const [selectedPlatform, setSelectedPlatform] = useState('');
@@ -63,44 +75,6 @@ const ProjectComponent = ({ projects, setProjects, createProject, updateProjectP
             setDevelopmentPoints(0);
         }
     };
-    
-    useEffect(() => {
-        const interval = setInterval(() => {
-            updateAllProjects();
-        }, 1000); // Every second
-
-        return () => clearInterval(interval);
-    }, [projects, employees]); // Rerun when projects or employees change
-
-    const updateAllProjects = () => {
-        const updatedProjects = projects.map(project => {
-            // Skip if project is already shipped
-            if (project.shipped) return project;
-
-            // Count the number of each type of employee assigned to the project
-            const numDevelopers = countEmployeesAssigned(project.id, 'Developer');
-            const numDesigners = countEmployeesAssigned(project.id, 'Designer');
-            const numMarketers = countEmployeesAssigned(project.id, 'Marketer');
-
-            // Define rates at which each type of employee contributes
-            const progressRate = 1; // Example rate at which developers contribute to progress
-            const designPointRate = 1 // Example rate for designers
-            const marketingPointRate = 1; // Example rate for marketers
-
-            // Update project metrics
-            project.progress += numDevelopers * progressRate;
-            project.designPoints = Math.floor((project.designPoints || 0)) + numDesigners * designPointRate;
-            project.marketingPoints = Math.floor((project.marketingPoints || 0)) + numMarketers * marketingPointRate;
-
-            // Ensure progress doesn't exceed 100%
-            project.progress = Math.min(project.progress, 100);
-
-            return project;
-        });
-
-        // Update the projects array with the new state
-        setProjects(updatedProjects);
-    };
 
     const handleCreateProject = () => {
         const maxPoints = developmentPoints;
@@ -113,7 +87,7 @@ const ProjectComponent = ({ projects, setProjects, createProject, updateProjectP
         const engineBoost = engine ? `Using ${engine.name} Engine` : null;
 
         // Check if this genre is trending
-        const isTrendingGenre = trendingGenre && trendingGenre.name === selectedGenre;
+        const isTrendingGenre = false; // Removed trendingGenre check as the prop is not available
 
         // Get franchise information if this is a sequel
         let franchiseId = null;
@@ -146,7 +120,7 @@ const ProjectComponent = ({ projects, setProjects, createProject, updateProjectP
                 startDate: `${currentYear}-${String(new Date().getMonth() + 1).padStart(2, '0')}`
             };
 
-            createProject(newProject);
+            startNewProject(newProject);
 
             setNewProjectName('');
             setSelectedPlatform('');
@@ -159,22 +133,18 @@ const ProjectComponent = ({ projects, setProjects, createProject, updateProjectP
         }
     };
 
-    const handleWorkOnProject = (projectId) => {
-        updateProjectProgress(projectId, 0.1);
-    };
-
-    const countEmployeesAssigned = (projectId, type) => {
-        return employees.filter(emp => emp.projectId === projectId && emp.type === type).length;
-    };
-
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 
     const availablePlatforms = platforms.filter(platform => platform.releaseYear <= currentYear);
 
-    // Helper function to check if a genre is trending
+    // Helper function to check if a genre is trending using getBestGenre
     const isGenreTrending = (genreName) => {
-        return trendingGenre && trendingGenre.name === genreName;
+        if (getBestGenre) {
+            const bestGenre = getBestGenre();
+            return bestGenre && bestGenre.name === genreName;
+        }
+        return false;
     };
 
     // Get franchise name from ID
@@ -211,8 +181,27 @@ const ProjectComponent = ({ projects, setProjects, createProject, updateProjectP
                 return "Manually add development progress to this project.";
             case 'ship':
                 return "Ship your game when it's complete to start earning revenue.";
+            case 'cancel':
+                return "Cancel this project. All progress will be lost.";
             default:
                 return "";
+        }
+    };
+
+    // Handle shipping a project
+    const handleShipGame = (projectId) => {
+        // Use the openShippingModal prop directly
+        if (openShippingModal && typeof openShippingModal === 'function') {
+            openShippingModal(projectId);
+        } else {
+            console.error("openShippingModal is not available");
+        }
+    };
+
+    // Handle canceling a project
+    const handleCancelProject = (projectId) => {
+        if (window.confirm("Are you sure you want to cancel this project? All progress will be lost.")) {
+            cancelProject(projectId);
         }
     };
 
@@ -241,11 +230,11 @@ const ProjectComponent = ({ projects, setProjects, createProject, updateProjectP
         <div className="bg-gray-100 p-4 rounded-lg shadow-md app">
             <div className="flex justify-between mb-4">
                 <div>
-                    <h2 className="text-xl font-bold">Projects</h2>
-                    {trendingGenre && (
+                    <h2 className="text-xl font-bold text-gray-800">Projects</h2>
+                    {getBestGenre && getBestGenre() && (
                         <div className="text-orange-500 mt-1 flex items-center">
                             <FontAwesomeIcon icon={faFire} className="mr-1" />
-                            <span>Trending Genre: {trendingGenre.name} (+{Math.round((trendingGenre.boost-1)*100)}% sales)</span>
+                            <span>Trending Genre: {getBestGenre().name} (+20% sales)</span>
                         </div>
                     )}
                 </div>
@@ -266,13 +255,13 @@ const ProjectComponent = ({ projects, setProjects, createProject, updateProjectP
                     projects.map(project => (
                         <div key={project.id} className={`bg-white p-4 rounded-lg shadow border-l-4 ${project.shipped ? 'border-green-500' : 'border-blue-500'}`}>
                             <div className="flex justify-between items-start mb-2">
-                                <h3 className="font-bold text-lg">{project.name}</h3>
+                                <h3 className="font-bold text-lg text-gray-800">{project.name}</h3>
                                 <div className="flex space-x-1">
                                     {project.progress >= 100 && !project.shipped && (
                                         <button 
                                             className="bg-green-500 hover:bg-green-700 text-white rounded p-1"
-                                            onClick={() => openShippingModal(project.id)}
-                                            onMouseEnter={() => displayTooltip('ship')}
+                                            onClick={() => handleShipGame(project.id)}
+                                            onMouseEnter={() => displayTooltip(`ship-${project.id}`)}
                                             onMouseLeave={hideTooltip}
                                         >
                                             <FontAwesomeIcon icon={faShip} />
@@ -280,31 +269,31 @@ const ProjectComponent = ({ projects, setProjects, createProject, updateProjectP
                                     )}
                                     {!project.shipped && (
                                         <button 
-                                            className="bg-blue-500 hover:bg-blue-700 text-white rounded p-1"
-                                            onClick={() => handleWorkOnProject(project.id)}
-                                            onMouseEnter={() => displayTooltip('work')}
+                                            className="bg-red-500 hover:bg-red-700 text-white rounded p-1"
+                                            onClick={() => handleCancelProject(project.id)}
+                                            onMouseEnter={() => displayTooltip(`cancel-${project.id}`)}
                                             onMouseLeave={hideTooltip}
                                         >
-                                            <FontAwesomeIcon icon={faHammer} />
+                                            <FontAwesomeIcon icon={faTimes} />
                                         </button>
                                     )}
-                                    {showTooltip === 'ship' && (
+                                    {showTooltip === `ship-${project.id}` && (
                                         <div className="absolute bg-black text-white text-xs p-1 rounded mt-6 z-10">
                                             Ship your game
                                         </div>
                                     )}
-                                    {showTooltip === 'work' && (
+                                    {showTooltip === `cancel-${project.id}` && (
                                         <div className="absolute bg-black text-white text-xs p-1 rounded mt-6 z-10">
-                                            Work on project
+                                            Cancel project
                                         </div>
                                     )}
                                 </div>
                             </div>
                             
                             <div className="text-sm mb-2">
-                                <span className="inline-block bg-gray-200 rounded px-2 py-1 mr-1 mb-1">{project.platform}</span>
-                                <span className="inline-block bg-gray-200 rounded px-2 py-1 mr-1 mb-1">{project.genre}</span>
-                                <span className="inline-block bg-gray-200 rounded px-2 py-1 mb-1">{project.size}</span>
+                                <span className="inline-block bg-gray-200 rounded px-2 py-1 mr-1 mb-1 text-gray-800">{project.platform}</span>
+                                <span className="inline-block bg-gray-200 rounded px-2 py-1 mr-1 mb-1 text-gray-800">{project.genre}</span>
+                                <span className="inline-block bg-gray-200 rounded px-2 py-1 mb-1 text-gray-800">{project.size}</span>
                                 {project.isTrendingGenre && (
                                     <span className="inline-block bg-orange-200 text-orange-700 rounded px-2 py-1 mb-1 ml-1">
                                         <FontAwesomeIcon icon={faFire} className="mr-1" />
@@ -312,245 +301,244 @@ const ProjectComponent = ({ projects, setProjects, createProject, updateProjectP
                                     </span>
                                 )}
                             </div>
-                            
-                            {project.franchiseId && (
-                                <div className="text-sm text-gray-600 mb-2">
-                                    <FontAwesomeIcon icon={faTrophy} className="mr-1 text-yellow-500" />
-                                    Franchise: {getFranchiseName(project.franchiseId)}
+
+                            {/* Project details */}
+                            <div className="text-sm text-gray-700 mb-2">
+                                <div className="flex justify-between">
+                                    <span>Progress:</span>
+                                    <span>{Math.min(100, Math.round(project.progress))}%</span>
                                 </div>
-                            )}
-                            
-                            {project.engineName && (
-                                <div className="text-sm text-gray-600 mb-2">
-                                    <FontAwesomeIcon icon={faCogs} className="mr-1" />
-                                    Engine: {project.engineName}
-                                </div>
-                            )}
-                            
-                            {!project.shipped ? (
-                                <div className="mb-2">
-                                    <div className="flex justify-between text-xs text-gray-600 mb-1">
-                                        <span>Progress: {Math.round(project.progress)}%</span>
-                                        <span>Dev: {project.developmentPoints?.toFixed(0) || 0}/{project.requiredPoints}</span>
+                                {renderProgress(project.progress, 100)}
+                                
+                                {!project.shipped && (
+                                    <div className="mt-2">
+                                        <span className="text-gray-800">Dev Points: {Math.round(project.developmentPoints)}/{project.requiredPoints}</span>
                                     </div>
-                                    <div className="w-full bg-gray-200 rounded-full h-2">
-                                        <div className="bg-blue-600 rounded-full h-2" style={{ width: `${project.progress}%` }}></div>
+                                )}
+                                
+                                {project.engineName && (
+                                    <div className="mt-1 text-blue-600">
+                                        <FontAwesomeIcon icon={faCogs} className="mr-1" />
+                                        {project.engineName} Engine
                                     </div>
-                                </div>
-                            ) : (
-                                <div className="mb-2">
-                                    <MetaCriticRatingComponent score={project.metaCriticRating || 0} />
-                                    <div className="text-sm mt-1">
-                                        <span className="font-semibold">Revenue:</span> ${(project.revenue || 0).toLocaleString()}
+                                )}
+                                
+                                {project.franchiseId && (
+                                    <div className="mt-1 text-purple-600">
+                                        <FontAwesomeIcon icon={faTrophy} className="mr-1" />
+                                        {getFranchiseName(project.franchiseId)} Franchise
                                     </div>
-                                    <div className="text-sm">
-                                        <span className="font-semibold">Sales:</span> {project.sales?.length || 0} weeks
-                                    </div>
-                                </div>
-                            )}
-                            
-                            <div className="text-xs text-gray-500">
-                                <div><span className="font-semibold">Design:</span> {project.designPoints || 0}</div>
-                                <div><span className="font-semibold">Marketing:</span> {project.marketingPoints || 0}</div>
-                                <div className="flex items-center">
-                                    <span className="font-semibold mr-1">Team:</span>
-                                    <span className="mr-2">👨‍💻 {countEmployeesAssigned(project.id, 'Developer')}</span>
-                                    <span className="mr-2">🎨 {countEmployeesAssigned(project.id, 'Designer')}</span>
-                                    <span>📢 {countEmployeesAssigned(project.id, 'Marketer')}</span>
-                                </div>
+                                )}
                             </div>
+                            
+                            {/* For shipped games, show the sales and revenue */}
+                            {project.shipped && (
+                                <div className="mt-2">
+                                    <div className="text-sm text-gray-800">Total Sales: {project.sales ? project.sales.reduce((sum, sale) => sum + sale, 0).toLocaleString() : 0} units</div>
+                                    <div className="text-sm text-green-600">Revenue: ${project.revenue ? project.revenue.toLocaleString() : 0}</div>
+                                    {project.metaCriticScore && (
+                                        <div className="mt-1">
+                                            <MetaCriticRatingComponent score={project.metaCriticScore} />
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     ))
                 )}
             </div>
 
-            {/* Modal for creating new project */}
-            <Modal isOpen={isModalOpen} onRequestClose={closeModal} className="bg-white rounded-lg p-6 mx-auto my-12 border max-w-xl shadow-lg">
-                <h2 className="text-lg font-bold mb-4 text-gray-800">Create New Project</h2>
-
+            {/* New Project Modal */}
+            <Modal
+                isOpen={isModalOpen}
+                onRequestClose={closeModal}
+                contentLabel="Create New Project"
+                className="bg-white rounded-lg p-6 mx-auto my-12 border max-w-lg"
+                overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+            >
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-xl font-bold text-gray-800">Create New Project</h2>
+                    <button onClick={closeModal} className="text-gray-500 hover:text-gray-700">
+                        <FontAwesomeIcon icon={faTimes} />
+                    </button>
+                </div>
+                
                 <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Project Name</label>
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="projectName">
+                        Project Name
+                    </label>
                     <input
                         type="text"
+                        id="projectName"
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         value={newProjectName}
                         onChange={(e) => setNewProjectName(e.target.value)}
-                        placeholder="Enter Project Name"
-                        className="p-2 border text-gray-800 border-gray-300 rounded-md w-full"
                     />
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <div>
-                        <div className="flex items-center">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Size</label>
-                            <FontAwesomeIcon 
-                                icon={faQuestionCircle} 
-                                className="ml-1 text-gray-400 cursor-pointer" 
-                                onMouseEnter={() => displayTooltip('size')}
-                                onMouseLeave={hideTooltip}
-                            />
-                        </div>
-                        {showTooltip === 'size' && (
-                            <div className="bg-black text-white text-xs p-2 rounded mb-2 z-10">
-                                {getTooltipContent('size')}
-                            </div>
-                        )}
-                        <select 
-                            value={selectedSize} 
-                            onChange={(e) => setSelectedSize(e.target.value)} 
-                            className="p-2 border text-gray-800 border-gray-300 rounded-md w-full"
+                
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2">
+                        Game Size
+                        <button className="ml-1 text-blue-500" onMouseEnter={() => displayTooltip('size')} onMouseLeave={hideTooltip}>
+                            <FontAwesomeIcon icon={faQuestionCircle} />
+                        </button>
+                    </label>
+                    <div className="flex space-x-2">
+                        <button
+                            className={`flex-1 py-2 px-4 rounded ${selectedSize === 'A' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}
+                            onClick={() => setSelectedSize('A')}
                         >
-                            <option value="A">A (Small)</option>
-                            <option value="AA">AA (Medium)</option>
-                            <option value="AAA">AAA (Large)</option>
-                        </select>
+                            A
+                        </button>
+                        <button
+                            className={`flex-1 py-2 px-4 rounded ${selectedSize === 'AA' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}
+                            onClick={() => setSelectedSize('AA')}
+                        >
+                            AA
+                        </button>
+                        <button
+                            className={`flex-1 py-2 px-4 rounded ${selectedSize === 'AAA' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}
+                            onClick={() => setSelectedSize('AAA')}
+                        >
+                            AAA
+                        </button>
                     </div>
-
-                    <div>
-                        <div className="flex items-center">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Platform</label>
-                            <FontAwesomeIcon 
-                                icon={faQuestionCircle} 
-                                className="ml-1 text-gray-400 cursor-pointer" 
-                                onMouseEnter={() => displayTooltip('platform')}
-                                onMouseLeave={hideTooltip}
-                            />
+                    {showTooltip === 'size' && (
+                        <div className="mt-1 text-sm text-gray-600 bg-gray-100 p-2 rounded">
+                            {getTooltipContent('size')}
                         </div>
-                        {showTooltip === 'platform' && (
-                            <div className="bg-black text-white text-xs p-2 rounded mb-2 z-10">
-                                {getTooltipContent('platform')}
-                            </div>
-                        )}
-                        <select 
-                            value={selectedPlatform} 
-                            onChange={(e) => setSelectedPlatform(e.target.value)} 
-                            className="p-2 border text-gray-800 border-gray-300 rounded-md w-full"
+                    )}
+                </div>
+                
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2">
+                        Platform
+                        <button className="ml-1 text-blue-500" onMouseEnter={() => displayTooltip('platform')} onMouseLeave={hideTooltip}>
+                            <FontAwesomeIcon icon={faQuestionCircle} />
+                        </button>
+                    </label>
+                    <select
+                        className="shadow border rounded w-full py-2 px-3 text-gray-700 bg-white"
+                        value={selectedPlatform}
+                        onChange={(e) => setSelectedPlatform(e.target.value)}
+                    >
+                        <option value="">Select a platform</option>
+                        {availablePlatforms.map((platform) => (
+                            <option key={platform.id} value={platform.name}>
+                                {platform.name} (Power: {platform.power})
+                            </option>
+                        ))}
+                    </select>
+                    {showTooltip === 'platform' && (
+                        <div className="mt-1 text-sm text-gray-600 bg-gray-100 p-2 rounded">
+                            {getTooltipContent('platform')}
+                        </div>
+                    )}
+                </div>
+                
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2">
+                        Genre
+                        <button className="ml-1 text-blue-500" onMouseEnter={() => displayTooltip('genre')} onMouseLeave={hideTooltip}>
+                            <FontAwesomeIcon icon={faQuestionCircle} />
+                        </button>
+                    </label>
+                    <select
+                        className="shadow border rounded w-full py-2 px-3 text-gray-700 bg-white"
+                        value={selectedGenre}
+                        onChange={(e) => setSelectedGenre(e.target.value)}
+                    >
+                        <option value="">Select a genre</option>
+                        {genres.map((genre) => {
+                            const stars = "★".repeat(genre.popularity);
+                            const isTrending = isGenreTrending(genre.name);
+                            return (
+                                <option key={genre.id} value={genre.name}>
+                                    {genre.name} {stars} {isTrending ? "🔥" : ""}
+                                </option>
+                            );
+                        })}
+                    </select>
+                    {showTooltip === 'genre' && (
+                        <div className="mt-1 text-sm text-gray-600 bg-gray-100 p-2 rounded">
+                            {getTooltipContent('genre')}
+                        </div>
+                    )}
+                </div>
+
+                {gameEngines.length > 0 && (
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2">
+                            Game Engine
+                            <button className="ml-1 text-blue-500" onMouseEnter={() => displayTooltip('engine')} onMouseLeave={hideTooltip}>
+                                <FontAwesomeIcon icon={faQuestionCircle} />
+                            </button>
+                        </label>
+                        <select
+                            className="shadow border rounded w-full py-2 px-3 text-gray-700 bg-white"
+                            value={selectedGameEngine}
+                            onChange={(e) => setSelectedGameEngine(e.target.value)}
                         >
-                            <option value="" disabled>Select Platform</option>
-                            {availablePlatforms.map(platform => (
-                                <option key={platform.name} value={platform.name}>
-                                    {platform.name} (Power: {platform.power})
+                            <option value="">No Engine (Default)</option>
+                            {gameEngines.map((engine) => (
+                                <option key={engine.id} value={engine.id}>
+                                    {engine.name} v{engine.version.toFixed(1)} (Efficiency: {(engine.efficiency * 100).toFixed(0)}%)
                                 </option>
                             ))}
                         </select>
-                    </div>
-
-                    <div>
-                        <div className="flex items-center">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Genre</label>
-                            <FontAwesomeIcon 
-                                icon={faQuestionCircle} 
-                                className="ml-1 text-gray-400 cursor-pointer" 
-                                onMouseEnter={() => displayTooltip('genre')}
-                                onMouseLeave={hideTooltip}
-                            />
-                        </div>
-                        {showTooltip === 'genre' && (
-                            <div className="bg-black text-white text-xs p-2 rounded mb-2 z-10">
-                                {getTooltipContent('genre')}
-                            </div>
-                        )}
-                        <select 
-                            value={selectedGenre} 
-                            onChange={(e) => setSelectedGenre(e.target.value)} 
-                            className="p-2 border text-gray-800 border-gray-300 rounded-md w-full"
-                        >
-                            <option value="" disabled>Select Genre</option>
-                            {genres.map(genre => {
-                                // Format genre popularity stars (1-9 scale)
-                                const popularityStars = '★'.repeat(Math.floor(genre.popularity/2)) + '☆'.repeat(Math.ceil(5-genre.popularity/2));
-                                
-                                return (
-                                    <option key={genre.id} value={genre.name}>
-                                        {genre.name} {isGenreTrending(genre.name) ? "🔥" : ""} ({popularityStars})
-                                    </option>
-                                );
-                            })}
-                        </select>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div>
-                        <div className="flex items-center">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Game Engine (Optional)</label>
-                            <FontAwesomeIcon 
-                                icon={faQuestionCircle} 
-                                className="ml-1 text-gray-400 cursor-pointer" 
-                                onMouseEnter={() => displayTooltip('engine')}
-                                onMouseLeave={hideTooltip}
-                            />
-                        </div>
                         {showTooltip === 'engine' && (
-                            <div className="bg-black text-white text-xs p-2 rounded mb-2 z-10">
+                            <div className="mt-1 text-sm text-gray-600 bg-gray-100 p-2 rounded">
                                 {getTooltipContent('engine')}
                             </div>
                         )}
-                        <select 
-                            value={selectedGameEngine} 
-                            onChange={(e) => setSelectedGameEngine(e.target.value)} 
-                            className="p-2 border text-gray-800 border-gray-300 rounded-md w-full"
+                    </div>
+                )}
+
+                {franchises.length > 0 && (
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2">
+                            Franchise (Optional)
+                            <button className="ml-1 text-blue-500" onMouseEnter={() => displayTooltip('franchise')} onMouseLeave={hideTooltip}>
+                                <FontAwesomeIcon icon={faQuestionCircle} />
+                            </button>
+                        </label>
+                        <select
+                            className="shadow border rounded w-full py-2 px-3 text-gray-700 bg-white"
+                            value={selectedFranchise}
+                            onChange={(e) => setSelectedFranchise(e.target.value)}
                         >
-                            <option value="">No Engine</option>
-                            {gameEngines.map(engine => (
-                                <option key={engine.id} value={engine.id}>
-                                    {engine.name} (Efficiency: {(engine.efficiency * 100).toFixed(0)}%)
+                            <option value="">New IP (No Franchise)</option>
+                            {franchises.map((franchise) => (
+                                <option key={franchise.id} value={franchise.id}>
+                                    {franchise.name} (Games: {franchise.games.length}, Fans: {franchise.fanbase.toLocaleString()})
                                 </option>
                             ))}
                         </select>
-                    </div>
-
-                    <div>
-                        <div className="flex items-center">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Franchise (Optional)</label>
-                            <FontAwesomeIcon 
-                                icon={faQuestionCircle} 
-                                className="ml-1 text-gray-400 cursor-pointer" 
-                                onMouseEnter={() => displayTooltip('franchise')}
-                                onMouseLeave={hideTooltip}
-                            />
-                        </div>
                         {showTooltip === 'franchise' && (
-                            <div className="bg-black text-white text-xs p-2 rounded mb-2 z-10">
+                            <div className="mt-1 text-sm text-gray-600 bg-gray-100 p-2 rounded">
                                 {getTooltipContent('franchise')}
                             </div>
                         )}
-                        <select 
-                            value={selectedFranchise} 
-                            onChange={(e) => setSelectedFranchise(e.target.value)} 
-                            className="p-2 border text-gray-800 border-gray-300 rounded-md w-full"
-                        >
-                            <option value="">New IP</option>
-                            {franchises.map(franchise => (
-                                <option key={franchise.id} value={franchise.id}>
-                                    {franchise.name} (Games: {franchise.games.length})
-                                </option>
-                            ))}
-                        </select>
+                    </div>
+                )}
+
+                <div className="mb-4 p-3 bg-gray-100 rounded-lg">
+                    <h3 className="font-bold text-gray-700 mb-2">Development Estimate</h3>
+                    <div className="flex justify-between text-gray-800">
+                        <span>Required Development Points:</span>
+                        <span>{developmentPoints}</span>
                     </div>
                 </div>
 
-                <div className="mb-6 bg-gray-100 p-3 rounded-lg">
-                    <h3 className="font-medium text-sm mb-2">Development Estimates:</h3>
-                    <div className="flex justify-between text-sm">
-                        <div><span className="font-medium">Required Points:</span> {developmentPoints}</div>
-                        {selectedGameEngine && (
-                            <div>
-                                <span className="font-medium">With Engine:</span> {Math.round(developmentPoints / (gameEngines.find(e => e.id === selectedGameEngine)?.efficiency || 1))}
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                <div className="flex justify-end space-x-3">
-                    <button 
-                        onClick={closeModal} 
+                <div className="flex justify-end space-x-2">
+                    <button
+                        onClick={closeModal}
                         className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
                     >
                         Cancel
                     </button>
-                    <button 
-                        onClick={handleCreateProject} 
+                    <button
+                        onClick={handleCreateProject}
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                         disabled={!newProjectName || !selectedPlatform || !selectedGenre}
                     >

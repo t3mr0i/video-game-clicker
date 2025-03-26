@@ -128,9 +128,9 @@ const TimeComponent = ({
             <div className="flex flex-col md:flex-row justify-between items-center">
                 <div className="w-full md:w-auto mb-4 md:mb-0">
                     <h2 className="text-xl font-bold text-gray-700 flex items-center justify-center md:justify-start">
-                        <span className="text-gray-600">{String(currentDay).padStart(2, '0')}</span>-
-                        <span className="text-gray-600">{String(currentMonth).padStart(2, '0')}</span>-
-                        <span className="text-gray-600">{currentYear}</span>
+                        <span className="text-gray-800">{String(currentDay).padStart(2, '0')}</span>-
+                        <span className="text-gray-800">{String(currentMonth).padStart(2, '0')}</span>-
+                        <span className="text-gray-800">{currentYear}</span>
                     </h2>
                     <div className="flex items-center mt-2">
                         <FontAwesomeIcon icon={faClock} className="text-sm text-gray-600 mr-2" />
@@ -138,9 +138,9 @@ const TimeComponent = ({
                             <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${monthProgress}%`, transition: 'width 0.5s ease-in-out' }}></div>
                         </div>
                     </div>
-                    <p className="text-center md:text-left text-gray-600 mt-1">Week <span className="font-medium">{currentWeek}</span></p>
+                    <p className="text-center md:text-left text-gray-800 mt-1">Week <span className="font-medium">{currentWeek}</span></p>
                     
-                    <div className="time-controls mt-3">
+                    <div className="time-controls mt-3 flex flex-wrap gap-2">
                         <button 
                             onClick={togglePause} 
                             className="bg-blue-500 hover:bg-blue-700 text-white rounded px-3 py-2"
@@ -150,28 +150,28 @@ const TimeComponent = ({
                         </button>
                         <button 
                             onClick={() => handleSpeedChange(1400)} 
-                            className={`rounded px-3 py-2 ${gameSpeed === 1400 ? 'bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
+                            className={`rounded px-3 py-2 ${gameSpeed === 1400 ? 'bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400 text-gray-800'}`}
                             title="Normal Speed"
                         >
                             1x
                         </button>
                         <button 
                             onClick={() => handleSpeedChange(700)} 
-                            className={`rounded px-3 py-2 ${gameSpeed === 700 ? 'bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
+                            className={`rounded px-3 py-2 ${gameSpeed === 700 ? 'bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400 text-gray-800'}`}
                             title="Fast Speed"
                         >
                             2x
                         </button>
                         <button 
                             onClick={() => handleSpeedChange(350)} 
-                            className={`rounded px-3 py-2 ${gameSpeed === 350 ? 'bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400'}`}
+                            className={`rounded px-3 py-2 ${gameSpeed === 350 ? 'bg-blue-500 text-white' : 'bg-gray-300 hover:bg-gray-400 text-gray-800'}`}
                             title="Very Fast Speed"
                         >
                             4x
                         </button>
                         <button 
                             onClick={manualSaveGame} 
-                            className="save-button"
+                            className="bg-green-500 hover:bg-green-600 text-white rounded px-3 py-2 flex items-center"
                             title="Save Game"
                         >
                             <FontAwesomeIcon icon={faSave} className="mr-1" />
@@ -194,11 +194,11 @@ const TimeComponent = ({
                     </div>
                     
                     <div className="save-status mt-2 flex items-center justify-center md:justify-start">
-                        <span className="mr-1">Status:</span>
-                        <span className={`font-medium ${saveStatus === "Saved" ? "status-saved" : saveStatus === "Failed" ? "status-failed" : "text-blue-600"}`}>
+                        <span className="mr-1 text-gray-800">Status:</span>
+                        <span className={`font-medium ${saveStatus === "Saved" ? "text-green-600" : saveStatus === "Failed" ? "text-red-600" : "text-blue-600"}`}>
                             {saveStatus || "Not saved"}
                         </span>
-                        <span className="last-saved">{formatLastSaved()}</span>
+                        <span className="text-gray-500 ml-2">{formatLastSaved()}</span>
                     </div>
                 </div>
                 
