@@ -188,6 +188,8 @@ const ProjectComponent = ({
                 return "Ship your game when it's complete to start earning revenue.";
             case 'cancel':
                 return "Cancel this project. All progress will be lost.";
+            case 'instruction':
+                return "Pro Tip: Balance game size, platform, and genre to maximize success! Trending genres offer bonus development speed.";
             default:
                 return "";
         }
@@ -550,10 +552,17 @@ const ProjectComponent = ({
                     </button>
                     <button
                         onClick={handleCreateProject}
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm"
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm relative"
                         disabled={!newProjectName || !selectedPlatform || !selectedGenre}
+                        onMouseEnter={() => displayTooltip('instruction')}
+                        onMouseLeave={hideTooltip}
                     >
                         Create Project
+                        {showTooltip === 'instruction' && (
+                            <div className="absolute z-10 bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white text-xs p-2 rounded shadow-lg">
+                                {getTooltipContent('instruction')}
+                            </div>
+                        )}
                     </button>
                 </div>
             </Modal>
