@@ -108,7 +108,11 @@ function App() {
         { name: 'Quantum Realm', releaseYear: 2022, power: 18, difficulty: 6 },
         { name: 'Cypher X', releaseYear: 2025, power: 20, difficulty: 7 },
         { name: 'Stellar Gaming', releaseYear: 2019, power: 15, difficulty: 5 },
-        { name: 'Nova Nexus', releaseYear: 2023, power: 17, difficulty: 6 }
+        { name: 'Nova Nexus', releaseYear: 2023, power: 17, difficulty: 6 },
+        { name: 'Apex Horizon', releaseYear: 2024, power: 19, difficulty: 8 },
+        { name: 'Cyber Genesis', releaseYear: 2026, power: 21, difficulty: 9 },
+        { name: 'Quantum Link', releaseYear: 2027, power: 22, difficulty: 9 },
+        { name: 'Stellar Horizon', releaseYear: 2028, power: 23, difficulty: 8 }
     ]);
     const [currentDay, setCurrentDay] = useState(1);
     const [currentWeek, setCurrentWeek] = useState(1);
