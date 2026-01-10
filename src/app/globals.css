@@ -19,6 +19,10 @@
 body {
   color: rgb(var(--foreground-rgb));
   background: white;
+  font-smooth: antialiased;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 /* Mobile-first approach */
@@ -76,27 +80,43 @@ body {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   transition: all 0.2s ease-in-out;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .game-card:hover {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  border-color: rgba(0, 0, 0, 0.1);
 }
 
 /* Button styles */
 .game-button {
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-weight: 500;
   padding: 0.375rem 0.75rem;
   border-radius: 0.375rem;
+  will-change: transform, box-shadow;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.game-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.game-button:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .game-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
 /* Dark mode specific styles */
@@ -105,52 +125,59 @@ body {
     background: #121212;
     color: #e0e0e0;
   }
-  
-  .game-card, 
+
+  .game-card,
   .main-container,
   .game-panel {
     background-color: #1e1e1e;
     color: #e0e0e0;
+    border: 1px solid rgba(255, 255, 255, 0.05);
   }
-  
+
   input, select, textarea, button {
     background-color: #2a2a2a;
     color: #e0e0e0;
     border-color: #3a3a3a;
+    transition: background-color 0.2s ease;
   }
-  
+
+  input:focus, select:focus, textarea:focus, button:focus {
+    outline: 2px solid rgba(64, 123, 255, 0.5);
+    border-color: #407bff;
+  }
+
   .text-gray-800 {
     color: #e0e0e0 !important;
   }
-  
+
   .text-gray-700 {
     color: #c0c0c0 !important;
   }
-  
+
   .text-gray-600 {
     color: #a0a0a0 !important;
   }
-  
+
   .bg-white {
     background-color: #1e1e1e !important;
   }
-  
+
   .bg-gray-100 {
     background-color: #282828 !important;
   }
-  
+
   .bg-gray-200 {
     background-color: #3a3a3a !important;
   }
-  
+
   .bg-gray-300 {
     background-color: #454545 !important;
   }
-  
+
   .border-gray-300 {
     border-color: #3a3a3a !important;
   }
-  
+
   .border-gray-200 {
     border-color: #333333 !important;
   }
