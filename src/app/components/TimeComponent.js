@@ -3,7 +3,7 @@ import FinanceComponent from './FinanceComponent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock, faCalendarAlt, faFastForward, faPause, faPlay, faBug, faSave } from '@fortawesome/free-solid-svg-icons';
 
-const TimeComponent = ({ 
+const TimeComponent = ({ gameSpeed, paused, setGameSpeed, 
     currentYear, 
     setCurrentYear, 
     platforms, 
@@ -42,7 +42,7 @@ const TimeComponent = ({
         const handleSpeedChange = (speed) => {
         // Check if function was passed as prop
         if (typeof toggleGameSpeed === 'function') {
-            toggleGameSpeed(speed);
+            setGameSpeed(speed);
         }
     };
 
