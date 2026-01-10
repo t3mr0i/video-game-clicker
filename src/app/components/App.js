@@ -112,7 +112,11 @@ function App() {
         { name: 'Apex Horizon', releaseYear: 2024, power: 19, difficulty: 8 },
         { name: 'Cyber Genesis', releaseYear: 2026, power: 21, difficulty: 9 },
         { name: 'Quantum Link', releaseYear: 2027, power: 22, difficulty: 9 },
-        { name: 'Stellar Horizon', releaseYear: 2028, power: 23, difficulty: 8 }
+        { name: 'Stellar Horizon', releaseYear: 2028, power: 23, difficulty: 8 },
+        { name: 'NeuraTech', releaseYear: 2029, power: 24, difficulty: 10 },
+        { name: 'Pixel Prime', releaseYear: 2030, power: 25, difficulty: 11 },
+        { name: 'Cosmic Engine', releaseYear: 2031, power: 26, difficulty: 12 },
+        { name: 'Radiant Core', releaseYear: 2032, power: 27, difficulty: 13 }
     ]);
     const [currentDay, setCurrentDay] = useState(1);
     const [currentWeek, setCurrentWeek] = useState(1);
