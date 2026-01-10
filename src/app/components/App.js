@@ -104,7 +104,11 @@ function App() {
         { name: 'NetPlay Station', releaseYear: 1999, power: 7, difficulty: 5 },
         { name: 'SilverStar', releaseYear: 2003, power: 9, difficulty: 6 },
         { name: 'Pulse Gaming', releaseYear: 2008, power: 10, difficulty: 5 },
-        { name: 'Neon Console', releaseYear: 2015, power: 14, difficulty: 5 }
+        { name: 'Neon Console', releaseYear: 2015, power: 14, difficulty: 5 },
+        { name: 'Quantum Realm', releaseYear: 2022, power: 18, difficulty: 6 },
+        { name: 'Cypher X', releaseYear: 2025, power: 20, difficulty: 7 },
+        { name: 'Stellar Gaming', releaseYear: 2019, power: 15, difficulty: 5 },
+        { name: 'Nova Nexus', releaseYear: 2023, power: 17, difficulty: 6 }
     ]);
     const [currentDay, setCurrentDay] = useState(1);
     const [currentWeek, setCurrentWeek] = useState(1);
