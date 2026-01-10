@@ -666,6 +666,33 @@ function App() {
                 category: 'studio',
                 triggeredBy: () => projects.filter(p => p.shipped).length > 3,
                 timestamp: currentYear
+            },
+            // New News Story 1: Awards and Recognition
+            {
+                id: 'news-industry-awards',
+                title: 'Indie Game Awards Announce Nominees',
+                description: 'The annual Indie Game Awards spotlight groundbreaking independent game developers from around the globe.',
+                category: 'industry',
+                triggeredBy: () => currentYear > 2010 && franchises.length >= 2,
+                timestamp: currentYear
+            },
+            // New News Story 2: Emerging Technologies
+            {
+                id: 'news-tech-vr-breakthrough',
+                title: 'Virtual Reality Gaming Takes Massive Leap Forward',
+                description: 'New VR technologies promise unprecedented immersion and interactivity in gaming experiences.',
+                category: 'technology',
+                triggeredBy: () => currentYear > 2015 && gameEngines.some(engine => engine.type === 'VR'),
+                timestamp: currentYear
+            },
+            // New News Story 3: Global Gaming Culture
+            {
+                id: 'news-market-esports-growth',
+                title: 'Esports Industry Reaches $1 Billion Revenue Milestone',
+                description: 'Competitive gaming continues to grow, attracting massive global audiences and significant investments.',
+                category: 'market',
+                triggeredBy: () => currentYear > 2020 && projects.filter(p => p.genre === 'Competitive').length > 0,
+                timestamp: currentYear
             }
         ];
 
