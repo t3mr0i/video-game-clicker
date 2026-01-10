@@ -837,6 +837,87 @@ function App() {
                 category: 'technology',
                 triggeredBy: () => currentYear > 2030,
                 timestamp: currentYear
+            },
+            // New 10 News Items
+            {
+                id: 'news-ai-game-accessibility',
+                title: 'AI Revolutionizes Game Accessibility',
+                description: 'Advanced AI technologies enable personalized game interfaces for players with diverse abilities.',
+                category: 'technology',
+                triggeredBy: () => currentYear > 2023,
+                timestamp: currentYear
+            },
+            {
+                id: 'news-indie-digital-distribution',
+                title: 'Independent Developers Break Digital Distribution Barriers',
+                description: 'New platforms emerge that allow small studios unprecedented access to global gaming markets.',
+                category: 'market',
+                triggeredBy: () => franchises.length > 3,
+                timestamp: currentYear
+            },
+            {
+                id: 'news-gaming-renewable-energy',
+                title: 'Gaming Industry Pioneers Renewable Energy Solutions',
+                description: 'Major game studios commit to carbon-neutral game development and server infrastructure.',
+                category: 'industry',
+                triggeredBy: () => currentYear > 2025,
+                timestamp: currentYear
+            },
+            {
+                id: 'news-procedural-narrative-ai',
+                title: 'Procedural Narrative AI Creates Endless Stories',
+                description: 'Machine learning algorithms can now generate complex, emotionally nuanced game narratives.',
+                category: 'technology',
+                triggeredBy: () => gameEngines.length > 4,
+                timestamp: currentYear
+            },
+            {
+                id: 'news-mobile-game-revolution',
+                title: 'Mobile Games Reach Console-Level Quality',
+                description: 'Advanced mobile hardware enables console-quality graphics and gameplay on smartphones.',
+                category: 'market',
+                triggeredBy: () => currentYear > 2022,
+                timestamp: currentYear
+            },
+            {
+                id: 'news-global-game-education-network',
+                title: 'Global Game Education Network Launches',
+                description: 'International consortium connects game design programs, fostering global collaboration and knowledge sharing.',
+                category: 'industry',
+                triggeredBy: () => franchises.length > 5,
+                timestamp: currentYear
+            },
+            {
+                id: 'news-real-time-translation-gaming',
+                title: 'Real-Time Game Translation Breaks Language Barriers',
+                description: 'AI-powered translation enables seamless multiplayer experiences across different languages.',
+                category: 'technology',
+                triggeredBy: () => currentYear > 2024,
+                timestamp: currentYear
+            },
+            {
+                id: 'news-ethical-monetization-standards',
+                title: 'New Ethical Monetization Standards Proposed',
+                description: 'Gaming industry develops comprehensive guidelines to prevent exploitative in-game purchase models.',
+                category: 'industry',
+                triggeredBy: () => currentYear > 2023,
+                timestamp: currentYear
+            },
+            {
+                id: 'news-game-data-privacy-movement',
+                title: 'Player Data Privacy Movement Gains Momentum',
+                description: 'Game developers commit to transparent data practices and player control over personal information.',
+                category: 'market',
+                triggeredBy: () => currentYear > 2025,
+                timestamp: currentYear
+            },
+            {
+                id: 'news-collaborative-game-development',
+                title: 'Global Collaborative Game Development Platform Emerges',
+                description: 'New platform allows developers from around the world to collaborate in real-time on game projects.',
+                category: 'technology',
+                triggeredBy: () => gameEngines.length > 5,
+                timestamp: currentYear
             }
         ];
 
