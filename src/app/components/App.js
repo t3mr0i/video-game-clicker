@@ -9,6 +9,7 @@ import EventsComponent from './EventsComponent';
 import FranchisesComponent from './FranchisesComponent';
 import StudioCultureComponent from './StudioCultureComponent';
 import DebugPanel from './DebugPanel';
+import NewsComponent from './NewsComponent';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -270,6 +271,7 @@ function App() {
         }
     ]);
     const [eventCooldown, setEventCooldown] = useState(0);
+    const [activeNews, setActiveNews] = useState([]);
 
     // Function to toggle game pause state
     const togglePaused = () => {
@@ -346,7 +348,8 @@ function App() {
                 
                 // Events & boosts
                 activeEvents,
-                
+                activeNews,
+
                 // Studio culture
                 studioCulture
             };
@@ -424,6 +427,7 @@ function App() {
             
             // Load events & boosts
             setActiveEvents(safeLocalStorageGet('activeEvents', []));
+            setActiveNews(safeLocalStorageGet('activeNews', []));
             
             // Load studio culture
             setStudioCulture(safeLocalStorageGet('studioCulture', {
@@ -616,6 +620,80 @@ function App() {
     };
 
     // Function to generate a game title
+    const generateNews = () => {
+        const newsItems = [
+            // Studio Success Stories
+            {
+                id: 'news-studio-success',
+                title: `${studioName} Gains Industry Recognition`,
+                description: 'Critics are praising the studio for innovative game design and creative storytelling.',
+                category: 'studio',
+                triggeredBy: () => franchises.length > 0,
+                timestamp: currentYear
+            },
+            // Industry Trends
+            {
+                id: 'news-industry-trend',
+                title: 'New Genre Emerging: Interactive Storytelling',
+                description: 'Game developers are exploring more narrative-driven experiences that blur the lines between games and movies.',
+                category: 'industry',
+                triggeredBy: () => currentYear > 2000,
+                timestamp: currentYear
+            },
+            // Market News
+            {
+                id: 'news-market-sales',
+                title: 'Global Game Sales Hit Record High',
+                description: 'The gaming industry continues to grow, with digital sales reaching unprecedented levels.',
+                category: 'market',
+                triggeredBy: () => projects.filter(p => p.shipped).length > 5,
+                timestamp: currentYear
+            },
+            // Technology Breakthrough
+            {
+                id: 'news-tech-breakthrough',
+                title: 'Revolutionary Game Engine Technology Announced',
+                description: 'A new game engine promises to revolutionize game development with unprecedented graphical capabilities.',
+                category: 'industry',
+                triggeredBy: () => gameEngines.length > 0,
+                timestamp: currentYear
+            },
+            // Studio Milestone
+            {
+                id: 'news-studio-milestone',
+                title: `${studioName} Reaches Significant Milestone`,
+                description: `The studio has now shipped ${projects.filter(p => p.shipped).length} games and continues to grow.`,
+                category: 'studio',
+                triggeredBy: () => projects.filter(p => p.shipped).length > 3,
+                timestamp: currentYear
+            }
+        ];
+
+        // Filter and generate news based on conditions
+        const availableNews = newsItems.filter(news =>
+            news.triggeredBy() &&
+            !activeNews.some(existingNews => existingNews.id === news.id)
+        );
+
+        // Randomly select news if available
+        if (availableNews.length > 0 && Math.random() < 0.2) { // 20% chance each week
+            const newNews = availableNews[Math.floor(Math.random() * availableNews.length)];
+            setActiveNews(prev => [
+                ...prev,
+                {
+                    ...newNews,
+                    id: `${newNews.id}-${Date.now()}`,
+                    createdAt: currentWeek
+                }
+            ]);
+        }
+    };
+
+    // Dismiss a specific news item
+    const dismissNews = (newsId) => {
+        setActiveNews(prev => prev.filter(news => news.id !== newsId));
+    };
+
     const generateGameTitle = (genre) => {
         const fantasyPrefixes = ['Elder', 'Dark', 'Lost', 'Forgotten', 'Crimson', 'Shadow', 'Mystic', 'Crystal', 'Eternal', 'Ancient'];
         const fantasyNouns = ['Scrolls', 'Realms', 'Legacy', 'Kingdoms', 'Legends', 'Chronicles', 'Fantasy', 'Souls', 'Destiny', 'Veil'];
@@ -1937,12 +2015,19 @@ function App() {
                 
                 <div className="card-grid">
                     <div className="game-card">
-                        <FinanceComponent 
-                            salaryCosts={salaryCosts} 
+                        <FinanceComponent
+                            salaryCosts={salaryCosts}
                             bankAccount={bankAccount}
                         />
                     </div>
-                
+
+                    <div className="game-card">
+                        <NewsComponent
+                            news={activeNews}
+                            onDismissNews={dismissNews}
+                        />
+                    </div>
+
                     <div className="game-card">
                         <ProjectComponent
                             startNewProject={createProject}
