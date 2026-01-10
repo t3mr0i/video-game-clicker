@@ -721,6 +721,88 @@ function App() {
                 triggeredBy: () => franchises.length >= 1 && currentYear > 2018,
                 timestamp: currentYear
             },
+            // New News Story 7: AI Accessibility in Gaming
+            {
+                id: 'news-ai-accessibility',
+                title: 'AI Revolutionizes Gaming Accessibility',
+                description: 'Advanced AI technologies enable real-time game adaptation for players with diverse abilities and disabilities.',
+                category: 'technology',
+                triggeredBy: () => currentYear > 2027 && technologies.some(tech => tech.type === 'Accessibility'),
+                timestamp: currentYear
+            },
+            // New News Story 8: Renewable Energy in Game Development
+            {
+                id: 'news-green-tech-gaming',
+                title: 'Game Studios Lead in Sustainable Computing',
+                description: 'Major game development studios commit to 100% renewable energy for game servers and development infrastructure.',
+                category: 'industry',
+                triggeredBy: () => currentYear > 2024 && gameEngines.length > 3,
+                timestamp: currentYear
+            },
+            // New News Story 9: Real-Time Language Translation
+            {
+                id: 'news-game-translation-tech',
+                title: 'Real-Time Game Translation Breaks Language Barriers',
+                description: 'Cutting-edge AI enables seamless, instant translation of game dialogue and chat in multiplayer environments.',
+                category: 'technology',
+                triggeredBy: () => currentYear > 2026 && technologies.some(tech => tech.type === 'Translation'),
+                timestamp: currentYear
+            },
+            // New News Story 10: Collaborative Game Development Platforms
+            {
+                id: 'news-collaborative-dev',
+                title: 'Global Platforms Revolutionize Game Collaboration',
+                description: 'New online platforms enable game developers from different continents to seamlessly co-create and prototype games.',
+                category: 'industry',
+                triggeredBy: () => currentYear > 2025 && franchises.length >= 3,
+                timestamp: currentYear
+            },
+            // New News Story 11: Neural Interface Gaming
+            {
+                id: 'news-neural-interface',
+                title: 'First Neural Interface Game Prototype Unveiled',
+                description: 'Researchers demonstrate a groundbreaking game controlled entirely through neural signals, opening new frontiers in interactive entertainment.',
+                category: 'technology',
+                triggeredBy: () => currentYear > 2029 && technologies.some(tech => tech.type === 'NeuralInterface'),
+                timestamp: currentYear
+            },
+            // New News Story 12: Global Esports Education
+            {
+                id: 'news-esports-education',
+                title: 'Universities Launch Comprehensive Esports Degrees',
+                description: 'Top universities worldwide now offer full academic programs in competitive gaming, game design, and esports management.',
+                category: 'industry',
+                triggeredBy: () => currentYear > 2026 && projects.filter(p => p.genre === 'Competitive').length > 2,
+                timestamp: currentYear
+            },
+            // New News Story 13: Procedural Narrative AI
+            {
+                id: 'news-procedural-narrative',
+                title: 'AI Creates Infinite, Unique Game Narratives',
+                description: 'Advanced AI algorithms can now generate completely unique, context-aware game storylines that adapt to player choices.',
+                category: 'technology',
+                triggeredBy: () => currentYear > 2028 && technologies.some(tech => tech.type === 'ProceduralNarrative'),
+                timestamp: currentYear
+            },
+            // New News Story 14: Blockchain Gaming Economies
+            {
+                id: 'news-blockchain-gaming',
+                title: 'Decentralized Gaming Economies Gain Traction',
+                description: 'Blockchain technology enables players to truly own, trade, and monetize in-game assets across multiple platforms.',
+                category: 'market',
+                triggeredBy: () => currentYear > 2027 && technologies.some(tech => tech.type === 'Blockchain'),
+                timestamp: currentYear
+            },
+            // New News Story 15: Ethical AI in Game Design
+            {
+                id: 'news-ethical-ai-design',
+                title: 'Global Initiative Launches Ethical AI Game Design Standards',
+                description: 'International consortium establishes comprehensive guidelines for responsible and unbiased AI implementation in video games.',
+                category: 'industry',
+                triggeredBy: () => currentYear > 2026 && technologies.some(tech => tech.type === 'AIEthics'),
+                timestamp: currentYear
+            }
+            },
             // New News Story 7: Cross-Platform Gaming
             {
                 id: 'news-cross-platform-breakthrough',
