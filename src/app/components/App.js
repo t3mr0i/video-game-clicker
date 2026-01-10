@@ -116,7 +116,11 @@ function App() {
         { name: 'NeuraTech', releaseYear: 2029, power: 24, difficulty: 10 },
         { name: 'Pixel Prime', releaseYear: 2030, power: 25, difficulty: 11 },
         { name: 'Cosmic Engine', releaseYear: 2031, power: 26, difficulty: 12 },
-        { name: 'Radiant Core', releaseYear: 2032, power: 27, difficulty: 13 }
+        { name: 'Radiant Core', releaseYear: 2032, power: 27, difficulty: 13 },
+        { name: 'Quantum Pulse', releaseYear: 2033, power: 28, difficulty: 14 },
+        { name: 'Neural Network', releaseYear: 2034, power: 29, difficulty: 15 },
+        { name: 'Holographic Hub', releaseYear: 2035, power: 30, difficulty: 16 },
+        { name: 'Synapse X', releaseYear: 2036, power: 31, difficulty: 17 }
     ]);
     const [currentDay, setCurrentDay] = useState(1);
     const [currentWeek, setCurrentWeek] = useState(1);
