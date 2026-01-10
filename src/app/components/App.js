@@ -99,7 +99,12 @@ function App() {
         { name: 'MegaStack Pro', releaseYear: 1987, power: 3, difficulty: 3 },
         { name: 'VirtualNest X', releaseYear: 1989, power: 4, difficulty: 4 },
         { name: 'CloudGamer Elite', releaseYear: 1992, power: 5, difficulty: 5 },
-        { name: 'Quantum Console', releaseYear: 1995, power: 6, difficulty: 6 }
+        { name: 'Quantum Console', releaseYear: 1995, power: 6, difficulty: 6 },
+        { name: 'Cyber Core', releaseYear: 1997, power: 5, difficulty: 4 },
+        { name: 'NetPlay Station', releaseYear: 1999, power: 7, difficulty: 5 },
+        { name: 'SilverStar', releaseYear: 2003, power: 9, difficulty: 6 },
+        { name: 'Pulse Gaming', releaseYear: 2008, power: 10, difficulty: 5 },
+        { name: 'Neon Console', releaseYear: 2015, power: 14, difficulty: 5 }
     ]);
     const [currentDay, setCurrentDay] = useState(1);
     const [currentWeek, setCurrentWeek] = useState(1);
