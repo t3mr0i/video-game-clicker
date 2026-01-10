@@ -93,7 +93,8 @@ function App() {
         { name: 'GizPro', releaseYear: 2005, power: 3, difficulty: 9 },
         { name: 'Trio Interactive', releaseYear: 1993, power: 7, difficulty: 6 },
         { name: 'VectorPlay', releaseYear: 1982, power: 3, difficulty: 3 },
-        { name: 'IntelliPlay', releaseYear: 1979, power: 3, difficulty: 3 }
+        { name: 'IntelliPlay', releaseYear: 1979, power: 3, difficulty: 3 },
+        { name: 'Xbox 360', releaseYear: 2005, power: 12, difficulty: 6 }
     ]);
     const [currentDay, setCurrentDay] = useState(1);
     const [currentWeek, setCurrentWeek] = useState(1);
