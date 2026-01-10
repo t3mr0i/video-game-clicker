@@ -756,6 +756,87 @@ function App() {
                 category: 'technology',
                 triggeredBy: () => currentYear > 2030,
                 timestamp: currentYear
+            },
+            // New News Story 11: Global Gaming Education
+            {
+                id: 'news-gaming-education-revolution',
+                title: 'Gaming Becomes a Formal Educational Path',
+                description: 'Universities launch first dedicated game design and interactive media degree programs globally.',
+                category: 'industry',
+                triggeredBy: () => currentYear > 2025,
+                timestamp: currentYear
+            },
+            // New News Story 12: AR Gaming Breakthrough
+            {
+                id: 'news-augmented-reality-gaming',
+                title: 'Augmented Reality Gaming Takes Giant Leap',
+                description: 'New AR technologies blur the lines between physical and digital gaming experiences.',
+                category: 'technology',
+                triggeredBy: () => currentYear > 2022,
+                timestamp: currentYear
+            },
+            // New News Story 13: Ethical Gaming Practices
+            {
+                id: 'news-ethical-gaming-standards',
+                title: 'Global Ethical Gaming Standards Proposed',
+                description: 'International consortium drafts comprehensive guidelines for responsible game design and player well-being.',
+                category: 'industry',
+                triggeredBy: () => currentYear > 2024,
+                timestamp: currentYear
+            },
+            // New News Story 14: Blockchain Game Economies
+            {
+                id: 'news-blockchain-game-economies',
+                title: 'Decentralized Game Economies Emerge',
+                description: 'Player-owned game assets and true digital ownership become mainstream in gaming ecosystems.',
+                category: 'market',
+                triggeredBy: () => gameEngines.length > 3,
+                timestamp: currentYear
+            },
+            // New News Story 15: Gaming Accessibility Milestone
+            {
+                id: 'news-gaming-accessibility-breakthrough',
+                title: 'Revolutionary Gaming Accessibility Features Unveiled',
+                description: 'New technologies enable unprecedented game experiences for players with diverse abilities.',
+                category: 'technology',
+                triggeredBy: () => currentYear > 2023,
+                timestamp: currentYear
+            },
+            // New News Story 16: Global Esports Education
+            {
+                id: 'news-esports-professional-training',
+                title: 'First Global Esports Training Academies Launch',
+                description: 'Professional training programs for competitive gaming emerge as a serious career path.',
+                category: 'industry',
+                triggeredBy: () => franchises.length > 5,
+                timestamp: currentYear
+            },
+            // New News Story 17: AI Game Testing
+            {
+                id: 'news-ai-game-testing',
+                title: 'AI Revolutionizes Game Quality Assurance',
+                description: 'Advanced AI systems can now comprehensively test video games, finding complex bugs faster than human testers.',
+                category: 'technology',
+                triggeredBy: () => technologies.some(tech => tech.id === 'tech-6'),
+                timestamp: currentYear
+            },
+            // New News Story 18: Global Gaming Infrastructure
+            {
+                id: 'news-global-gaming-infrastructure',
+                title: 'Ultra-Low Latency Global Gaming Network Launched',
+                description: 'New international network infrastructure enables seamless multiplayer experiences across continents.',
+                category: 'market',
+                triggeredBy: () => currentYear > 2025,
+                timestamp: currentYear
+            },
+            // New News Story 19: Neurogaming Advances
+            {
+                id: 'news-neurogaming-breakthrough',
+                title: 'First Direct Neural Interface Gaming System Demonstrated',
+                description: 'Groundbreaking technology allows direct brain-computer interaction in gaming experiences.',
+                category: 'technology',
+                triggeredBy: () => currentYear > 2030,
+                timestamp: currentYear
             }
         ];
 
