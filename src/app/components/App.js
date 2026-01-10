@@ -80,7 +80,13 @@ function App() {
         { name: 'M-Box One', releaseYear: 2013, power: 14, difficulty: 5, timeline: 'Entertainment hub era', news: 'Integrates TV and gaming services' },
         { name: 'M-Box X', releaseYear: 2020, power: 17, difficulty: 4, timeline: 'Cloud gaming start', news: 'Cloud game streaming capabilities' },
         // ... (rest of the list remains the same, just add timeline and news to each)
-        { name: 'Quantum Horizon', releaseYear: 2044, power: 38, difficulty: 21, timeline: 'Quantum computing gaming', news: 'Ultimate computational gaming platform' }
+        { name: 'Quantum Horizon', releaseYear: 2044, power: 38, difficulty: 21, timeline: 'Quantum computing gaming', news: 'Ultimate computational gaming platform' },
+
+        // Futuristic consoles with expanded timeline and news
+        { name: 'NeuroSync', releaseYear: 2030, power: 25, difficulty: 15, timeline: 'Neural interface gaming breakthrough', news: 'First console with direct brain-computer gaming interaction' },
+        { name: 'HoloStream X', releaseYear: 2035, power: 30, difficulty: 17, timeline: 'Immersive holographic gaming era', news: 'Introduces full-room holographic game environments' },
+        { name: 'Quantum Pulse Pro', releaseYear: 2040, power: 35, difficulty: 19, timeline: 'Quantum-entangled multiplayer networks', news: 'Enables instantaneous, lag-free global multiplayer experiences' },
+        { name: 'CyberNest Prime', releaseYear: 2045, power: 40, difficulty: 22, timeline: 'AI-generated personalized gaming worlds', news: 'Dynamically creates unique game experiences for each player' }
     ]);
     const [currentDay, setCurrentDay] = useState(1);
     const [currentWeek, setCurrentWeek] = useState(1);
