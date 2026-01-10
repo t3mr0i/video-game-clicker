@@ -693,6 +693,69 @@ function App() {
                 category: 'market',
                 triggeredBy: () => currentYear > 2020 && projects.filter(p => p.genre === 'Competitive').length > 0,
                 timestamp: currentYear
+            },
+            // New News Story 4: AI in Game Development
+            {
+                id: 'news-ai-game-design',
+                title: 'AI Transforms Game Design Landscape',
+                description: 'Artificial Intelligence starts generating unique game narratives and dynamic gameplay mechanics.',
+                category: 'technology',
+                triggeredBy: () => currentYear > 2025,
+                timestamp: currentYear
+            },
+            // New News Story 5: Cloud Gaming Expansion
+            {
+                id: 'news-cloud-gaming-rise',
+                title: 'Cloud Gaming Goes Mainstream',
+                description: 'High-quality game streaming becomes accessible to millions of players worldwide.',
+                category: 'market',
+                triggeredBy: () => currentYear > 2022,
+                timestamp: currentYear
+            },
+            // New News Story 6: Indie Studio Success
+            {
+                id: 'news-indie-studio-success',
+                title: 'Small Studio Wins Global Recognition',
+                description: 'An indie game studio breaks through with a revolutionary game concept, challenging industry giants.',
+                category: 'studio',
+                triggeredBy: () => franchises.length >= 1 && currentYear > 2018,
+                timestamp: currentYear
+            },
+            // New News Story 7: Cross-Platform Gaming
+            {
+                id: 'news-cross-platform-breakthrough',
+                title: 'Seamless Cross-Platform Gaming Arrives',
+                description: 'New technology enables true cross-platform multiplayer experiences across different devices.',
+                category: 'technology',
+                triggeredBy: () => gameEngines.length > 2,
+                timestamp: currentYear
+            },
+            // New News Story 8: Gaming Sustainability
+            {
+                id: 'news-sustainability-gaming',
+                title: 'Green Gaming Movement Gains Momentum',
+                description: 'Game developers commit to reducing carbon footprint of game production and digital infrastructure.',
+                category: 'industry',
+                triggeredBy: () => currentYear > 2020,
+                timestamp: currentYear
+            },
+            // New News Story 9: Games for Mental Health
+            {
+                id: 'news-mental-health-games',
+                title: 'Games Emerge as Mental Health Support Tools',
+                description: 'Researchers highlight the potential of interactive experiences in mental health therapy and support.',
+                category: 'industry',
+                triggeredBy: () => currentYear > 2024,
+                timestamp: currentYear
+            },
+            // New News Story 10: Quantum Computing in Gaming
+            {
+                id: 'news-quantum-computing-games',
+                title: 'Quantum Computing Enters Gaming Realm',
+                description: 'First demonstrations of quantum-computed game graphics show unprecedented complexity and realism.',
+                category: 'technology',
+                triggeredBy: () => currentYear > 2030,
+                timestamp: currentYear
             }
         ];
 
