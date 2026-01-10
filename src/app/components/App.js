@@ -94,7 +94,12 @@ function App() {
         { name: 'Trio Interactive', releaseYear: 1993, power: 7, difficulty: 6 },
         { name: 'VectorPlay', releaseYear: 1982, power: 3, difficulty: 3 },
         { name: 'IntelliPlay', releaseYear: 1979, power: 3, difficulty: 3 },
-        { name: 'Xbox 360', releaseYear: 2005, power: 12, difficulty: 6 }
+        { name: 'Xbox 360', releaseYear: 2005, power: 12, difficulty: 6 },
+        { name: 'RetroPlay 3000', releaseYear: 1983, power: 1, difficulty: 2 },
+        { name: 'MegaStack Pro', releaseYear: 1987, power: 3, difficulty: 3 },
+        { name: 'VirtualNest X', releaseYear: 1989, power: 4, difficulty: 4 },
+        { name: 'CloudGamer Elite', releaseYear: 1992, power: 5, difficulty: 5 },
+        { name: 'Quantum Console', releaseYear: 1995, power: 6, difficulty: 6 }
     ]);
     const [currentDay, setCurrentDay] = useState(1);
     const [currentWeek, setCurrentWeek] = useState(1);
@@ -507,6 +512,7 @@ function App() {
     };
 
     const addNotification = (message, type) => {
+        console.debug(`[Notification] Type: ${type}, Message: ${message}`);
         toast(message, { type });
     };
 
