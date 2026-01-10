@@ -27,8 +27,7 @@ const TimeComponent = ({
 }) => {
     const [currentMonth, setCurrentMonth] = useState(1);
     const [monthProgress, setMonthProgress] = useState(0);
-    const [gameSpeed, setGameSpeed] = useState(1400); // Default speed: 1400ms
-    const [paused, setPaused] = useState(false);
+    // Remove local state and use props instead
 
     useEffect(() => {
         if (paused) return;
@@ -40,12 +39,11 @@ const TimeComponent = ({
         return () => clearInterval(timer);
     }, [currentDay, currentMonth, currentYear, currentWeek, gameSpeed, paused]);
 
-    const handleSpeedChange = (speed) => {
-        setGameSpeed(speed);
-    };
-
-    const togglePaused = () => {
-        setPaused(!paused);
+        const handleSpeedChange = (speed) => {
+        // Check if function was passed as prop
+        if (typeof toggleGameSpeed === 'function') {
+            toggleGameSpeed(speed);
+        }
     };
 
     const formatLastSaved = () => {
@@ -137,8 +135,8 @@ const TimeComponent = ({
 
     // Button styling with conditional classes
     const speedButtonClass = (speed) => {
-        return `px-2 py-1 text-xs font-medium rounded ${gameSpeed === speed 
-            ? 'bg-blue-500 text-white' 
+        return `px-2 py-1 text-xs font-medium rounded ${speed
+            ? 'bg-blue-500 text-white'
             : 'bg-gray-200 hover:bg-gray-300 text-gray-800'}`;
     };
 
@@ -161,20 +159,20 @@ const TimeComponent = ({
             </div>
             
             <div className="flex flex-wrap items-center gap-1">
-                <button 
-                    onClick={togglePaused}
-                    className={`px-2 py-1 font-medium rounded flex items-center ${paused 
-                        ? 'bg-green-500 hover:bg-green-600 text-white' 
+                <button
+                    onClick={typeof togglePaused === 'function' ? () => togglePaused() : null}
+                    className={`px-2 py-1 font-medium rounded flex items-center ${paused
+                        ? 'bg-green-500 hover:bg-green-600 text-white'
                         : 'bg-yellow-500 hover:bg-yellow-600 text-white'}`}
                 >
                     <FontAwesomeIcon icon={paused ? faPlay : faPause} className="mr-1" />
                     {paused ? "Play" : "Pause"}
                 </button>
-                
+
                 <div className="flex gap-1 ml-1">
-                    <button onClick={() => setGameSpeed(1)} className={speedButtonClass(1)}>1x</button>
-                    <button onClick={() => setGameSpeed(2)} className={speedButtonClass(2)}>2x</button>
-                    <button onClick={() => setGameSpeed(5)} className={speedButtonClass(5)}>5x</button>
+                    <button onClick={() => handleSpeedChange(1)} className={speedButtonClass(gameSpeed === 1 ? 1 : null)}>1x</button>
+                    <button onClick={() => handleSpeedChange(2)} className={speedButtonClass(gameSpeed === 2 ? 2 : null)}>2x</button>
+                    <button onClick={() => handleSpeedChange(5)} className={speedButtonClass(gameSpeed === 5 ? 5 : null)}>5x</button>
                 </div>
             </div>
             

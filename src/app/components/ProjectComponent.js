@@ -216,22 +216,25 @@ const ProjectComponent = ({
         }
     };
 
-    function renderProgress(progress, requiredPoints) {
-        const cycleCount = Math.floor(progress / requiredPoints); // Number of complete cycles
-        const currentProgress = (progress % requiredPoints) / requiredPoints * 100; // Remaining progress after cycles, scaled to a percentage
+    function renderProgress(progress, maxPoints = 100) {
+        // Clamp progress between 0 and 100
+        const normalizedProgress = Math.min(Math.max(0, progress), maxPoints);
 
-        // Define colors for each cycle, add more colors if needed
-        const cycleColors = ['bg-green-500', 'bg-yellow-500', 'bg-red-500', 'bg-blue-500'];
+        // Determine the bar color based on progress
+        const barColors = [
+            { max: 25, color: 'bg-red-500' },
+            { max: 50, color: 'bg-yellow-500' },
+            { max: 75, color: 'bg-blue-500' },
+            { max: 100, color: 'bg-green-500' }
+        ];
 
-        // Determine the color based on the cycle count
-        const barColor = cycleColors[cycleCount % cycleColors.length];
+        const barColor = barColors.find(color => normalizedProgress <= color.max).color;
 
-        // Return the progress bar with dynamic width and color
         return (
             <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
                     className={`${barColor} h-2 rounded-full transition-all duration-300 ease-in-out`}
-                    style={{ width: `${currentProgress}%` }}
+                    style={{ width: `${normalizedProgress}%` }}
                 ></div>
             </div>
         );
@@ -324,7 +327,7 @@ const ProjectComponent = ({
                                         <span className="text-gray-800">{Math.round(project.developmentPoints)}/{project.requiredPoints} pts</span>
                                     )}
                                 </div>
-                                {renderProgress(project.progress, 100)}
+                                {renderProgress(project.progress)}
                                 
                                 <div className="mt-1 flex flex-wrap gap-1">
                                     {project.engineName && (

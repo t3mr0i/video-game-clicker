@@ -2,7 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle, faCheckCircle, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 
-const EventsComponent = ({ events, currentYear }) => {
+const EventsComponent = ({ events, currentWeek }) => {
     if (!events || events.length === 0) {
         return null;
     }
@@ -12,7 +12,7 @@ const EventsComponent = ({ events, currentYear }) => {
             <h2 className="text-lg font-semibold mb-3">Active Events</h2>
             <div className="space-y-3">
                 {events.map(event => {
-                    const weeksRemaining = event.endWeek - currentYear;
+                    const weeksRemaining = Math.max(0, event.endWeek - currentWeek);
                     const isPositive = event.type === 'positive';
                     
                     return (

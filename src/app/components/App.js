@@ -37,8 +37,7 @@ function App() {
         { id: 1, name: 'Action', popularity: 8, complexity: 3 },
         { id: 2, name: 'Adventure', popularity: 7, complexity: 2 },
         { id: 3, name: 'Strategy', popularity: 7, complexity: 4 },
-        { id: 4, name: 'Simulation', popularity: 6, complexity: 3 },
-        { id: 5, name: 'RPG', popularity: 9, complexity: 5 },
+                { id: 5, name: 'RPG', popularity: 9, complexity: 5 },
         { id: 6, name: 'Sports', popularity: 7, complexity: 3 },
         { id: 7, name: 'Puzzle', popularity: 6, complexity: 2 },
         { id: 8, name: 'Shooter', popularity: 8, complexity: 4 },
@@ -470,9 +469,18 @@ function App() {
             clearInterval(autoSaveInterval);
             window.removeEventListener('blur', autoSave);
         };
-    }, [currentYear, currentMonth, currentWeek, currentDay, employees, projects, 
-        publishers, bankAccount, studioLevel, studioExp, studioExpToNextLevel, technologies, gameEngines, 
-        activeEvents, studioCulture]);
+    }, [JSON.stringify({
+        currentYear,
+        currentMonth,
+        currentWeek,
+        currentDay,
+        employeesCount: employees.length,
+        projectsCount: projects.length,
+        bankAccount,
+        studioLevel,
+        studioExp,
+        studioExpToNextLevel
+    })]);
     
     // Also save when important state changes (less frequent than the regular autosave)
     useEffect(() => {
