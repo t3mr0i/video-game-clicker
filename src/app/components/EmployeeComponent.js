@@ -3,6 +3,39 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus, faStar, faCode, faWrench, faBug, faPaintBrush, faUser, faChartLine, faVial, faBullhorn, faSearch } from '@fortawesome/free-solid-svg-icons';
 import Modal from 'react-modal';
 
+const PERSONALITIES = {
+    Developer: [
+        "Perfectionist", "Quick Learner", "Creative Coder", "Problem Solver", "Tech Geek",
+        "Night Owl", "Team Player", "Solo Genius", "Caffeine Addict", "Experimental"
+    ],
+    Designer: [
+        "Visionary", "Minimalist", "Color Enthusiast", "User-Focused", "Trendsetter",
+        "Storyteller", "Pixel Perfectionist", "Unconventional", "Collaborative", "Intuitive"
+    ],
+    Marketer: [
+        "Social Butterfly", "Data Driven", "Storyteller", "Persuasive", "Trend Spotter",
+        "Digital Native", "Creative Strategist", "Network Expert", "Bold Communicator", "Adaptable"
+    ]
+};
+
+const PERSONALITY_EFFECTS = {
+    "Perfectionist": { skillGainRate: 1.2, projectDelayRisk: 0.3 },
+    "Quick Learner": { skillGainRate: 1.5, initialSkillPoints: 2 },
+    "Creative Coder": { bugFixRate: 1.3, randomBugChance: 0.2 },
+    "Night Owl": { lateNightProductivity: 1.2, energyDrainRate: 0.3 },
+    "Team Player": { teamBonusMultiplier: 1.2, individualPerformance: 0.9 },
+    "Solo Genius": { individualPerformance: 1.3, teamBonusMultiplier: 0.8 },
+    "Visionary": { creativityBoost: 1.3, marketAcceptanceChance: 1.2 },
+    "User-Focused": { userExperienceImpact: 1.4, designCost: 1.1 },
+    "Social Butterfly": { networkingEffectiveness: 1.3, socialMediaEngagement: 1.2 },
+    "Data Driven": { marketResearchAccuracy: 1.4, advertisingEfficiency: 1.2 }
+};
+
+const getRandomPersonality = (type) => {
+    const personalities = PERSONALITIES[type] || [];
+    return personalities[Math.floor(Math.random() * personalities.length)];
+};
+
 const EmployeeComponent = ({
     employees = [],
     hireEmployee,
@@ -32,7 +65,9 @@ const EmployeeComponent = ({
 
     const handleHireEmployee = () => {
         if (typeof hireEmployee === 'function') {
-            hireEmployee(selectedEmployeeType);
+            const personality = getRandomPersonality(selectedEmployeeType);
+            const personalityEffects = PERSONALITY_EFFECTS[personality] || {};
+            hireEmployee(selectedEmployeeType, { personality, personalityEffects });
         }
     };
 
@@ -250,24 +285,31 @@ const EmployeeComponent = ({
                                     onClick={() => openEmployeeDetails(employee)}
                                 >
                                     <div className="flex justify-between items-start">
-                                        <h3 className="font-semibold text-gray-800">{employee.name}</h3>
+                                        <div>
+                                            <h3 className="font-semibold text-gray-800">{employee.name}</h3>
+                                            {employee.personality && (
+                                                <div className="text-xs text-gray-600 mt-0.5">
+                                                    {employee.personality}
+                                                </div>
+                                            )}
+                                        </div>
                                         <div className="text-xs font-medium px-2 py-0.5 rounded bg-gray-200 text-gray-700">
                                             {employee.type}
                                         </div>
                                     </div>
-                                    
+
                                     <div className="text-xs text-gray-700 mt-1 space-y-1">
                                         {renderSkillIcons(employee)}
-                                        
+
                                         <div className="mt-1 flex justify-between items-center">
-                                            <div className="text-gray-800">
+                                            <div className="text-gray-800 space-x-1">
                                                 {employee.skillPoints > 0 && (
                                                     <span className="bg-yellow-100 text-yellow-800 px-1 rounded">
                                                         {employee.skillPoints} skill points
                                                     </span>
                                                 )}
                                             </div>
-                                            
+
                                             <div className="text-gray-800">
                                                 {employee.projectId ? (
                                                     <div className="flex items-center">
@@ -338,19 +380,38 @@ const EmployeeComponent = ({
                                 <div>{selectedEmployee.type}</div>
                                 <div>Experience: {selectedEmployee.experience || 0} years</div>
                                 <div>Skill Points: {selectedEmployee.skillPoints || 0}</div>
+                                {selectedEmployee.personality && (
+                                    <div className="mt-1 flex items-center">
+                                        <span className="font-semibold mr-2">Personality:</span>
+                                        <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-xs">
+                                            {selectedEmployee.personality}
+                                        </span>
+                                    </div>
+                                )}
                             </div>
-                            
+
                             <div className="mt-2 text-sm">
                                 <h3 className="font-bold text-gray-700 mb-1">Skills</h3>
                                 <div className="space-y-1">
                                     {renderSkillIcons(selectedEmployee)}
                                 </div>
                             </div>
-                            
+
                             {selectedEmployee.skillPoints > 0 && (
                                 <div className="mt-2">
                                     <h3 className="font-bold text-gray-700 mb-1">Improve Skills</h3>
                                     {renderSkillUpgradeButtons()}
+                                </div>
+                            )}
+
+                            {selectedEmployee.personalityEffects && Object.keys(selectedEmployee.personalityEffects).length > 0 && (
+                                <div className="mt-2 text-sm">
+                                    <h3 className="font-bold text-gray-700 mb-1">Personality Effects</h3>
+                                    <ul className="list-disc list-inside text-xs text-gray-700">
+                                        {Object.entries(selectedEmployee.personalityEffects).map(([key, value]) => (
+                                            <li key={key}>{key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}: {value}</li>
+                                        ))}
+                                    </ul>
                                 </div>
                             )}
                             
