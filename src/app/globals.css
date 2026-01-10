@@ -3,22 +3,32 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --color-primary: #2563eb;       /* Vibrant blue */
+  --color-secondary: #10b981;     /* Emerald green */
+  --color-accent: #ef4444;        /* Bright red */
+  --color-background-dark: #121212;
+  --color-background-medium: #1e1e1e;
+  --color-background-light: #1f2937;
+  --color-text-primary: #f0f0f0;
+  --color-text-secondary: #a0a0a0;
+  --color-text-tertiary: #6b7280;
+
+  --foreground-rgb: 240, 240, 240;
+  --background-start-rgb: 18, 18, 18;
+  --background-end-rgb: 18, 18, 18;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --foreground-rgb: 240, 240, 240;
+    --background-start-rgb: 18, 18, 18;
+    --background-end-rgb: 18, 18, 18;
   }
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(135deg, #121212, #1e1e1e);
+  color: var(--color-text-primary);
+  background: linear-gradient(135deg, var(--color-background-dark), var(--color-background-medium));
   font-smooth: antialiased;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -28,6 +38,14 @@ body {
   background-size: cover;
   background-position: center;
   overflow-x: hidden;
+  font-family: 'Inter', 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  line-height: 1.6;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 body::before {
@@ -37,9 +55,43 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at top right, rgba(64, 123, 255, 0.1), transparent 30%);
+  background: linear-gradient(
+    -45deg,
+    rgba(37, 99, 235, 0.1),
+    rgba(16, 185, 129, 0.1),
+    rgba(239, 68, 68, 0.1),
+    rgba(64, 123, 255, 0.1)
+  );
+  background-size: 400% 400%;
+  animation: gradient-shift 15s ease infinite;
   pointer-events: none;
   z-index: -1;
+}
+
+@keyframes subtle-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+.game-card:hover {
+  animation: subtle-pulse 1.5s infinite;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-grid > .game-card {
+  opacity: 0;
+  animation: fade-in-up 0.5s forwards;
+  animation-delay: calc(var(--index, 0) * 100ms);
 }
 
 /* Mobile-first approach */
@@ -72,21 +124,76 @@ body::before {
   grid-template-columns: 1fr;
 }
 
-@media (min-width: 640px) {
+@media (max-width: 640px) {
   .card-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .time-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .time-controls button {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .game-card {
+    padding: 0.75rem;
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 641px) and (max-width: 1023px) {
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
   .card-grid {
     grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
   }
 }
 
 @media (min-width: 1280px) {
   .card-grid {
     grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+/* Typography adjustments for mobile */
+@media (max-width: 640px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+  }
+
+  .game-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Scrollbar adjustments for mobile */
+@media (max-width: 640px) {
+  body::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  body::-webkit-scrollbar-thumb {
+    border-width: 2px;
   }
 }
 
@@ -98,10 +205,13 @@ body::before {
     0 4px 6px rgba(0, 0, 0, 0.2),
     0 10px 20px rgba(64, 123, 255, 0.1);
   overflow: hidden;
-  transition: all 0.3s ease-in-out;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   border: 1px solid rgba(64, 123, 255, 0.1);
   position: relative;
   color: #e0e0e0;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .game-card::before {
@@ -110,7 +220,7 @@ body::before {
   top: 0;
   left: 0;
   width: 100%;
-  height: 3px;
+  height: 4px;
   background: linear-gradient(90deg, #ef4444, #10b981);
 }
 
@@ -121,6 +231,19 @@ body::before {
   transform: translateY(-8px) scale(1.02);
   border-color: rgba(64, 123, 255, 0.3);
   z-index: 10;
+}
+
+.game-card h3 {
+  margin-top: 0;
+  color: #f0f0f0;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.game-card p {
+  margin-bottom: 0.5rem;
+  color: #a0a0a0;
 }
 
 /* Button styles */
@@ -140,6 +263,9 @@ body::before {
   color: #f0f0f0;
   position: relative;
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .game-button::before {
@@ -163,6 +289,7 @@ body::before {
   box-shadow:
     0 8px 15px rgba(0, 0, 0, 0.2),
     0 5px 10px rgba(64, 123, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .game-button:hover:not(:disabled)::before {
@@ -170,10 +297,11 @@ body::before {
 }
 
 .game-button:active:not(:disabled) {
-  transform: translateY(2px) scale(0.95);
+  transform: translateY(2px) scale(0.98);
   box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.1),
     0 1px 2px rgba(64, 123, 255, 0.05);
+  background: linear-gradient(145deg, #1e40af, #2563eb);
 }
 
 .game-button:disabled {
@@ -182,6 +310,7 @@ body::before {
   box-shadow: none;
   transform: none;
   background: linear-gradient(145deg, #4b5563, #374151);
+  border-color: transparent;
 }
 
 /* Dark mode specific styles */
