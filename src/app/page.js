@@ -1,18 +1,19 @@
 'use client'
 import Head from 'next/head';
-import App from './components/App';
+import LeonardCookieClicker from './components/LeonardCookieClicker';
 import './globals.css'
 
 export default function Home() {
   return (
     <div>
       <Head>
-        <title>Game Studio Manager</title>
+        <title>Leonard Cookie Clicker</title>
         <link
           rel="stylesheet"
-          href="/animate.css" // The path to your animate.css file in the public folder
-        />      </Head>
-      <App></App>
+          href="/animate.css"
+        />
+      </Head>
+      <LeonardCookieClicker />
     </div>
   );
 }
