@@ -5,17 +5,18 @@ const LeonardCookieClicker = () => {
   const [cookies, setCookies] = useState(0);
   const [multiplier, setMultiplier] = useState(1);
   const [autoClickers, setAutoClickers] = useState(0);
+  const [rockRating, setRockRating] = useState(1);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCookies(prev => prev + autoClickers * multiplier);
+      setCookies(prev => prev + (autoClickers * multiplier * rockRating));
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [autoClickers, multiplier]);
+  }, [autoClickers, multiplier, rockRating]);
 
   const handleClick = () => {
-    setCookies(prev => prev + 1 * multiplier);
+    setCookies(prev => prev + (1 * multiplier * rockRating));
   };
 
   const buyAutoClicker = () => {
@@ -34,9 +35,17 @@ const LeonardCookieClicker = () => {
     }
   };
 
+  const upgradeRockRating = () => {
+    const cost = (rockRating) * 100;
+    if (cookies >= cost) {
+      setCookies(prev => prev - cost);
+      setRockRating(prev => prev + 1);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-center p-4 bg-gradient-to-r from-blue-500 to-purple-600 min-h-screen">
-      <h1 className="text-4xl font-bold mb-4 text-white">Leonard Cookie Clicker</h1>
+      <h1 className="text-4xl font-bold mb-4 text-white">Leonard Cookie Clicker Gaming Band</h1>
       <div className="text-center">
         <div className="mb-4 text-2xl text-white">
           Cookies: {cookies.toLocaleString()}
@@ -45,7 +54,7 @@ const LeonardCookieClicker = () => {
           onClick={handleClick}
           className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-4 rounded-full transition duration-300 transform hover:scale-110"
         >
-          Click for Cookies!
+          Rock Out for Cookies!
         </button>
         <div className="mt-4 space-y-2">
           <button
@@ -62,14 +71,24 @@ const LeonardCookieClicker = () => {
           >
             Upgrade Multiplier (Cost: {(multiplier) * 50} cookies)
           </button>
+          <button
+            onClick={upgradeRockRating}
+            disabled={cookies < (rockRating) * 100}
+            className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
+          >
+            Rock Rating (Cost: {(rockRating) * 100} cookies)
+          </button>
         </div>
         <div className="mt-4 text-white">
           <p>Auto Clickers: {autoClickers}</p>
           <p>Multiplier: {multiplier}x</p>
+          <p>Rock Rating: {rockRating}★</p>
         </div>
       </div>
     </div>
   );
 };
+
+export default LeonardCookieClicker;
 
 export default LeonardCookieClicker;
