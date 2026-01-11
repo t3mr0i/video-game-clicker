@@ -38,9 +38,9 @@ export const calculateDevelopmentPoints = (platform, genre, size, year, employee
   const platformModifiers = {
     PC: { baseModifier: 1.0, complexityFactor: 0.9, marketReach: 1.2 },
     Console: { baseModifier: 1.2, complexityFactor: 1.1, marketReach: 1.0 },
-    Mobile: { baseModifier: 0.8, complexityFactor: 0.7, marketReach: 1.5 },
-    Web: { baseModifier: 0.7, complexityFactor: 0.5, marketReach: 0.6 },
-    VR: { baseModifier: 1.5, complexityFactor: 1.3, marketReach: 0.4 }
+    Mobile: { baseModifier: 1.5, complexityFactor: 0.9, marketReach: 1.5 },
+    Web: { baseModifier: 0.4, complexityFactor: 0.5, marketReach: 0.6 },
+    VR: { baseModifier: 2.5, complexityFactor: 1.5, marketReach: 0.4 }
   };
 
   const genreModifiers = {
@@ -57,11 +57,10 @@ export const calculateDevelopmentPoints = (platform, genre, size, year, employee
   };
 
   const skillWeights = {
-    Developer: 0.5,
-    Designer: 0.2,
-    Artist: 0.15,
-    SoundDesigner: 0.1,
-    Producer: 0.05
+    programming: 0.5,
+    design: 0.3,
+    art: 0.15,
+    audio: 0.05
   };
 
   // Team composition diversity bonus
@@ -84,7 +83,7 @@ export const calculateDevelopmentPoints = (platform, genre, size, year, employee
     ? Object.entries(employeeSkills).reduce((total, [role, skill]) => {
         const weight = skillWeights[role] || 0.1;
         return total + (skill * weight);
-      }, 0)
+      }, 0) * 2
     : 50; // Default skill level
 
   const yearModifier = Math.max(0.8, 1.0 + (year - 2020) * 0.06);
@@ -254,5 +253,4 @@ export const calculateMarketDemand = (genre, platform, year, previousGameSuccess
   }
 
   return result;
-};
 };

@@ -334,10 +334,10 @@ export function GameProvider({ children }) {
     })
   };
 
-  return (
-    <GameContext.Provider value={{ state, actions }}>
-      {children}
-    </GameContext.Provider>
+  return React.createElement(
+    GameContext.Provider,
+    { value: { state, actions } },
+    children
   );
 }
 
