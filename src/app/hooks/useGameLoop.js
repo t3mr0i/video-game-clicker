@@ -22,21 +22,36 @@ export function useGameLoop() {
     // Skip if tab was inactive for too long (> 5 seconds)
     if (deltaTime > 5000) return;
 
-    // Fixed timestep with accumulator for stable updates
-    frameAccumulator.current += deltaTime;
+    // Prevent excessive accumulation
+    frameAccumulator.current = Math.min(frameAccumulator.current + deltaTime, fixedTimeStep.current * 5);
 
-    while (frameAccumulator.current >= fixedTimeStep.current) {
+    let iterations = 0;
+    const maxIterations = 3; // Prevent infinite loop
+
+    while (frameAccumulator.current >= fixedTimeStep.current && iterations < maxIterations) {
       const gameTickDelta = fixedTimeStep.current;
 
-      // Calculate time progression
-      const timeStep = (gameTickDelta / 1000) * state.gameSpeed;
+      // Calculate time progression with safety checks
+      const timeStep = Math.max(0, Math.min((gameTickDelta / 1000) * state.gameSpeed, 1));
       const daysPerSecond = GAME_MECHANICS.GAME_DAYS_PER_REAL_SECOND;
-      const dayProgress = timeStep * daysPerSecond;
+      const dayProgress = Math.max(0, timeStep * daysPerSecond);
 
-      advanceTime(dayProgress);
-      processAutomaticActions(dayProgress);
+      // Error handling for tick processing
+      try {
+        advanceTime(dayProgress);
+        processAutomaticActions(dayProgress);
+      } catch (error) {
+        console.error('Game tick processing error:', error);
+        break; // Exit loop on error to prevent game freeze
+      }
 
       frameAccumulator.current -= fixedTimeStep.current;
+      iterations++;
+    }
+
+    // Reset accumulator if iterations exceeded
+    if (iterations === maxIterations) {
+      frameAccumulator.current = 0;
     }
   }, [state.gameSpeed, state.currentDate, state.projects, state.employees, state.money]);
 
@@ -175,36 +190,106 @@ export function useGameLoop() {
   }, [actions, state.morale]);
 
   const calculateSkillMatch = (employee, project) => {
-    // Simple skill matching - could be expanded based on project requirements
-    const relevantSkills = ['programming', 'design', 'testing'];
-    const skillSum = relevantSkills.reduce((sum, skill) => sum + (employee.skills[skill] || 50), 0);
-    return skillSum / (relevantSkills.length * 100); // Normalize to 0-1
+    // More sophisticated skill matching based on project phase and requirements
+    const relevantSkills = project.requiredSkills || ['programming', 'design', 'testing'];
+    const phaseMultipliers = {
+      'Concept': 0.5,
+      'Pre-production': 0.7,
+      'Production': 1.0,
+      'Alpha': 1.2,
+      'Beta': 1.5,
+      'Release': 1.0
+    };
+
+    const phaseMultiplier = phaseMultipliers[project.phase] || 1.0;
+
+    // Deeper skill calculation with personality and experience factors
+    const skillSum = relevantSkills.reduce((sum, skill) => {
+      const skillLevel = employee.skills[skill] || 50;
+      const personalityBonus = employee.personality.includes('Innovative') ? 1.1 :
+                                employee.personality.includes('Perfectionist') ? 1.05 : 1.0;
+
+      return sum + (skillLevel * personalityBonus);
+    }, 0);
+
+    // Normalize and apply phase multiplier
+    return Math.min(1, (skillSum / (relevantSkills.length * 100)) * phaseMultiplier);
   };
 
   const calculateProjectRevenue = (project) => {
-    // Base revenue calculation with quality-based variance
+    // More dynamic revenue calculation with genre and market factors
     const baseRevenue = project.estimatedRevenue || 50000;
 
-    // Factor in project size and complexity
-    const sizeMultiplier = project.size === 3 ? 2.5 : project.size === 2 ? 1.5 : 1.0;
+    // Sophisticated size and complexity multipliers
+    const sizeMultipliers = {
+      1: 1.0,  // Small game
+      2: 1.5,  // Medium game
+      3: 2.5   // Large AAA game
+    };
+    const sizeMultiplier = sizeMultipliers[project.size] || 1.0;
 
-    // Quality variance based on team composition and morale
+    // Genre popularity and current market trends
+    const genrePopularityMultipliers = {
+      'Action': 1.3,
+      'RPG': 1.2,
+      'Strategy': 1.1,
+      'Simulation': 0.9,
+      'Puzzle': 0.8
+    };
+    const genreMultiplier = genrePopularityMultipliers[project.genre] || 1.0;
+
+    // Quality variance based on team composition, morale, and project complexity
     const teamQuality = state.morale / 100;
-    const qualityVariance = 0.2 + (teamQuality * 0.3); // 0.2-0.5 range
-    const randomFactor = 0.8 + (Math.random() * 0.4); // 0.8-1.2 range
+    const projectComplexityFactor = project.requiredSkills ? project.requiredSkills.length * 0.1 : 0.2;
+    const qualityVariance = 0.2 + (teamQuality * 0.3) + projectComplexityFactor;
 
-    return Math.floor(baseRevenue * sizeMultiplier * qualityVariance * randomFactor);
+    // Random market reception factor
+    const marketReceptionFactor = 0.8 + (Math.random() * 0.4);
+
+    // Platform factor
+    const platformMultipliers = {
+      'PC': 1.0,
+      'Console': 1.2,
+      'Mobile': 0.9,
+      'Web': 0.7,
+      'VR': 1.5
+    };
+    const platformMultiplier = platformMultipliers[project.platform] || 1.0;
+
+    return Math.floor(
+      baseRevenue *
+      sizeMultiplier *
+      genreMultiplier *
+      qualityVariance *
+      marketReceptionFactor *
+      platformMultiplier
+    );
   };
 
   const calculateMoraleChanges = (dayProgress) => {
     let moraleChange = 0;
 
-    // Workload pressure - more nuanced calculation
-    const activeProjects = (state.projects || []).filter(p => p.status === 'in-progress').length;
+    // Workload pressure - more dynamic calculation
+    const activeProjects = (state.projects || []).filter(p => p.status === 'in-progress');
     const employeeCount = Math.max(1, (state.employees || []).length);
-    const workloadRatio = activeProjects / employeeCount;
+    const workloadRatio = activeProjects.length / employeeCount;
 
-    if (workloadRatio > 2.5) {
+    // Project phase complexity impacts workload
+    const phaseWorkloadImpact = activeProjects.reduce((impact, project) => {
+      const phaseMultipliers = {
+        'Concept': 0.2,
+        'Pre-production': 0.5,
+        'Production': 1.0,
+        'Alpha': 1.5,
+        'Beta': 2.0,
+        'Release': 0.5
+      };
+      return impact + (phaseMultipliers[project.phase] || 1.0);
+    }, 0);
+
+    if (phaseWorkloadImpact > 3.0) {
+      moraleChange -= 10 * dayProgress; // Extreme project complexity stress
+    } else if (workloadRatio > 2.5) {
       moraleChange -= 8 * dayProgress; // Severe overwork
     } else if (workloadRatio > 1.5) {
       moraleChange -= 3 * dayProgress; // Moderate overwork
@@ -212,99 +297,148 @@ export function useGameLoop() {
       moraleChange += 2 * dayProgress; // Well-staffed bonus
     }
 
-    // Financial stress affects morale
-    if (state.money < 5000) {
-      moraleChange -= 5 * dayProgress; // Critical financial situation
-    } else if (state.money < 25000) {
-      moraleChange -= 2 * dayProgress; // Moderate financial pressure
-    } else if (state.money > 100000) {
-      moraleChange += 1 * dayProgress; // Financial security bonus
+    // Enhanced financial stress calculation
+    const financialStressLevels = [
+      { threshold: 5000, impact: -5, description: 'Critical' },
+      { threshold: 25000, impact: -2, description: 'Moderate' },
+      { threshold: 100000, impact: 1, description: 'Secure' }
+    ];
+
+    const financialStress = financialStressLevels.find(level => state.money < level.threshold);
+    if (financialStress) {
+      moraleChange += financialStress.impact * dayProgress;
     }
 
-    // Recent project completions boost morale (check completed in last few updates)
+    // More sophisticated project completion morale boost
     const recentCompletions = (state.completedProjects || []).filter(p => {
-      // Simple check - could be improved with actual date comparison
-      return true; // Simplified for now
-    }).length;
+      // Check completions within last game month
+      const completionThreshold = new Date(Date.now() - (30 * 24 * 60 * 60 * 1000));
+      return new Date(p.completedDate) > completionThreshold;
+    });
 
-    if (recentCompletions > 0) {
-      moraleChange += 0.5 * dayProgress; // Success breeds morale
+    if (recentCompletions.length > 0) {
+      // Boost depends on project size and quality
+      const completionBonus = recentCompletions.reduce((bonus, project) => {
+        const sizeBonus = project.size === 3 ? 1.5 : project.size === 2 ? 1.0 : 0.5;
+        const qualityBonus = project.progress >= 95 ? 1.2 : 1.0;
+        return bonus + (0.5 * sizeBonus * qualityBonus);
+      }, 0);
+
+      moraleChange += completionBonus * dayProgress;
     }
+
+    // Team personality dynamics
+    const teamPersonalities = (state.employees || []).map(emp => emp.personality);
+    const personalityHarmony = calculateTeamPersonalityHarmony(teamPersonalities);
+    moraleChange += personalityHarmony * dayProgress;
 
     return moraleChange;
   };
 
-  const checkForNewAchievements = () => {
-    const newAchievements = [];
-
-    const achievementConditions = {
-      first_game: () => (state.completedProjects || []).length >= 1,
-      profitable: () => state.money >= 100000,
-      team_player: () => (state.employees || []).length >= 10,
-      aaa_developer: () => (state.completedProjects || []).some(p => p.size === 3),
-      millionaire: () => state.money >= 1000000,
-      speed_demon: () => (state.completedProjects || []).length >= 5,
-      empire_builder: () => (state.employees || []).length >= 25,
-      perfectionist: () => state.morale >= 95
+  const calculateTeamPersonalityHarmony = (personalities) => {
+    const personalityGroups = {
+      'Team Players': ['Team Player'],
+      'Innovators': ['Innovative'],
+      'Detail-Oriented': ['Perfectionist', 'Detail-oriented'],
+      'Creatives': ['Creative', 'Visionary']
     };
 
-    Object.entries(achievementConditions).forEach(([id, condition]) => {
-      if (condition() && !(state.achievements || []).some(a => a.id === id)) {
+    const groupCounts = Object.keys(personalityGroups).reduce((acc, group) => {
+      acc[group] = personalities.filter(p => personalityGroups[group].includes(p)).length;
+      return acc;
+    }, {});
+
+    // More personalities in a group increase harmony
+    const harmonyScore = Object.values(groupCounts).reduce((score, count) => {
+      return score + (count > 1 ? (count * 0.5) : 0);
+    }, 0);
+
+    return Math.min(2, harmonyScore); // Cap harmony bonus
+  };
+
+  const ACHIEVEMENTS_CONFIG = {
+    first_game: {
+      title: 'First Steps',
+      description: 'Complete your first game',
+      reward: 5000,
+      condition: (state) => (state.completedProjects || []).length >= 1,
+      category: 'milestone'
+    },
+    profitable: {
+      title: 'In the Black',
+      description: 'Reach $100,000 in funds',
+      reward: 10000,
+      condition: (state) => state.money >= 100000,
+      category: 'financial'
+    },
+    team_player: {
+      title: 'Team Player',
+      description: 'Hire 10 employees',
+      reward: 15000,
+      condition: (state) => (state.employees || []).length >= 10,
+      category: 'team'
+    },
+    aaa_developer: {
+      title: 'AAA Developer',
+      description: 'Complete a AAA game',
+      reward: 50000,
+      condition: (state) => (state.completedProjects || []).some(p => p.size === 3),
+      category: 'milestone'
+    },
+    millionaire: {
+      title: 'Millionaire',
+      description: 'Reach $1,000,000 in funds',
+      reward: 100000,
+      condition: (state) => state.money >= 1000000,
+      category: 'financial'
+    },
+    speed_demon: {
+      title: 'Speed Demon',
+      description: 'Complete 5 games',
+      reward: 25000,
+      condition: (state) => (state.completedProjects || []).length >= 5,
+      category: 'milestone'
+    },
+    empire_builder: {
+      title: 'Empire Builder',
+      description: 'Hire 25 employees',
+      reward: 75000,
+      condition: (state) => (state.employees || []).length >= 25,
+      category: 'team'
+    },
+    perfectionist: {
+      title: 'Perfectionist',
+      description: 'Achieve 95+ team morale',
+      reward: 30000,
+      condition: (state) => state.morale >= 95,
+      category: 'performance'
+    }
+  };
+
+  const checkForNewAchievements = () => {
+    const newAchievements = [];
+    const existingAchievementIds = new Set(state.achievements?.map(a => a.id) || []);
+
+    for (const [id, config] of Object.entries(ACHIEVEMENTS_CONFIG)) {
+      if (!existingAchievementIds.has(id) && config.condition(state)) {
         const achievementData = {
           id,
-          title: getAchievementTitle(id),
-          description: getAchievementDescription(id),
-          reward: getAchievementReward(id),
+          title: config.title,
+          description: config.description,
+          reward: config.reward,
+          category: config.category,
           unlockedAt: Date.now()
         };
         newAchievements.push(achievementData);
       }
-    });
+    }
 
     return newAchievements;
   };
 
-  const getAchievementTitle = (id) => {
-    const titles = {
-      first_game: 'First Steps',
-      profitable: 'In the Black',
-      team_player: 'Team Player',
-      aaa_developer: 'AAA Developer',
-      millionaire: 'Millionaire',
-      speed_demon: 'Speed Demon',
-      empire_builder: 'Empire Builder',
-      perfectionist: 'Perfectionist'
-    };
-    return titles[id] || 'Achievement';
-  };
-
-  const getAchievementDescription = (id) => {
-    const descriptions = {
-      first_game: 'Complete your first game',
-      profitable: 'Reach $100,000 in funds',
-      team_player: 'Hire 10 employees',
-      aaa_developer: 'Complete a AAA game',
-      millionaire: 'Reach $1,000,000 in funds',
-      speed_demon: 'Complete 5 games',
-      empire_builder: 'Hire 25 employees',
-      perfectionist: 'Achieve 95+ team morale'
-    };
-    return descriptions[id] || 'Achievement unlocked';
-  };
-
-  const getAchievementReward = (id) => {
-    const rewards = {
-      first_game: 5000,
-      profitable: 10000,
-      team_player: 15000,
-      aaa_developer: 50000,
-      millionaire: 100000,
-      speed_demon: 25000,
-      empire_builder: 75000,
-      perfectionist: 30000
-    };
-    return rewards[id] || 0;
-  };
+  const getAchievementTitle = (id) => ACHIEVEMENTS_CONFIG[id]?.title || 'Achievement';
+  const getAchievementDescription = (id) => ACHIEVEMENTS_CONFIG[id]?.description || 'Achievement unlocked';
+  const getAchievementReward = (id) => ACHIEVEMENTS_CONFIG[id]?.reward || 0;
 
   // Start/stop game loop based on game speed
   useEffect(() => {
