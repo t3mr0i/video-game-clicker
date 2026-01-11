@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useGameContext } from '../contexts/GameContext';
+import { useGameLoop } from '../hooks/useGameLoop';
 import TimeComponent from './TimeComponent';
-import ProjectComponent from './ProjectComponent';
-import EmployeeComponent from './EmployeeComponent';
+import ProjectComponent from './Project/ProjectComponent';
+import EmployeeComponent from './Employee/EmployeeComponent';
 import FinanceComponent from './FinanceComponent';
 import ShippingComponent from './ShippingComponent';
 import ResearchComponent from './ResearchComponent';
@@ -10,83 +12,57 @@ import FranchisesComponent from './FranchisesComponent';
 import StudioCultureComponent from './StudioCultureComponent';
 import AchievementsComponent from './AchievementsComponent';
 import MoraleComponent from './MoraleComponent';
+import DebugPanel from './common/DebugPanel';
+import Card from './common/Card';
 
-function App() {
-    const [platforms, setPlatforms] = useState([
-        // ... (keep the existing platforms array)
-        // Platforms list from previous implementation
-    ]);
-
-    const [gameState, setGameState] = useState({
-        platforms: platforms,
-        money: 10000,
-        reputation: 50,
-        employees: [],
-        projects: [],
-        achievements: [],
-        shipments: [],
-        morale: 50
-    });
-
-    const [notifications, setNotifications] = useState([]);
-    const [achievements, setAchievements] = useState([]);
+function GameStudio() {
+    const { state, actions } = useGameContext();
+    const { isRunning, currentSpeed } = useGameLoop();
 
     const addNotification = (message, type = 'info') => {
-        const id = Date.now();
-        const newNotification = { id, message, type };
-        setNotifications([...notifications, newNotification]);
+        actions.addNotification({
+            message,
+            type
+        });
 
-        // Remove notification after 5 seconds
+        // Auto-remove notification after 5 seconds
         setTimeout(() => {
-            setNotifications(notifications.filter(n => n.id !== id));
+            actions.removeNotification(Date.now());
         }, 5000);
     };
 
     const handleAchievementComplete = (achievement) => {
-        const existingAchievement = achievements.find(a => a.id === achievement.id);
+        const existingAchievement = state.achievements.find(a => a.id === achievement.id);
         if (!existingAchievement) {
-            const newAchievements = [...achievements, achievement];
-            setAchievements(newAchievements);
-            setGameState(prevState => ({
-                ...prevState,
-                money: prevState.money + achievement.reward
-            }));
-            addNotification(`Achievement Unlocked: ${achievement.title} (+${achievement.reward})`, 'success');
+            actions.unlockAchievement(achievement);
+            addNotification(`Achievement Unlocked: ${achievement.title} (+$${achievement.reward})`, 'success');
         }
     };
 
     const handleMoraleChange = (newMorale) => {
-        setGameState(prevState => ({
-            ...prevState,
-            morale: newMorale
-        }));
+        actions.updateMorale(newMorale);
     };
 
     return (
         <div className="flex flex-col min-h-screen bg-gray-100">
             <div className="container mx-auto px-4 py-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div>
+                    <div className="space-y-4">
                         <TimeComponent />
-                        <FinanceComponent gameState={gameState} />
+                        <FinanceComponent />
                         <MoraleComponent
-                            gameState={gameState}
                             onMoraleChange={handleMoraleChange}
-                            projects={gameState.projects}
-                            achievements={achievements}
-                            shipments={gameState.shipments}
                         />
                         <AchievementsComponent
-                            gameState={gameState}
                             onAchievementComplete={handleAchievementComplete}
                         />
                     </div>
-                    <div>
+                    <div className="space-y-4">
                         <ProjectComponent />
                         <EmployeeComponent />
                         <ResearchComponent />
                     </div>
-                    <div>
+                    <div className="space-y-4">
                         <ShippingComponent
                             addNotification={addNotification}
                         />
@@ -97,25 +73,45 @@ function App() {
                 </div>
             </div>
 
+            {/* Game Status Indicator */}
+            <div className="fixed top-4 right-4 z-50">
+                <div className={`px-3 py-1 rounded-full text-sm font-medium ${
+                    isRunning ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                }`}>
+                    {isRunning ? `Running ${currentSpeed}x` : 'Paused'}
+                </div>
+            </div>
+
             {/* Notifications */}
             <div className="fixed bottom-4 right-4 space-y-2 z-50">
-                {notifications.map(notification => (
+                {state.notifications.map(notification => (
                     <div
                         key={notification.id}
-                        className={`p-4 rounded-lg shadow-lg ${
+                        className={`p-4 rounded-lg shadow-lg transition-all duration-300 ${
                             notification.type === 'success'
                                 ? 'bg-green-500 text-white'
                                 : notification.type === 'error'
                                 ? 'bg-red-500 text-white'
+                                : notification.type === 'warning'
+                                ? 'bg-yellow-500 text-white'
                                 : 'bg-blue-500 text-white'
                         }`}
                     >
                         {notification.message}
+                        <button
+                            onClick={() => actions.removeNotification(notification.id)}
+                            className="ml-2 text-white opacity-70 hover:opacity-100"
+                        >
+                            ×
+                        </button>
                     </div>
                 ))}
             </div>
+
+            {/* Debug Panel */}
+            <DebugPanel />
         </div>
     );
 }
 
-export default App;
+export default GameStudio;

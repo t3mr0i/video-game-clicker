@@ -1,19 +1,19 @@
 'use client'
 import Head from 'next/head';
-import LeonardCookieClicker from './components/LeonardCookieClicker';
+import GameStudio from './components/GameStudio';
 import './globals.css'
 
 export default function Home() {
   return (
     <div>
       <Head>
-        <title>Leonard Cookie Clicker</title>
+        <title>Game Development Studio</title>
         <link
           rel="stylesheet"
           href="/animate.css"
         />
       </Head>
-      <LeonardCookieClicker />
+      <GameStudio />
     </div>
   );
 }

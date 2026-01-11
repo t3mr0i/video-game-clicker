@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMicrochip, faAngleRight, faFlask, faCog, faTimes, faLaptopCode } from '@fortawesome/free-solid-svg-icons';
+import { useGameContext } from '../contexts/GameContext';
+import { GAME_MECHANICS } from '../config/gameConstants';
 
-const ResearchComponent = ({ 
-    technologies, 
-    unlockTechnology, 
+const ResearchComponent = ({
+    technologies,
+    unlockTechnology,
     gameEngines,
     createGameEngine,
     bankAccount,
@@ -13,18 +15,19 @@ const ResearchComponent = ({
     isResearchModalOpen,
     setIsResearchModalOpen,
     isCreateEngineModalOpen,
-    setIsCreateEngineModalOpen, 
+    setIsCreateEngineModalOpen,
     newEngineName,
     setNewEngineName,
     selectedEngineType,
     setSelectedEngineType
 }) => {
+    const { actions } = useGameContext();
     const [activeTab, setActiveTab] = useState('technologies');
     
     // Filter technologies by availability
-    const availableTechnologies = technologies.filter(tech => !tech.unlocked && tech.requiredLevel <= studioLevel);
-    const unlockedTechnologies = technologies.filter(tech => tech.unlocked);
-    const lockedTechnologies = technologies.filter(tech => !tech.unlocked && tech.requiredLevel > studioLevel);
+    const availableTechnologies = (technologies || []).filter(tech => !tech.unlocked && tech.requiredLevel <= studioLevel);
+    const unlockedTechnologies = (technologies || []).filter(tech => tech.unlocked);
+    const lockedTechnologies = (technologies || []).filter(tech => !tech.unlocked && tech.requiredLevel > studioLevel);
     
     const openResearchModal = () => {
         setIsResearchModalOpen(true);
@@ -36,12 +39,15 @@ const ResearchComponent = ({
     
     const openEngineModal = () => {
         // Check if engine tech is unlocked
-        const engineTech = technologies.find(tech => tech.id === 'tech-3');
+        const engineTech = (technologies || []).find(tech => tech.id === GAME_MECHANICS.TECHNOLOGY_IDS.GAME_ENGINE_FRAMEWORK);
         if (!engineTech || !engineTech.unlocked) {
-            alert('You need to unlock Game Engine Framework technology first');
+            actions.addNotification({
+                message: 'You need to unlock Game Engine Framework technology first',
+                type: 'warning'
+            });
             return;
         }
-        
+
         setIsCreateEngineModalOpen(true);
     };
     
@@ -219,11 +225,11 @@ const ResearchComponent = ({
                     </select>
                 </div>
                 
-                {gameEngines.length > 0 && (
+                {(gameEngines || []).length > 0 && (
                     <div className="mb-6">
                         <h3 className="font-semibold mb-2">Your Game Engines:</h3>
                         <div className="bg-gray-100 p-3 rounded max-h-32 overflow-y-auto">
-                            {gameEngines.map(engine => (
+                            {(gameEngines || []).map(engine => (
                                 <div key={engine.id} className="border-b border-gray-200 py-2 last:border-b-0">
                                     <div className="font-medium">{engine.name}</div>
                                     <div className="text-sm text-gray-600">
@@ -244,9 +250,9 @@ const ResearchComponent = ({
                     </button>
                     <button
                         onClick={handleCreateEngine}
-                        disabled={!newEngineName.trim() || !selectedEngineType}
+                        disabled={!(newEngineName || '').trim() || !selectedEngineType}
                         className={`font-bold py-2 px-4 rounded ${
-                            !newEngineName.trim() || !selectedEngineType
+                            !(newEngineName || '').trim() || !selectedEngineType
                                 ? 'bg-gray-300 cursor-not-allowed text-gray-600'
                                 : 'bg-blue-500 hover:bg-blue-600 text-white'
                         }`}

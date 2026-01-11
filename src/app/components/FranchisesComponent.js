@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar, faUsers, faGamepad, faTrophy, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
+import { GAME_MECHANICS } from '../config/gameConstants';
+import Modal from './common/Modal';
 
 const FranchisesComponent = ({ franchises, projects, createProject }) => {
     const [selectedFranchise, setSelectedFranchise] = useState(null);
     const [isCreateSequelModalOpen, setIsCreateSequelModalOpen] = useState(false);
     
-    if (franchises.length === 0) {
+    if ((franchises || []).length === 0) {
         return (
             <div className="bg-white rounded-lg shadow-md p-4 mb-4">
                 <h2 className="text-lg font-semibold mb-2">Franchises</h2>
@@ -27,7 +29,7 @@ const FranchisesComponent = ({ franchises, projects, createProject }) => {
         
         // Find the last game in the franchise
         const lastGameId = selectedFranchise.lastGameId;
-        const lastGame = projects.find(p => p.id === lastGameId);
+        const lastGame = (projects || []).find(p => p.id === lastGameId);
         
         if (!lastGame) return;
         
@@ -44,10 +46,10 @@ const FranchisesComponent = ({ franchises, projects, createProject }) => {
             engineName: lastGame.engineName,
             engineEfficiency: lastGame.engineEfficiency,
             franchiseId: selectedFranchise.id,
-            requiredPoints: lastGame.requiredPoints * 1.2, // Sequels are more complex
+            requiredPoints: lastGame.requiredPoints * GAME_MECHANICS.SEQUEL_COMPLEXITY_MULTIPLIER,
             designPoints: 0,
             marketingPoints: 0,
-            maxPoints: lastGame.maxPoints * 1.2,
+            maxPoints: lastGame.maxPoints * GAME_MECHANICS.SEQUEL_MAX_POINTS_MULTIPLIER,
             progress: 0,
             developmentPoints: 0,
             startDate: null,
@@ -65,7 +67,7 @@ const FranchisesComponent = ({ franchises, projects, createProject }) => {
             <h2 className="text-lg font-semibold mb-3">Franchises</h2>
             
             <div className="space-y-4">
-                {franchises.map(franchise => {
+                {(franchises || []).map(franchise => {
                     // Calculate years since franchise creation
                     const franchiseAge = franchise.games.length > 1 ? 
                         `${franchise.games.length} games since ${franchise.created}` : 
@@ -112,10 +114,14 @@ const FranchisesComponent = ({ franchises, projects, createProject }) => {
             </div>
             
             {/* Create Sequel Modal */}
-            {isCreateSequelModalOpen && selectedFranchise && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 w-96">
-                        <h3 className="text-lg font-bold mb-4">Create a Sequel</h3>
+            <Modal
+                isOpen={isCreateSequelModalOpen && selectedFranchise}
+                onClose={() => setIsCreateSequelModalOpen(false)}
+                title="Create a Sequel"
+                size="medium"
+            >
+                {selectedFranchise && (
+                    <>
                         <p className="mb-4">
                             Create a sequel in the {selectedFranchise.name} franchise?
                         </p>
@@ -123,24 +129,24 @@ const FranchisesComponent = ({ franchises, projects, createProject }) => {
                             This will create a new game project with similar properties to the last game in this franchise.
                             The sequel will gain bonuses from the franchise's fanbase.
                         </p>
-                        
+
                         <div className="flex justify-end space-x-2">
-                            <button 
+                            <button
                                 onClick={() => setIsCreateSequelModalOpen(false)}
                                 className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded"
                             >
                                 Cancel
                             </button>
-                            <button 
+                            <button
                                 onClick={handleSequelCreation}
                                 className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
                             >
                                 Create Sequel
                             </button>
                         </div>
-                    </div>
-                </div>
-            )}
+                    </>
+                )}
+            </Modal>
         </div>
     );
 };

@@ -1,51 +1,13 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useGameContext } from '../contexts/GameContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
+import { GAME_MECHANICS } from '../config/gameConstants';
 
 const TimeComponent = () => {
     const { state, actions } = useGameContext();
-    const {
-        time: { day, week, month, year },
-        gameSpeed,
-    } = state;
-
-    useEffect(() => {
-        const timer = setInterval(() => {
-            advanceTime();
-        }, gameSpeed === 0 ? Number.MAX_SAFE_INTEGER : 1000 / gameSpeed);
-
-        return () => clearInterval(timer);
-    }, [day, month, year, week, gameSpeed]);
-
-    const advanceTime = () => {
-        let newDay = day + 1;
-        let newWeek = week;
-        let newMonth = month;
-        let newYear = year;
-
-        if (newDay > 30) {
-            newDay = 1;
-            newMonth++;
-            newWeek = 1;
-        }
-
-        if (newMonth > 12) {
-            newMonth = 1;
-            newYear++;
-        }
-
-        if (newDay % 7 === 0) {
-            newWeek++;
-        }
-
-        actions.updateTime({
-            day: newDay,
-            week: newWeek,
-            month: newMonth,
-            year: newYear
-        });
-    };
+    const { currentDate, gameSpeed } = state;
+    const { day, month, year } = currentDate;
 
     const handleSpeedChange = (speed) => {
         actions.toggleGameSpeed(speed);
@@ -56,7 +18,7 @@ const TimeComponent = () => {
 
     const formatMonth = (monthNum) => monthNames[monthNum - 1];
 
-    const monthProgress = (day / 30) * 100;
+    const monthProgress = (day / GAME_MECHANICS.DAYS_PER_MONTH) * 100;
 
     const speedButtonClass = (speed) => {
         return `px-2 py-1 text-xs font-medium rounded ${gameSpeed === speed
@@ -97,6 +59,7 @@ const TimeComponent = () => {
                     <button onClick={() => handleSpeedChange(1)} className={speedButtonClass(1)}>1x</button>
                     <button onClick={() => handleSpeedChange(2)} className={speedButtonClass(2)}>2x</button>
                     <button onClick={() => handleSpeedChange(5)} className={speedButtonClass(5)}>5x</button>
+                    <button onClick={() => handleSpeedChange(10)} className={speedButtonClass(10)}>10x</button>
                 </div>
             </div>
         </div>
