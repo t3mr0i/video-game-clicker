@@ -4,15 +4,24 @@ import Card from '../common/Card';
 import Button from '../common/Button';
 import Tooltip from '../common/Tooltip';
 
+// Imported game icons
+import developerIcon from '../../../assets/icons/employees/perspective-dice-six-faces-random.svg';
+import designerIcon from '../../../assets/icons/employees/paint-brush.svg';
+import marketerIcon from '../../../assets/icons/employees/bar-chart.svg';
+import artistIcon from '../../../assets/icons/employees/graphic-design.svg';
+import soundDesignerIcon from '../../../assets/icons/employees/music.svg';
+import producerIcon from '../../../assets/icons/employees/movie-director.svg';
+import defaultIcon from '../../../assets/icons/employees/player.svg';
+
 const getTypeIcon = (type) => {
   switch (type) {
-    case 'Developer': return '💻';
-    case 'Designer': return '🎨';
-    case 'Marketer': return '📈';
-    case 'Artist': return '🖌️';
-    case 'Sound Designer': return '🎵';
-    case 'Producer': return '🎬';
-    default: return '👤';
+    case 'Developer': return developerIcon;
+    case 'Designer': return designerIcon;
+    case 'Marketer': return marketerIcon;
+    case 'Artist': return artistIcon;
+    case 'Sound Designer': return soundDesignerIcon;
+    case 'Producer': return producerIcon;
+    default: return defaultIcon;
   }
 };
 
@@ -35,7 +44,11 @@ const EmployeeCard = ({ employee, onFire, onViewDetails, onAssign }) => {
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center mb-2">
-            <span className="text-xl mr-2">{getTypeIcon(employee.type)}</span>
+            <img
+              src={getTypeIcon(employee.type)}
+              alt={`${employee.type} icon`}
+              className="w-8 h-8 mr-2"
+            />
             <div>
               <h4 className="font-bold text-lg">{employee.name}</h4>
               <p className="text-sm text-gray-600">{employee.type}</p>
