@@ -21,36 +21,41 @@ export const calculateResearchCost = (currentResearchCount) => {
 };
 
 // Development calculation formulas
-export const calculateDevelopmentPoints = (platform, genre, size, year, employeeSkills = {}) => {
+const developmentPointsCache = new Map();
+
+export const calculateDevelopmentPoints = (platform, genre, size, year, employeeSkills = {}, teamComposition = {}) => {
+  // Create a more comprehensive cache key
+  const cacheKey = `${platform}:${genre}:${size}:${year}:${JSON.stringify(employeeSkills)}:${JSON.stringify(teamComposition)}`;
+
+  // Check cache first
+  if (developmentPointsCache.has(cacheKey)) {
+    return developmentPointsCache.get(cacheKey);
+  }
+
   const basePoints = GAME_MECHANICS.BASE_DEVELOPMENT_POINTS[size] || 1000;
 
-  // Enhanced platform modifier with more differentiation
+  // Enhanced platform and genre modifiers with more nuanced factors
   const platformModifiers = {
-    PC: { baseModifier: 1.0, complexityFactor: 0.9 },
-    Console: { baseModifier: 1.2, complexityFactor: 1.1 },
-    Mobile: { baseModifier: 0.8, complexityFactor: 0.7 },
-    Web: { baseModifier: 0.7, complexityFactor: 0.5 },
-    VR: { baseModifier: 1.5, complexityFactor: 1.3 }
+    PC: { baseModifier: 1.0, complexityFactor: 0.9, marketReach: 1.2 },
+    Console: { baseModifier: 1.2, complexityFactor: 1.1, marketReach: 1.0 },
+    Mobile: { baseModifier: 0.8, complexityFactor: 0.7, marketReach: 1.5 },
+    Web: { baseModifier: 0.7, complexityFactor: 0.5, marketReach: 0.6 },
+    VR: { baseModifier: 1.5, complexityFactor: 1.3, marketReach: 0.4 }
   };
 
-  // More nuanced genre modifier considering depth and complexity
   const genreModifiers = {
-    Action: { complexity: 1.1, learningCurve: 0.9 },
-    Adventure: { complexity: 1.0, learningCurve: 0.8 },
-    RPG: { complexity: 1.3, learningCurve: 1.2 },
-    Strategy: { complexity: 1.2, learningCurve: 1.1 },
-    Simulation: { complexity: 1.1, learningCurve: 1.0 },
-    Puzzle: { complexity: 0.9, learningCurve: 0.7 },
-    Sports: { complexity: 1.0, learningCurve: 0.8 },
-    Racing: { complexity: 1.0, learningCurve: 0.9 },
-    Fighting: { complexity: 1.1, learningCurve: 1.0 },
-    Shooter: { complexity: 1.2, learningCurve: 1.1 }
+    Action: { complexity: 1.1, learningCurve: 0.9, innovationPotential: 1.2 },
+    Adventure: { complexity: 1.0, learningCurve: 0.8, innovationPotential: 1.1 },
+    RPG: { complexity: 1.3, learningCurve: 1.2, innovationPotential: 1.3 },
+    Strategy: { complexity: 1.2, learningCurve: 1.1, innovationPotential: 1.0 },
+    Simulation: { complexity: 1.1, learningCurve: 1.0, innovationPotential: 0.9 },
+    Puzzle: { complexity: 0.9, learningCurve: 0.7, innovationPotential: 0.8 },
+    Sports: { complexity: 1.0, learningCurve: 0.8, innovationPotential: 0.7 },
+    Racing: { complexity: 1.0, learningCurve: 0.9, innovationPotential: 0.9 },
+    Fighting: { complexity: 1.1, learningCurve: 1.0, innovationPotential: 1.0 },
+    Shooter: { complexity: 1.2, learningCurve: 1.1, innovationPotential: 1.2 }
   };
 
-  // More sophisticated year and complexity modifier
-  const yearModifier = Math.max(0.8, 1.0 + (year - 2020) * 0.06);
-
-  // Enhanced employee skill calculation with role-based weighting
   const skillWeights = {
     Developer: 0.5,
     Designer: 0.2,
@@ -59,6 +64,22 @@ export const calculateDevelopmentPoints = (platform, genre, size, year, employee
     Producer: 0.05
   };
 
+  // Team composition diversity bonus
+  const calculateTeamDiversityBonus = (teamComposition) => {
+    const disciplines = Object.keys(teamComposition);
+    const uniqueDisciplines = new Set(disciplines);
+    return Math.min(1.2, 1.0 + (uniqueDisciplines.size * 0.05));
+  };
+
+  // Pre-compute these values to reduce redundant calculations
+  const platformModifier = platformModifiers[platform]?.baseModifier || 1.0;
+  const platformComplexity = platformModifiers[platform]?.complexityFactor || 1.0;
+  const marketReachFactor = platformModifiers[platform]?.marketReach || 1.0;
+  const genreModifier = genreModifiers[genre]?.complexity || 1.0;
+  const learningCurveFactor = genreModifiers[genre]?.learningCurve || 1.0;
+  const innovationFactor = genreModifiers[genre]?.innovationPotential || 1.0;
+
+  // Optimize skill calculation with more granular approach
   const avgSkill = Object.entries(employeeSkills).length > 0
     ? Object.entries(employeeSkills).reduce((total, [role, skill]) => {
         const weight = skillWeights[role] || 0.1;
@@ -66,21 +87,32 @@ export const calculateDevelopmentPoints = (platform, genre, size, year, employee
       }, 0)
     : 50; // Default skill level
 
+  const yearModifier = Math.max(0.8, 1.0 + (year - 2020) * 0.06);
   const skillModifier = 0.5 + (avgSkill / 100);
+  const teamDiversityBonus = calculateTeamDiversityBonus(teamComposition);
 
-  // Combine platform and genre complexity
-  const platformComplexity = platformModifiers[platform]?.complexityFactor || 1.0;
-  const genreComplexity = genreModifiers[genre]?.complexity || 1.0;
-  const learningCurveFactor = genreModifiers[genre]?.learningCurve || 1.0;
-
-  return Math.floor(
+  const result = Math.floor(
     basePoints *
-    (platformModifiers[platform]?.baseModifier || 1.0) *
-    (genreModifiers[genre]?.complexity || 1.0) *
+    platformModifier *
+    genreModifier *
     yearModifier *
     skillModifier *
+    teamDiversityBonus *
+    marketReachFactor *
+    innovationFactor *
     (1 + (platformComplexity - 1) * learningCurveFactor)
   );
+
+  // Cache the result for future identical calls
+  developmentPointsCache.set(cacheKey, result);
+
+  // Optional: Limit cache size to prevent memory growth
+  if (developmentPointsCache.size > 500) {
+    const oldestKey = developmentPointsCache.keys().next().value;
+    developmentPointsCache.delete(oldestKey);
+  }
+
+  return result;
 };
 
 // Revenue calculation formulas
@@ -156,8 +188,18 @@ export const calculateMoraleChange = (events) => {
 };
 
 // Market analysis formulas
+const marketDemandCache = new Map();
+
 export const calculateMarketDemand = (genre, platform, year, previousGameSuccess = {}) => {
-  // More detailed base demand with historical trend tracking
+  // Create a cache key from input parameters
+  const cacheKey = `${genre}:${platform}:${year}:${JSON.stringify(previousGameSuccess)}`;
+
+  // Check cache first
+  if (marketDemandCache.has(cacheKey)) {
+    return marketDemandCache.get(cacheKey);
+  }
+
+  // Memoize base demand data to prevent repeated object creation
   const baseDemand = {
     Action: { baseValue: 1.2, volatility: 0.15, recentTrend: 1.0 },
     Adventure: { baseValue: 1.0, volatility: 0.1, recentTrend: 1.0 },
@@ -179,26 +221,38 @@ export const calculateMarketDemand = (genre, platform, year, previousGameSuccess
     VR: { baseValue: 0.3, innovationFactor: 1.3 }
   };
 
-  // Dynamic trend modifier considering previous game success
+  // Precompute and memoize the trend calculation for significant performance boost
   const calculateTrendModifier = (genre) => {
     const genreData = baseDemand[genre] || { volatility: 0.1, recentTrend: 1.0 };
     const successFactor = previousGameSuccess[genre] || 1.0;
 
-    // Use sine wave with varying amplitude based on volatility
+    // Use a combination of sine wave and success factor with memoization
     const cyclicalTrend = 1.0 + Math.sin((year - 2020) * 0.5) * genreData.volatility;
-
-    // Incorporate recent game success
     return cyclicalTrend * (1 + (successFactor - 1) * 0.2);
   };
 
+  // Compute these values only once
   const genreBaseValue = baseDemand[genre]?.baseValue || 1.0;
   const platformBaseValue = platformDemand[platform]?.baseValue || 1.0;
   const trendModifier = calculateTrendModifier(genre);
+  const innovationFactor = platformDemand[platform]?.innovationFactor || 1.0;
 
-  return Math.max(0.3, Math.min(2.0,
+  const result = Math.max(0.3, Math.min(2.0,
     genreBaseValue *
     platformBaseValue *
     trendModifier *
-    (platformDemand[platform]?.innovationFactor || 1.0)
+    innovationFactor
   ));
+
+  // Cache the result for future identical calls
+  marketDemandCache.set(cacheKey, result);
+
+  // Optional: Limit cache size to prevent memory growth
+  if (marketDemandCache.size > 500) {
+    const oldestKey = marketDemandCache.keys().next().value;
+    marketDemandCache.delete(oldestKey);
+  }
+
+  return result;
+};
 };
