@@ -129,10 +129,21 @@ function gameReducer(state, action) {
       };
 
     case ACTIONS.ADD_NOTIFICATION:
-      return {
-        ...state,
-        notifications: [...(state.notifications || []), { ...action.payload, id: `notification_${Date.now()}_${Math.random().toString(36).substr(2, 9)}` }]
-      };
+      {
+        const newNotification = {
+          ...action.payload,
+          id: crypto.randomUUID(),
+          timestamp: Date.now()
+        };
+        const notifications = [
+          ...(state.notifications || []).slice(-49), // Keep only last 50 notifications
+          newNotification
+        ];
+        return {
+          ...state,
+          notifications
+        };
+      }
 
     case ACTIONS.REMOVE_NOTIFICATION:
       return {
@@ -270,10 +281,14 @@ export function GameProvider({ children }) {
     }),
 
     // Notifications
-    addNotification: (notification) => dispatch({
-      type: ACTIONS.ADD_NOTIFICATION,
-      payload: notification
-    }),
+    addNotification: (notification) => {
+      const id = crypto.randomUUID();
+      dispatch({
+        type: ACTIONS.ADD_NOTIFICATION,
+        payload: { ...notification, id }
+      });
+      return id;
+    },
 
     removeNotification: (id) => dispatch({
       type: ACTIONS.REMOVE_NOTIFICATION,

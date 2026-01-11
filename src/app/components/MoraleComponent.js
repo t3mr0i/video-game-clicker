@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 const MORALE_FACTORS = {
     projectSuccess: 10,
@@ -89,5 +90,17 @@ function MoraleComponent({
         </div>
     );
 }
+
+MoraleComponent.propTypes = {
+  gameState: PropTypes.shape({
+    platforms: PropTypes.arrayOf(PropTypes.object).isRequired
+  }).isRequired,
+  onMoraleChange: PropTypes.func.isRequired,
+  projects: PropTypes.arrayOf(PropTypes.shape({
+    completed: PropTypes.bool
+  })).isRequired,
+  achievements: PropTypes.arrayOf(PropTypes.object).isRequired,
+  shipments: PropTypes.arrayOf(PropTypes.object).isRequired
+};
 
 export default MoraleComponent;

@@ -20,15 +20,21 @@ function GameStudio() {
     const { isRunning, currentSpeed } = useGameLoop();
 
     const addNotification = (message, type = 'info') => {
-        actions.addNotification({
+        const notification = {
             message,
             type
-        });
+        };
+
+        // Create and get the new notification's ID
+        const notificationId = actions.addNotification(notification);
 
         // Auto-remove notification after 5 seconds
-        setTimeout(() => {
-            actions.removeNotification(Date.now());
+        const timeoutId = setTimeout(() => {
+            actions.removeNotification(notificationId);
         }, 5000);
+
+        // Return the notification id to allow external cancellation
+        return { id: notificationId, timeoutId };
     };
 
     const handleAchievementComplete = (achievement) => {

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import Modal from 'react-modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMicrochip, faAngleRight, faFlask, faCog, faTimes, faLaptopCode } from '@fortawesome/free-solid-svg-icons';
@@ -266,4 +267,33 @@ const ResearchComponent = ({
     );
 };
 
-export default ResearchComponent; 
+ResearchComponent.propTypes = {
+  technologies: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    cost: PropTypes.number.isRequired,
+    requiredLevel: PropTypes.number.isRequired,
+    unlocked: PropTypes.bool
+  })),
+  unlockTechnology: PropTypes.func.isRequired,
+  gameEngines: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+    efficiency: PropTypes.number.isRequired
+  })),
+  createGameEngine: PropTypes.func.isRequired,
+  bankAccount: PropTypes.number.isRequired,
+  studioLevel: PropTypes.number.isRequired,
+  isResearchModalOpen: PropTypes.bool.isRequired,
+  setIsResearchModalOpen: PropTypes.func.isRequired,
+  isCreateEngineModalOpen: PropTypes.bool.isRequired,
+  setIsCreateEngineModalOpen: PropTypes.func.isRequired,
+  newEngineName: PropTypes.string,
+  setNewEngineName: PropTypes.func.isRequired,
+  selectedEngineType: PropTypes.string,
+  setSelectedEngineType: PropTypes.func.isRequired
+};
+
+export default ResearchComponent;

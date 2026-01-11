@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faTrophy, faBolt, faLightbulb, faBullhorn, faHeart,
@@ -250,4 +251,27 @@ const StudioCultureComponent = ({ studioCulture = { values: [], bonuses: {} }, c
     );
 };
 
-export default StudioCultureComponent; 
+StudioCultureComponent.propTypes = {
+  studioCulture: PropTypes.shape({
+    values: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
+      icon: PropTypes.string.isRequired,
+      bonuses: PropTypes.objectOf(PropTypes.number).isRequired
+    })),
+    bonuses: PropTypes.objectOf(PropTypes.number)
+  }),
+  culturalValues: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    icon: PropTypes.string.isRequired,
+    bonuses: PropTypes.objectOf(PropTypes.number).isRequired
+  })),
+  adoptCulturalValue: PropTypes.func,
+  removeCulturalValue: PropTypes.func,
+  studioLevel: PropTypes.number
+};
+
+export default StudioCultureComponent;

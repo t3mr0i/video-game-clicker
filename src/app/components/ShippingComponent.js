@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import Modal from 'react-modal';
 import 'tailwindcss/tailwind.css';
 
@@ -155,6 +156,32 @@ const ShippingComponent = ({
             />
         </>
     );
+};
+
+ShippingCelebrationModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  game: PropTypes.shape({
+    name: PropTypes.string.isRequired
+  }),
+  publisher: PropTypes.string
+};
+
+ShippingComponent.propTypes = {
+  isModalOpen: PropTypes.bool.isRequired,
+  closeModal: PropTypes.func.isRequired,
+  game: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired
+  }),
+  publishers: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    imageName: PropTypes.string,
+  })),
+  shipGame: PropTypes.func.isRequired,
+  calculateUpfrontPayment: PropTypes.func,
+  calculateRevenueShare: PropTypes.func,
+  addNotification: PropTypes.func
 };
 
 export default ShippingComponent;

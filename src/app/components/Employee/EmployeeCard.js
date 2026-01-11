@@ -1,31 +1,34 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import PropTypes from 'prop-types';
 import Card from '../common/Card';
 import Button from '../common/Button';
 import Tooltip from '../common/Tooltip';
 
+const getTypeIcon = (type) => {
+  switch (type) {
+    case 'Developer': return '💻';
+    case 'Designer': return '🎨';
+    case 'Marketer': return '📈';
+    case 'Artist': return '🖌️';
+    case 'Sound Designer': return '🎵';
+    case 'Producer': return '🎬';
+    default: return '👤';
+  }
+};
+
+const getSkillColor = (skill) => {
+  if (skill >= 80) return 'text-green-600';
+  if (skill >= 60) return 'text-yellow-600';
+  if (skill >= 40) return 'text-orange-600';
+  return 'text-red-600';
+};
+
 const EmployeeCard = ({ employee, onFire, onViewDetails, onAssign }) => {
-  const getTypeIcon = (type) => {
-    switch (type) {
-      case 'Developer': return '💻';
-      case 'Designer': return '🎨';
-      case 'Marketer': return '📈';
-      case 'Artist': return '🖌️';
-      case 'Sound Designer': return '🎵';
-      case 'Producer': return '🎬';
-      default: return '👤';
-    }
-  };
-
-  const getSkillColor = (skill) => {
-    if (skill >= 80) return 'text-green-600';
-    if (skill >= 60) return 'text-yellow-600';
-    if (skill >= 40) return 'text-orange-600';
-    return 'text-red-600';
-  };
-
-  const averageSkill = (employee.skills && Object.keys(employee.skills).length > 0)
-    ? Math.round(Object.values(employee.skills).reduce((sum, skill) => sum + skill, 0) / Object.keys(employee.skills).length)
-    : 50;
+  const averageSkill = useMemo(() =>
+    (employee.skills && Object.keys(employee.skills).length > 0)
+      ? Math.round(Object.values(employee.skills).reduce((sum, skill) => sum + skill, 0) / Object.keys(employee.skills).length)
+      : 50
+  , [employee.skills]);
 
   return (
     <Card className="mb-3">
@@ -109,4 +112,20 @@ const EmployeeCard = ({ employee, onFire, onViewDetails, onAssign }) => {
   );
 };
 
-export default EmployeeCard;
+EmployeeCard.propTypes = {
+  employee: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+    salary: PropTypes.number,
+    skills: PropTypes.objectOf(PropTypes.number),
+    skillPoints: PropTypes.number,
+    personality: PropTypes.string,
+    assignedProject: PropTypes.string
+  }).isRequired,
+  onFire: PropTypes.func.isRequired,
+  onViewDetails: PropTypes.func.isRequired,
+  onAssign: PropTypes.func.isRequired
+};
+
+export default React.memo(EmployeeCard);
