@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import CheckIcon from '../../assets/icons/status/check-mark.svg';
 
 const achievements = [
     {
@@ -74,7 +75,10 @@ function AchievementsComponent({ gameState, onAchievementComplete }) {
                     <h3 className="font-semibold">{achievement.title}</h3>
                     <p className="text-sm">{achievement.description}</p>
                     {unlockedAchievements.some(a => a.id === achievement.id) && (
-                        <span className="text-green-600">✓ Unlocked! (+{achievement.reward})</span>
+                        <div className="flex items-center text-green-600">
+                            <CheckIcon className="w-4 h-4 mr-2" />
+                            Unlocked! (+{achievement.reward})
+                        </div>
                     )}
                 </div>
             ))}
