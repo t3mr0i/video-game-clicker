@@ -5,25 +5,40 @@ const Card = ({
   children,
   className = '',
   headerActions,
-  variant = 'default'
+  variant = 'default',
+  onHover = false,
+  onClick
 }) => {
   const variantClasses = {
-    default: 'bg-white border border-gray-200',
-    dark: 'bg-gray-800 border border-gray-700 text-white',
-    success: 'bg-green-50 border border-green-200',
-    warning: 'bg-yellow-50 border border-yellow-200',
-    error: 'bg-red-50 border border-red-200'
+    default: 'bg-gray-800 border-2 border-gray-700 text-white',
+    dark: 'bg-gray-900 border-2 border-blue-900 text-white',
+    success: 'bg-green-800 border-2 border-green-700 text-white',
+    warning: 'bg-yellow-800 border-2 border-yellow-700 text-white',
+    error: 'bg-red-800 border-2 border-red-700 text-white'
   };
 
   return (
-    <div className={`rounded-lg shadow-md ${variantClasses[variant]} ${className}`}>
+    <div
+      className={`
+        rounded-lg
+        shadow-xl
+        transform
+        transition-all
+        duration-300
+        ${variantClasses[variant]}
+        ${className}
+        ${onHover ? 'hover:scale-105 hover:shadow-2xl cursor-pointer' : ''}
+        ${onClick ? 'cursor-pointer' : ''}
+      `}
+      onClick={onClick}
+    >
       {title && (
-        <div className="flex justify-between items-center p-4 border-b border-inherit">
-          <h3 className="text-lg font-semibold">{title}</h3>
+        <div className="flex justify-between items-center p-4 border-b border-inherit bg-gray-700/50">
+          <h3 className="text-lg font-bold text-blue-300">{title}</h3>
           {headerActions && <div>{headerActions}</div>}
         </div>
       )}
-      <div className="p-4">
+      <div className="p-4 space-y-2">
         {children}
       </div>
     </div>

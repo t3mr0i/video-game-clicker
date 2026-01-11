@@ -50,68 +50,93 @@ function GameStudio() {
     };
 
     return (
-        <div className="flex flex-col min-h-screen bg-gray-100">
+        <div className="flex flex-col min-h-screen bg-gray-900 text-white">
+            {/* Management Dashboard Header */}
+            <div className="bg-gray-800 p-4 shadow-lg flex justify-between items-center">
+                <h1 className="text-2xl font-bold text-blue-400">Game Studio Tycoon</h1>
+                <div className="flex items-center space-x-4">
+                    <div className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        isRunning ? 'bg-green-600 text-white' : 'bg-gray-600 text-gray-300'
+                    }`}>
+                        {isRunning ? `Running ${currentSpeed}x` : 'Paused'}
+                    </div>
+                    <TimeComponent />
+                </div>
+            </div>
+
             <div className="container mx-auto px-4 py-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div className="space-y-4">
-                        <TimeComponent />
-                        <FinanceComponent />
-                        <MoraleComponent
-                            onMoraleChange={handleMoraleChange}
-                        />
-                        <AchievementsComponent
-                            onAchievementComplete={handleAchievementComplete}
-                        />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {/* Left Column: Studio Management */}
+                    <div className="space-y-6">
+                        <Card className="bg-gray-800 border-2 border-blue-900">
+                            <FinanceComponent />
+                        </Card>
+                        <Card className="bg-gray-800 border-2 border-green-900">
+                            <MoraleComponent
+                                onMoraleChange={handleMoraleChange}
+                            />
+                        </Card>
+                        <Card className="bg-gray-800 border-2 border-purple-900">
+                            <AchievementsComponent
+                                onAchievementComplete={handleAchievementComplete}
+                            />
+                        </Card>
                     </div>
-                    <div className="space-y-4">
-                        <ProjectComponent />
-                        <EmployeeComponent />
-                        <ResearchComponent />
+
+                    {/* Middle Column: Production */}
+                    <div className="space-y-6">
+                        <Card className="bg-gray-800 border-2 border-indigo-900">
+                            <ProjectComponent />
+                        </Card>
+                        <Card className="bg-gray-800 border-2 border-yellow-900">
+                            <EmployeeComponent />
+                        </Card>
+                        <Card className="bg-gray-800 border-2 border-teal-900">
+                            <ResearchComponent />
+                        </Card>
                     </div>
-                    <div className="space-y-4">
-                        <ShippingComponent
-                            addNotification={addNotification}
-                        />
-                        <EventsComponent />
-                        <FranchisesComponent />
-                        <StudioCultureComponent />
+
+                    {/* Right Column: Business Strategy */}
+                    <div className="space-y-6">
+                        <Card className="bg-gray-800 border-2 border-red-900">
+                            <ShippingComponent
+                                addNotification={addNotification}
+                            />
+                        </Card>
+                        <Card className="bg-gray-800 border-2 border-orange-900">
+                            <EventsComponent />
+                        </Card>
+                        <Card className="bg-gray-800 border-2 border-pink-900">
+                            <FranchisesComponent />
+                        </Card>
+                        <Card className="bg-gray-800 border-2 border-cyan-900">
+                            <StudioCultureComponent />
+                        </Card>
                     </div>
                 </div>
             </div>
 
-            {/* Game Status Indicator */}
-            <div className="fixed top-4 right-4 z-50">
-                <div className={`px-3 py-1 rounded-full text-sm font-medium ${
-                    isRunning ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                }`}>
-                    {isRunning ? `Running ${currentSpeed}x` : 'Paused'}
-                </div>
-            </div>
-
-            {/* Notifications */}
-            <div className="fixed bottom-4 right-4 space-y-2 z-50">
-                {state.notifications.map(notification => (
-                    <div
-                        key={notification.id}
-                        className={`p-4 rounded-lg shadow-lg transition-all duration-300 ${
-                            notification.type === 'success'
-                                ? 'bg-green-500 text-white'
-                                : notification.type === 'error'
-                                ? 'bg-red-500 text-white'
-                                : notification.type === 'warning'
-                                ? 'bg-yellow-500 text-white'
-                                : 'bg-blue-500 text-white'
-                        }`}
-                    >
-                        {notification.message}
-                        <button
-                            onClick={() => actions.removeNotification(notification.id)}
-                            className="ml-2 text-white opacity-70 hover:opacity-100"
+            {/* Event Log / Notifications - More Tycoon-like Sidebar */}
+            <div className="fixed right-0 top-1/2 transform -translate-y-1/2 w-72 bg-gray-800 shadow-lg p-4 rounded-l-lg z-50">
+                <h3 className="text-lg font-bold mb-4 text-blue-400">Recent Events</h3>
+                <div className="space-y-2 max-h-96 overflow-y-auto">
+                    {state.notifications.slice(-5).map(notification => (
+                        <div
+                            key={notification.id}
+                            className={`p-3 rounded-lg text-sm transition-all duration-300 ${
+                                notification.type === 'success'
+                                    ? 'bg-green-700 text-white'
+                                    : notification.type === 'error'
+                                    ? 'bg-red-700 text-white'
+                                    : notification.type === 'warning'
+                                    ? 'bg-yellow-700 text-white'
+                                    : 'bg-blue-700 text-white'
+                            }`}
                         >
-                            ×
-                        </button>
-                    </div>
-                ))}
+                            {notification.message}
+                        </div>
+                    ))}
+                </div>
             </div>
 
             {/* Debug Panel */}
