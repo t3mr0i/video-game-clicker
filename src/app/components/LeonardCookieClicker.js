@@ -20,7 +20,7 @@ const LeonardCookieClicker = () => {
   };
 
   const buyAutoClicker = () => {
-    const cost = (autoClickers + 1) * 10;
+    const cost = Math.floor(10 * Math.pow(1.15, autoClickers));
     if (cookies >= cost) {
       setCookies(prev => prev - cost);
       setAutoClickers(prev => prev + 1);
@@ -28,7 +28,7 @@ const LeonardCookieClicker = () => {
   };
 
   const upgradeMultiplier = () => {
-    const cost = (multiplier) * 50;
+    const cost = Math.floor(50 * Math.pow(1.15, multiplier - 1));
     if (cookies >= cost) {
       setCookies(prev => prev - cost);
       setMultiplier(prev => prev + 1);
@@ -36,7 +36,7 @@ const LeonardCookieClicker = () => {
   };
 
   const upgradeRockRating = () => {
-    const cost = (rockRating) * 100;
+    const cost = Math.floor(100 * Math.pow(1.15, rockRating - 1));
     if (cookies >= cost) {
       setCookies(prev => prev - cost);
       setRockRating(prev => prev + 1);
@@ -59,24 +59,24 @@ const LeonardCookieClicker = () => {
         <div className="mt-4 space-y-2">
           <button
             onClick={buyAutoClicker}
-            disabled={cookies < (autoClickers + 1) * 10}
+            disabled={cookies < Math.floor(10 * Math.pow(1.15, autoClickers))}
             className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
           >
-            Buy Auto Clicker (Cost: {(autoClickers + 1) * 10} cookies)
+            Buy Auto Clicker (Cost: {Math.floor(10 * Math.pow(1.15, autoClickers))} cookies)
           </button>
           <button
             onClick={upgradeMultiplier}
-            disabled={cookies < (multiplier) * 50}
+            disabled={cookies < Math.floor(50 * Math.pow(1.15, multiplier - 1))}
             className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
           >
-            Upgrade Multiplier (Cost: {(multiplier) * 50} cookies)
+            Upgrade Multiplier (Cost: {Math.floor(50 * Math.pow(1.15, multiplier - 1))} cookies)
           </button>
           <button
             onClick={upgradeRockRating}
-            disabled={cookies < (rockRating) * 100}
+            disabled={cookies < Math.floor(100 * Math.pow(1.15, rockRating - 1))}
             className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
           >
-            Rock Rating (Cost: {(rockRating) * 100} cookies)
+            Rock Rating (Cost: {Math.floor(100 * Math.pow(1.15, rockRating - 1))} cookies)
           </button>
         </div>
         <div className="mt-4 text-white">
