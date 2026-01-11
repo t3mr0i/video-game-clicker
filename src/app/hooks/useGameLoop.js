@@ -23,17 +23,19 @@ export function useGameLoop() {
     if (deltaTime > 5000) return;
 
     // Prevent excessive accumulation with speed-adjusted buffer
-    const speedAdjustedBuffer = fixedTimeStep.current * (5 * state.gameSpeed);
+    // More intelligent speed buffer with exponential falloff
+    const speedAdjustedBuffer = fixedTimeStep.current * (10 * Math.log2(state.gameSpeed + 1));
     frameAccumulator.current = Math.min(frameAccumulator.current + deltaTime, speedAdjustedBuffer);
 
     let iterations = 0;
-    const maxIterations = Math.max(3, Math.floor(state.gameSpeed * 2)); // Adjust max iterations based on speed
+    // Logarithmic iteration limit to prevent game slowdown
+    const maxIterations = Math.max(3, Math.floor(Math.log2(state.gameSpeed + 1) * 3));
 
     while (frameAccumulator.current >= fixedTimeStep.current && iterations < maxIterations) {
       const gameTickDelta = fixedTimeStep.current;
 
-      // Calculate time progression with safety checks
-      const timeStep = Math.max(0, (gameTickDelta / 1000) * state.gameSpeed);
+      // Non-linear time scaling to prevent abrupt speed changes
+      const timeStep = Math.max(0, (gameTickDelta / 1000) * Math.pow(state.gameSpeed, 0.75));
       const daysPerSecond = GAME_MECHANICS.GAME_DAYS_PER_REAL_SECOND;
       const dayProgress = Math.max(0, timeStep * daysPerSecond);
 
