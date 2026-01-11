@@ -3,19 +3,22 @@
 @tailwind utilities;
 
 :root {
-  --color-primary: #3b82f6;       /* Updated vibrant blue */
-  --color-secondary: #10b981;     /* Emerald green */
-  --color-accent: #f43f5e;        /* Softer bright red */
-  --color-background-dark: #0f1217; /* Darker background */
-  --color-background-medium: #1a2332; /* Updated medium background */
-  --color-background-light: #253341; /* Updated lighter background */
-  --color-text-primary: #e6e6e6;   /* Slightly softer primary text */
-  --color-text-secondary: #a3a3a3; /* Adjusted secondary text */
-  --color-text-tertiary: #6b7280;  /* Tertiary text remains same */
+  --color-primary: #4380f6;       /* Enhanced vibrant blue */
+  --color-secondary: #12c49b;     /* Brighter emerald green */
+  --color-accent: #f64f6e;        /* More vibrant red-pink */
+  --color-background-dark: #0d1015; /* Even darker background */
+  --color-background-medium: #1c2634; /* Enhanced medium background */
+  --color-background-light: #273645; /* Refined lighter background */
+  --color-text-primary: #f0f0f0;   /* Slightly brighter primary text */
+  --color-text-secondary: #b0b0b0; /* More readable secondary text */
+  --color-text-tertiary: #7c8491;  /* Refined tertiary text */
 
-  --foreground-rgb: 230, 230, 230; /* Updated to match new primary text */
-  --background-start-rgb: 15, 18, 23; /* Darker background */
-  --background-end-rgb: 15, 18, 23;
+  --foreground-rgb: 240, 240, 240; /* Updated to match new primary text */
+  --background-start-rgb: 13, 16, 21; /* Darker background */
+  --background-end-rgb: 13, 16, 21;
+
+  /* Enhanced accessibility color ratios */
+  color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -291,23 +294,30 @@ h1, h2, h3 {
 }
 
 h1 {
-  font-size: 2.25rem;
+  font-size: 2.35rem;
+  font-weight: 800;
   text-transform: uppercase;
   background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  letter-spacing: 0.05em;
+  line-height: 1.1;
 }
 
 h2 {
-  font-size: 1.75rem;
+  font-size: 1.85rem;
+  font-weight: 700;
   color: var(--color-text-primary);
-  border-bottom: 2px solid rgba(59, 130, 246, 0.3);
-  padding-bottom: 0.5rem;
+  border-bottom: 2px solid rgba(64, 123, 255, 0.4);
+  padding-bottom: 0.625rem;
+  letter-spacing: 0.025em;
 }
 
 h3 {
-  font-size: 1.375rem;
+  font-size: 1.45rem;
+  font-weight: 600;
   color: var(--color-text-secondary);
+  letter-spacing: 0.015em;
 }
 
 /* Typography adjustments for mobile */
@@ -384,11 +394,12 @@ h3 {
 
 .game-card:hover {
   box-shadow:
-    0 12px 20px rgba(0, 0, 0, 0.3),
-    0 15px 30px rgba(64, 123, 255, 0.2);
-  transform: translateY(-8px) scale(1.02);
-  border-color: rgba(64, 123, 255, 0.3);
+    0 16px 24px rgba(0, 0, 0, 0.4),
+    0 18px 36px rgba(64, 123, 255, 0.25);
+  transform: translateY(-10px) scale(1.025);
+  border-color: rgba(64, 123, 255, 0.4);
   z-index: 10;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .game-card h3 {
@@ -443,11 +454,13 @@ h3 {
 }
 
 .game-button:hover:not(:disabled) {
-  transform: translateY(-4px) scale(1.05);
+  transform: translateY(-5px) scale(1.055);
   box-shadow:
-    0 8px 15px rgba(0, 0, 0, 0.2),
-    0 5px 10px rgba(64, 123, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.3);
+    0 10px 18px rgba(0, 0, 0, 0.25),
+    0 6px 12px rgba(64, 123, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.4);
+  background: linear-gradient(145deg, #4a8dff, #2563eb);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .game-button:hover:not(:disabled)::before {
