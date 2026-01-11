@@ -22,17 +22,18 @@ export function useGameLoop() {
     // Skip if tab was inactive for too long (> 5 seconds)
     if (deltaTime > 5000) return;
 
-    // Prevent excessive accumulation
-    frameAccumulator.current = Math.min(frameAccumulator.current + deltaTime, fixedTimeStep.current * 5);
+    // Prevent excessive accumulation with speed-adjusted buffer
+    const speedAdjustedBuffer = fixedTimeStep.current * (5 * state.gameSpeed);
+    frameAccumulator.current = Math.min(frameAccumulator.current + deltaTime, speedAdjustedBuffer);
 
     let iterations = 0;
-    const maxIterations = 3; // Prevent infinite loop
+    const maxIterations = Math.max(3, Math.floor(state.gameSpeed * 2)); // Adjust max iterations based on speed
 
     while (frameAccumulator.current >= fixedTimeStep.current && iterations < maxIterations) {
       const gameTickDelta = fixedTimeStep.current;
 
       // Calculate time progression with safety checks
-      const timeStep = Math.max(0, Math.min((gameTickDelta / 1000) * state.gameSpeed, 1));
+      const timeStep = Math.max(0, (gameTickDelta / 1000) * state.gameSpeed);
       const daysPerSecond = GAME_MECHANICS.GAME_DAYS_PER_REAL_SECOND;
       const dayProgress = Math.max(0, timeStep * daysPerSecond);
 
@@ -106,7 +107,10 @@ export function useGameLoop() {
           return sum + (emp.productivity * skillMatch * moraleBonus);
         }, 0);
 
-        const progressIncrement = (totalProductivity * dayProgress) / project.estimatedDays;
+        // More precise progress calculation with dynamic scaling
+        const progressBase = 100 / project.estimatedDays;
+        const progressMultiplier = 1 + (totalProductivity * 0.5); // Dynamic multiplier
+        const progressIncrement = progressBase * progressMultiplier * dayProgress;
         const newProgress = Math.min(100, project.progress + progressIncrement);
 
         // Only update if progress changed significantly
