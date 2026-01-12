@@ -98,7 +98,7 @@ function GameStudio() {
                                 letterSpacing: '0.1em',
                                 marginTop: '0.5rem'
                             }}>
-                                > NEXT-GEN ENTERTAINMENT CORPORATION
+                                &gt; NEXT-GEN ENTERTAINMENT CORPORATION
                             </div>
                         </div>
                     </div>
@@ -365,80 +365,138 @@ function GameStudio() {
                         )}
                     </div>
 
-                    <div className="space-y-2 max-h-80 overflow-y-auto" style={{
+                    <div className="mission-feed space-y-3 max-h-80 overflow-y-auto" style={{
                         scrollbarWidth: 'thin',
-                        scrollbarColor: '#00D9FF #1A1A24'
+                        scrollbarColor: 'rgba(0, 217, 255, 0.6) rgba(26, 26, 36, 0.8)'
                     }}>
-                        {state.notifications.slice(-8).map(notification => (
+                        {state.notifications.slice(-8).map((notification, index) => (
                             <div
                                 key={notification.id}
-                                className="relative p-3 pr-10 rounded-lg text-sm transition-all duration-300 transform hover:scale-102 font-mono"
+                                className="mission-log-entry relative rounded-xl text-sm transition-all duration-500 transform hover:scale-105 font-mono"
                                 style={{
                                     background: notification.type === 'success'
-                                        ? 'linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 255, 136, 0.1))'
+                                        ? 'linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 255, 136, 0.05))'
                                         : notification.type === 'error'
-                                        ? 'linear-gradient(135deg, rgba(255, 68, 68, 0.2), rgba(255, 68, 68, 0.1))'
+                                        ? 'linear-gradient(135deg, rgba(255, 68, 68, 0.15), rgba(255, 68, 68, 0.05))'
                                         : notification.type === 'warning'
-                                        ? 'linear-gradient(135deg, rgba(255, 170, 0, 0.2), rgba(255, 170, 0, 0.1))'
-                                        : 'linear-gradient(135deg, rgba(0, 217, 255, 0.2), rgba(0, 217, 255, 0.1))',
-                                    border: `1px solid ${
-                                        notification.type === 'success' ? '#00FF88'
-                                        : notification.type === 'error' ? '#FF4444'
-                                        : notification.type === 'warning' ? '#FFAA00'
-                                        : '#00D9FF'
+                                        ? 'linear-gradient(135deg, rgba(255, 170, 0, 0.15), rgba(255, 170, 0, 0.05))'
+                                        : 'linear-gradient(135deg, rgba(0, 217, 255, 0.15), rgba(0, 217, 255, 0.05))',
+                                    border: `2px solid ${
+                                        notification.type === 'success' ? 'rgba(0, 255, 136, 0.4)'
+                                        : notification.type === 'error' ? 'rgba(255, 68, 68, 0.4)'
+                                        : notification.type === 'warning' ? 'rgba(255, 170, 0, 0.4)'
+                                        : 'rgba(0, 217, 255, 0.4)'
                                     }`,
                                     color: 'var(--text-neon-bright)',
-                                    boxShadow: `0 0 10px ${
-                                        notification.type === 'success' ? 'rgba(0, 255, 136, 0.3)'
-                                        : notification.type === 'error' ? 'rgba(255, 68, 68, 0.3)'
-                                        : notification.type === 'warning' ? 'rgba(255, 170, 0, 0.3)'
-                                        : 'rgba(0, 217, 255, 0.3)'
-                                    }`
+                                    boxShadow: `0 4px 15px ${
+                                        notification.type === 'success' ? 'rgba(0, 255, 136, 0.2)'
+                                        : notification.type === 'error' ? 'rgba(255, 68, 68, 0.2)'
+                                        : notification.type === 'warning' ? 'rgba(255, 170, 0, 0.2)'
+                                        : 'rgba(0, 217, 255, 0.2)'
+                                    }`,
+                                    padding: '1rem 3rem 1rem 1rem',
+                                    backdropFilter: 'blur(10px)',
+                                    position: 'relative',
+                                    overflow: 'hidden',
+                                    animationDelay: `${index * 100}ms`,
+                                    animation: 'slideInFromRight 0.5s ease-out forwards'
                                 }}
                             >
+                                {/* Mission log status indicator */}
+                                <div className="absolute left-3 top-3" style={{
+                                    width: '8px',
+                                    height: '8px',
+                                    borderRadius: '50%',
+                                    background: notification.type === 'success' ? '#00FF88'
+                                        : notification.type === 'error' ? '#FF4444'
+                                        : notification.type === 'warning' ? '#FFAA00'
+                                        : '#00D9FF',
+                                    boxShadow: `0 0 15px ${
+                                        notification.type === 'success' ? 'rgba(0, 255, 136, 0.8)'
+                                        : notification.type === 'error' ? 'rgba(255, 68, 68, 0.8)'
+                                        : notification.type === 'warning' ? 'rgba(255, 170, 0, 0.8)'
+                                        : 'rgba(0, 217, 255, 0.8)'
+                                    }`,
+                                    animation: 'pulse 2s infinite'
+                                }}></div>
+
                                 <button
                                     onClick={() => actions.removeNotification(notification.id)}
-                                    className="absolute top-1 right-1 w-5 h-5 rounded-full text-white text-xs flex items-center justify-center transition-all duration-200 hover:scale-110"
+                                    className="dismiss-btn absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-125 hover:rotate-90"
                                     style={{
-                                        background: 'rgba(255, 68, 68, 0.8)',
-                                        border: '1px solid #FF4444'
+                                        background: 'linear-gradient(135deg, rgba(255, 68, 68, 0.3), rgba(255, 68, 68, 0.1))',
+                                        border: '1px solid rgba(255, 68, 68, 0.4)',
+                                        color: '#FF4444',
+                                        fontSize: '0.8rem',
+                                        backdropFilter: 'blur(10px)'
                                     }}
-                                    title="Dismiss notification"
+                                    title="Dismiss log entry"
                                 >
-                                    ×
+                                    ✕
                                 </button>
-                                <div className="pr-2" style={{fontSize: '0.8rem'}}>
-                                    <span style={{
-                                        color: notification.type === 'success' ? '#00FF88'
-                                            : notification.type === 'error' ? '#FF4444'
-                                            : notification.type === 'warning' ? '#FFAA00'
-                                            : '#00D9FF'
-                                    }}>
-                                        {notification.type === 'success' ? '✓'
-                                         : notification.type === 'error' ? '✗'
-                                         : notification.type === 'warning' ? '⚠'
-                                         : 'ℹ'}
-                                    </span>{' '}
-                                    {notification.message}
-                                </div>
-                                {notification.timestamp && (
-                                    <div className="text-xs opacity-75 mt-1 font-mono" style={{
-                                        color: 'var(--text-muted-console)',
-                                        fontSize: '0.7rem'
-                                    }}>
-                                        {new Date(notification.timestamp).toLocaleTimeString()}
+
+                                <div className="log-content ml-6" style={{fontSize: '0.85rem', lineHeight: '1.4'}}>
+                                    <div className="flex items-center space-x-2 mb-1">
+                                        <span className="log-type" style={{
+                                            color: notification.type === 'success' ? '#00FF88'
+                                                : notification.type === 'error' ? '#FF4444'
+                                                : notification.type === 'warning' ? '#FFAA00'
+                                                : '#00D9FF',
+                                            fontWeight: 'bold',
+                                            fontSize: '1rem'
+                                        }}>
+                                            {notification.type === 'success' ? '✅ SUCCESS'
+                                             : notification.type === 'error' ? '🚨 ERROR'
+                                             : notification.type === 'warning' ? '⚠️ WARNING'
+                                             : '📡 INFO'}
+                                        </span>
+                                        {notification.timestamp && (
+                                            <span className="log-timestamp text-xs" style={{
+                                                color: 'rgba(0, 217, 255, 0.6)',
+                                                fontFamily: 'Fira Code, monospace'
+                                            }}>
+                                                {new Date(notification.timestamp).toLocaleTimeString()}
+                                            </span>
+                                        )}
                                     </div>
-                                )}
+                                    <div className="log-message" style={{
+                                        color: 'var(--text-neon-bright)',
+                                        fontWeight: '500'
+                                    }}>
+                                        {notification.message}
+                                    </div>
+                                </div>
                             </div>
                         ))}
                         {state.notifications.length === 0 && (
-                            <div className="text-center py-8 font-mono" style={{
-                                color: 'var(--text-muted-console)',
-                                fontSize: '0.9rem'
+                            <div className="mission-idle text-center py-12" style={{
+                                background: 'linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(136, 0, 255, 0.1))',
+                                border: '2px dashed rgba(0, 217, 255, 0.3)',
+                                borderRadius: '16px',
+                                backdropFilter: 'blur(10px)'
                             }}>
-                                > SYSTEM IDLE
-                                <div className="animate-pulse mt-2" style={{color: 'var(--color-neon-green)'}}>
-                                    █
+                                <div className="idle-icon text-4xl mb-4 animate-pulse">🛸</div>
+                                <div className="font-mono" style={{
+                                    color: 'rgba(0, 217, 255, 0.8)',
+                                    fontSize: '1rem',
+                                    letterSpacing: '0.1em'
+                                }}>
+                                    MISSION CONTROL STANDBY
+                                </div>
+                                <div className="font-mono text-xs mt-2" style={{
+                                    color: 'rgba(0, 217, 255, 0.5)',
+                                    letterSpacing: '0.05em'
+                                }}>
+                                    All systems operational
+                                </div>
+                                <div className="status-bar mt-4 flex justify-center">
+                                    <div className="animate-pulse" style={{
+                                        color: 'var(--color-neon-green)',
+                                        fontSize: '1.5rem',
+                                        animation: 'cursor-blink 1.5s infinite'
+                                    }}>
+                                        ▊
+                                    </div>
                                 </div>
                             </div>
                         )}
