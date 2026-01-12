@@ -1,0 +1,488 @@
+/* Gaming Empire Studio Styles */
+:root {
+  --gradient-studio: linear-gradient(135deg, #0A0A0F 0%, #0D0D16 50%, #151520 100%);
+  --gradient-cyan: linear-gradient(135deg, #00D9FF, #0099CC);
+  --gradient-green: linear-gradient(135deg, #00FF88, #00CC66);
+  --gradient-purple: linear-gradient(135deg, #8800FF, #6600CC);
+  --gradient-pink: linear-gradient(135deg, #FF0080, #CC0066);
+  --gradient-rainbow: linear-gradient(45deg, #00D9FF, #00FF88, #FF0080, #8800FF);
+
+  --color-neon-cyan: #00D9FF;
+  --color-neon-green: #00FF88;
+  --color-neon-purple: #8800FF;
+  --color-neon-pink: #FF0080;
+  --color-error: #FF4444;
+  --color-warning: #FFAA00;
+
+  --text-neon-bright: #E8E8F0;
+  --text-subtitle: #8A8A9F;
+
+  --border-rainbow: linear-gradient(90deg, #00D9FF, #00FF88, #FF0080) 1;
+  --shadow-dark: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-glow-cyan: 0 0 30px rgba(0, 217, 255, 0.5);
+  --shadow-glow-green: 0 0 20px rgba(0, 255, 136, 0.6);
+  --shadow-glow-error: 0 0 20px rgba(255, 68, 68, 0.6);
+
+  --backdrop-blur: blur(10px);
+  --backdrop-blur-strong: blur(20px);
+}
+
+/* Animations */
+@keyframes gradient-flow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes rotate-glow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes cursor-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Main Layout */
+.enterprise-dashboard {
+  background: var(--gradient-studio);
+}
+
+/* Header Styles */
+.executive-header {
+  background: linear-gradient(135deg, #0A0A0F 0%, #1A1A24 50%, #252538 100%);
+  border-bottom: 3px solid transparent;
+  border-image: var(--border-rainbow);
+  box-shadow: var(--shadow-dark), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.studio-logo-icon {
+  position: relative;
+}
+
+.logo-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle, var(--color-neon-cyan) 0%, transparent 70%);
+  opacity: 0.3;
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.studio-title {
+  font-size: 2.8rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  background: var(--gradient-rainbow);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-flow 4s ease infinite;
+  letter-spacing: 0.15em;
+  text-shadow: var(--shadow-glow-cyan);
+}
+
+.studio-subtitle {
+  font-size: 1rem;
+  color: var(--text-subtitle);
+  font-family: 'Fira Code', monospace;
+  letter-spacing: 0.1em;
+  margin-top: 0.5rem;
+}
+
+/* Status Monitor */
+.status-monitor {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(0, 217, 255, 0.05));
+  border: 2px solid rgba(0, 217, 255, 0.3);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  backdrop-filter: var(--backdrop-blur);
+}
+
+.system-status {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  font-family: 'Fira Code', monospace;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+}
+
+.status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.status-indicator.running {
+  background: var(--color-neon-green);
+  box-shadow: var(--shadow-glow-green);
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.status-indicator.paused {
+  background: var(--color-error);
+  box-shadow: var(--shadow-glow-error);
+}
+
+.system-status.active .status-text {
+  color: var(--color-neon-green);
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.8);
+}
+
+.system-status.paused .status-text {
+  color: var(--color-error);
+  text-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
+}
+
+/* Time Console */
+.time-console {
+  background: linear-gradient(135deg, rgba(136, 0, 255, 0.1), rgba(136, 0, 255, 0.05));
+  border: 2px solid rgba(136, 0, 255, 0.3);
+  border-radius: 12px;
+  padding: 1rem;
+  backdrop-filter: var(--backdrop-blur);
+}
+
+/* Workspace */
+.enterprise-workspace {
+  padding: 2rem;
+  background: linear-gradient(180deg, rgba(26, 26, 36, 0.8) 0%, rgba(16, 16, 24, 0.9) 100%);
+  position: relative;
+}
+
+.executive-dashboard {
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+/* Department Headers */
+.department-title {
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  backdrop-filter: var(--backdrop-blur-strong);
+  position: relative;
+  overflow: hidden;
+}
+
+.department-title.executive {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.15), rgba(0, 217, 255, 0.05));
+  border: 2px solid rgba(0, 217, 255, 0.3);
+}
+
+.department-title.development {
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 255, 136, 0.05));
+  border: 2px solid rgba(0, 255, 136, 0.3);
+}
+
+.department-title.business {
+  background: linear-gradient(135deg, rgba(136, 0, 255, 0.15), rgba(136, 0, 255, 0.05));
+  border: 2px solid rgba(136, 0, 255, 0.3);
+}
+
+.department-title h2 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  font-family: 'Fira Code', monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.department-title.executive h2 {
+  color: #00D9FF;
+}
+
+.department-title.development h2 {
+  color: #00FF88;
+}
+
+.department-title.business h2 {
+  color: #8800FF;
+}
+
+.department-subtitle {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  font-family: 'Fira Code', monospace;
+  opacity: 0.7;
+}
+
+.department-title.executive .department-subtitle {
+  color: rgba(0, 217, 255, 0.7);
+}
+
+.department-title.development .department-subtitle {
+  color: rgba(0, 255, 136, 0.7);
+}
+
+.department-title.business .department-subtitle {
+  color: rgba(136, 0, 255, 0.7);
+}
+
+/* Mission Control */
+.enterprise-mission-control {
+  position: fixed;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 420px;
+  z-index: 50;
+  max-height: 500px;
+  background: linear-gradient(135deg, rgba(10, 10, 15, 0.95), rgba(26, 26, 36, 0.9));
+  border: 3px solid transparent;
+  border-image: linear-gradient(45deg, #00D9FF, #FF0080, #8800FF) 1;
+  border-radius: 20px;
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.6),
+    0 0 30px rgba(0, 217, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: var(--backdrop-blur-strong);
+  overflow: hidden;
+}
+
+.mission-control-header {
+  border-bottom: 2px solid rgba(0, 217, 255, 0.3);
+  padding-bottom: 1rem;
+}
+
+.control-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--gradient-cyan);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  animation: rotate-glow 4s linear infinite;
+}
+
+.control-title h3 {
+  color: var(--text-neon-bright);
+  text-shadow: var(--shadow-glow-cyan);
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  font-family: 'Fira Code', monospace;
+  font-weight: bold;
+}
+
+.control-subtitle {
+  color: rgba(0, 217, 255, 0.7);
+  font-size: 0.75rem;
+  font-family: 'Fira Code', monospace;
+  letter-spacing: 0.05em;
+}
+
+.clear-feed-btn {
+  background: linear-gradient(135deg, rgba(255, 68, 68, 0.2), rgba(255, 68, 68, 0.1));
+  border: 1px solid rgba(255, 68, 68, 0.4);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  color: var(--color-error);
+  font-size: 0.75rem;
+  font-family: 'Fira Code', monospace;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease;
+  backdrop-filter: var(--backdrop-blur);
+}
+
+.clear-feed-btn:hover {
+  background: linear-gradient(135deg, rgba(255, 68, 68, 0.3), rgba(255, 68, 68, 0.15));
+  transform: scale(1.05);
+}
+
+/* Mission Feed */
+.mission-feed {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 217, 255, 0.6) rgba(26, 26, 36, 0.8);
+}
+
+.mission-log-entry {
+  border-radius: 12px;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+  font-family: 'Fira Code', monospace;
+  padding: 1rem 3rem 1rem 1rem;
+  backdrop-filter: var(--backdrop-blur);
+  position: relative;
+  overflow: hidden;
+  animation: slideInFromRight 0.5s ease-out forwards;
+}
+
+.mission-log-entry:hover {
+  transform: scale(1.02);
+}
+
+.mission-log-entry.success {
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 255, 136, 0.05));
+  border: 2px solid rgba(0, 255, 136, 0.4);
+  box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
+}
+
+.mission-log-entry.error {
+  background: linear-gradient(135deg, rgba(255, 68, 68, 0.15), rgba(255, 68, 68, 0.05));
+  border: 2px solid rgba(255, 68, 68, 0.4);
+  box-shadow: 0 4px 15px rgba(255, 68, 68, 0.2);
+}
+
+.mission-log-entry.warning {
+  background: linear-gradient(135deg, rgba(255, 170, 0, 0.15), rgba(255, 170, 0, 0.05));
+  border: 2px solid rgba(255, 170, 0, 0.4);
+  box-shadow: 0 4px 15px rgba(255, 170, 0, 0.2);
+}
+
+.mission-log-entry.info {
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.15), rgba(0, 217, 255, 0.05));
+  border: 2px solid rgba(0, 217, 255, 0.4);
+  box-shadow: 0 4px 15px rgba(0, 217, 255, 0.2);
+}
+
+.log-status-indicator {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.log-status-indicator.success {
+  background: var(--color-neon-green);
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.8);
+}
+
+.log-status-indicator.error {
+  background: var(--color-error);
+  box-shadow: 0 0 15px rgba(255, 68, 68, 0.8);
+}
+
+.log-status-indicator.warning {
+  background: var(--color-warning);
+  box-shadow: 0 0 15px rgba(255, 170, 0, 0.8);
+}
+
+.log-status-indicator.info {
+  background: var(--color-neon-cyan);
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.8);
+}
+
+.dismiss-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, rgba(255, 68, 68, 0.3), rgba(255, 68, 68, 0.1));
+  border: 1px solid rgba(255, 68, 68, 0.4);
+  color: var(--color-error);
+  font-size: 0.8rem;
+  backdrop-filter: var(--backdrop-blur);
+}
+
+.dismiss-btn:hover {
+  transform: scale(1.25) rotate(90deg);
+}
+
+.log-content {
+  margin-left: 1.5rem;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.log-type {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.log-type.success {
+  color: var(--color-neon-green);
+}
+
+.log-type.error {
+  color: var(--color-error);
+}
+
+.log-type.warning {
+  color: var(--color-warning);
+}
+
+.log-type.info {
+  color: var(--color-neon-cyan);
+}
+
+.log-timestamp {
+  color: rgba(0, 217, 255, 0.6);
+  font-family: 'Fira Code', monospace;
+  font-size: 0.75rem;
+}
+
+.log-message {
+  color: var(--text-neon-bright);
+  font-weight: 500;
+}
+
+/* Mission Idle State */
+.mission-idle {
+  text-align: center;
+  padding: 3rem;
+  background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(136, 0, 255, 0.1));
+  border: 2px dashed rgba(0, 217, 255, 0.3);
+  border-radius: 16px;
+  backdrop-filter: var(--backdrop-blur);
+}
+
+.idle-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.idle-title {
+  color: rgba(0, 217, 255, 0.8);
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  font-family: 'Fira Code', monospace;
+}
+
+.idle-subtitle {
+  color: rgba(0, 217, 255, 0.5);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  font-family: 'Fira Code', monospace;
+  margin-top: 0.5rem;
+}
+
+.status-cursor {
+  color: var(--color-neon-green);
+  font-size: 1.5rem;
+  animation: cursor-blink 1.5s infinite;
+}

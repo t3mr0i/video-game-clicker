@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { formatCurrency } from '../../utils/formatting';
 import Modal from './common/Modal';
 import Button from './common/Button';
 
@@ -24,12 +25,6 @@ const StocksTradingModal = ({
 
     if (!stock) return null;
 
-    const formatCurrency = (amount) => {
-        return `$${Math.abs(amount).toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        })}`;
-    };
 
     const totalCost = quantity * stock.currentPrice;
     const maxBuyQuantity = Math.floor(currentMoney / stock.currentPrice);

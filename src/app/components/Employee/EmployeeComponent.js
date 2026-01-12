@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useGameContext } from '../../contexts/GameContext';
+import { useNotification } from '../../hooks/useNotification';
 import Card from '../common/Card';
 import Button from '../common/Button';
 import EmployeeCard from './EmployeeCard';
@@ -7,24 +8,19 @@ import HiringModal from './HiringModal';
 
 const EmployeeComponent = () => {
   const { state, actions } = useGameContext();
+  const { gameEvents, notifyInfo } = useNotification();
   const [isHiringModalOpen, setIsHiringModalOpen] = useState(false);
 
   const handleHireEmployee = (employeeData) => {
     actions.hireEmployee(employeeData);
-    actions.addNotification({
-      message: `Hired ${employeeData.name} as ${employeeData.type}`,
-      type: 'success'
-    });
+    gameEvents.employeeHired(employeeData);
   };
 
   const handleFireEmployee = (employeeId) => {
     const employee = (state.employees || []).find(e => e.id === employeeId);
     if (employee && window.confirm(`Are you sure you want to fire ${employee.name}?`)) {
       actions.fireEmployee(employeeId);
-      actions.addNotification({
-        message: `Fired ${employee.name}`,
-        type: 'warning'
-      });
+      gameEvents.employeeFired(employee);
     }
   };
 
@@ -34,19 +30,13 @@ const EmployeeComponent = () => {
       ? Object.entries(employee.skills).map(([skill, level]) => `${skill}: ${level}`).join(', ')
       : 'None';
 
-    actions.addNotification({
-      message: `${employee.name} (${employee.type}) - Salary: $${employee.salary?.toLocaleString() || 'N/A'} - Skills: ${skillsText}`,
-      type: 'info'
-    });
+    notifyInfo(`${employee.name} (${employee.type}) - Salary: $${employee.salary?.toLocaleString() || 'N/A'} - Skills: ${skillsText}`);
   };
 
   const handleAssignEmployee = (employee) => {
     // Project assignment functionality would go here
     // For now, just show info about the employee
-    actions.addNotification({
-      message: `${employee.name} is available for assignment to projects. Feature coming soon!`,
-      type: 'info'
-    });
+    notifyInfo(`${employee.name} is available for assignment to projects. Feature coming soon!`);
   };
 
   const totalMonthlySalaries = (state.employees || []).reduce((total, emp) => total + (emp.salary || 0), 0);

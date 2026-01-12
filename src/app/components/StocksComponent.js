@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { useGameContext } from '../contexts/GameContext';
+import { useNotification } from '../hooks/useNotification';
+import { formatCurrency, formatPercentage, getChangeColor } from '../../utils/formatting';
 import Button from './common/Button';
 import StocksTradingModal from './StocksTradingModal';
 import Modal from './common/Modal';
 
 const StocksComponent = () => {
     const { state, actions } = useGameContext();
+    const { gameEvents, notifySuccess } = useNotification();
     const [isTradingModalOpen, setIsTradingModalOpen] = useState(false);
     const [selectedStock, setSelectedStock] = useState(null);
     const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
@@ -42,10 +45,7 @@ const StocksComponent = () => {
                 parseFloat(alertTarget.targetPrice),
                 alertTarget.direction
             );
-            actions.addNotification({
-                message: `Price alert created for ${state.stocks.find(s => s.id === alertTarget.stockId)?.symbol}`,
-                type: 'success'
-            });
+            notifySuccess(`Price alert created for ${state.stocks.find(s => s.id === alertTarget.stockId)?.symbol}`);
             setIsAlertModalOpen(false);
             setAlertTarget({ stockId: '', targetPrice: '', direction: 'above' });
         }
@@ -62,22 +62,6 @@ const StocksComponent = () => {
         };
     };
 
-    const formatCurrency = (amount) => {
-        return `$${Math.abs(amount).toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        })}`;
-    };
-
-    const formatPercentage = (percent) => {
-        return `${percent >= 0 ? '+' : ''}${percent.toFixed(2)}%`;
-    };
-
-    const getChangeColor = (value) => {
-        if (value > 0) return 'text-green-400';
-        if (value < 0) return 'text-red-400';
-        return 'text-gray-400';
-    };
 
     const handleTradeClick = (stock) => {
         setSelectedStock(stock);
@@ -87,16 +71,10 @@ const StocksComponent = () => {
     const handleTrade = (stockId, action, quantity, price) => {
         if (action === 'buy') {
             actions.buyStock(stockId, quantity, price);
-            actions.addNotification({
-                message: `Bought ${quantity} shares of ${selectedStock.symbol}`,
-                type: 'success'
-            });
+            gameEvents.stockTraded('buy', quantity, selectedStock);
         } else {
             actions.sellStock(stockId, quantity, price);
-            actions.addNotification({
-                message: `Sold ${quantity} shares of ${selectedStock.symbol}`,
-                type: 'success'
-            });
+            gameEvents.stockTraded('sell', quantity, selectedStock);
         }
         setIsTradingModalOpen(false);
     };

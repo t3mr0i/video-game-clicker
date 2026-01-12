@@ -1,5 +1,6 @@
 import React from 'react';
 import { useGameContext } from '../contexts/GameContext';
+import { formatCurrency, getChangeColor } from '../utils/formatting';
 
 const FinanceComponent = () => {
     const { state } = useGameContext();
@@ -15,20 +16,20 @@ const FinanceComponent = () => {
             <div className="flex flex-col space-y-2">
                 <div className="flex justify-between items-center text-xs">
                     <span className="text-gray-300">Current Balance:</span>
-                    <span className={`font-medium ${state.money >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                        ${state.money.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}
+                    <span className={`font-medium ${getChangeColor(state.money)}`}>
+                        {formatCurrency(state.money, 0)}
                     </span>
                 </div>
                 <div className="flex justify-between items-center text-xs">
                     <span className="text-gray-300">Monthly Salaries:</span>
                     <span className="font-medium text-yellow-400">
-                        ${monthlySalaryCosts.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}
+                        {formatCurrency(monthlySalaryCosts, 0)}
                     </span>
                 </div>
                 <div className="flex justify-between items-center text-xs">
                     <span className="text-gray-300">Daily Expenses:</span>
                     <span className="font-medium text-red-400">
-                        ${dailySalaryCosts.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})}
+                        {formatCurrency(dailySalaryCosts, 2)}
                     </span>
                 </div>
                 {state.employees.length > 0 && (
