@@ -1,6 +1,6 @@
 import React from 'react';
 import { useGameContext } from '../contexts/GameContext';
-import { formatCurrency, getChangeColor } from '../utils/formatting';
+import { formatCurrency, getChangeColor } from '../../utils/formatting';
 
 const FinanceComponent = () => {
     const { state } = useGameContext();

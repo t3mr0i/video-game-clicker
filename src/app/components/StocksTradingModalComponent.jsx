@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { formatCurrency } from '../../utils/formatting';
 import Modal from './common/Modal';
 import Button from './common/Button';
@@ -11,7 +11,7 @@ const StocksTradingModal = ({
     currentHolding,
     onTrade
 }) => {
-    const [action, setAction] = useState('buy'); // 'buy' or 'sell'
+    const [action, setAction] = useState('buy');
     const [quantity, setQuantity] = useState(1);
     const [isProcessing, setIsProcessing] = useState(false);
 
@@ -20,16 +20,18 @@ const StocksTradingModal = ({
         if (isOpen) {
             setAction('buy');
             setQuantity(1);
+            setIsProcessing(false);
         }
     }, [isOpen]);
 
     if (!stock) return null;
 
-
+    // Trading calculations
     const totalCost = quantity * stock.currentPrice;
     const maxBuyQuantity = Math.floor(currentMoney / stock.currentPrice);
     const maxSellQuantity = currentHolding ? currentHolding.quantity : 0;
 
+    // Trade validation
     const canExecuteTrade = () => {
         if (action === 'buy') {
             return quantity > 0 && quantity <= maxBuyQuantity && currentMoney >= totalCost;
@@ -38,6 +40,7 @@ const StocksTradingModal = ({
         }
     };
 
+    // Quantity handlers
     const handleQuantityChange = (value) => {
         const newQuantity = Math.max(1, parseInt(value) || 1);
         setQuantity(newQuantity);
@@ -51,18 +54,7 @@ const StocksTradingModal = ({
         }
     };
 
-    const handleTrade = async () => {
-        if (!canExecuteTrade()) return;
-
-        setIsProcessing(true);
-
-        try {
-            onTrade(stock.id, action, quantity, stock.currentPrice);
-        } finally {
-            setIsProcessing(false);
-        }
-    };
-
+    // Gain/Loss calculation for selling
     const getGainLoss = () => {
         if (action === 'sell' && currentHolding) {
             const costBasis = quantity * currentHolding.averagePurchasePrice;
@@ -79,7 +71,38 @@ const StocksTradingModal = ({
         return null;
     };
 
+    // Execute trade
+    const handleTrade = async () => {
+        if (!canExecuteTrade()) return;
+
+        setIsProcessing(true);
+
+        try {
+            await onTrade(stock.id, action, quantity, stock.currentPrice);
+            onClose();
+        } catch (error) {
+            console.error('Trade execution failed:', error);
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
+    // Get validation error
+    const getValidationError = () => {
+        if (quantity <= 0) return 'Quantity must be greater than 0.';
+
+        if (action === 'buy') {
+            if (currentMoney < totalCost) return 'Insufficient funds for this purchase.';
+            if (quantity > maxBuyQuantity) return 'Quantity exceeds maximum affordable amount.';
+        } else {
+            if (quantity > maxSellQuantity) return 'Quantity exceeds available shares.';
+        }
+
+        return null;
+    };
+
     const gainLoss = getGainLoss();
+    const validationError = getValidationError();
 
     return (
         <Modal
@@ -194,12 +217,9 @@ const StocksTradingModal = ({
                 </div>
 
                 {/* Error Messages */}
-                {!canExecuteTrade() && (
+                {validationError && (
                     <div className="bg-red-900 border border-red-600 text-red-200 p-2 rounded text-sm">
-                        {action === 'buy' && currentMoney < totalCost && 'Insufficient funds for this purchase.'}
-                        {action === 'buy' && quantity > maxBuyQuantity && 'Quantity exceeds maximum affordable amount.'}
-                        {action === 'sell' && quantity > maxSellQuantity && 'Quantity exceeds available shares.'}
-                        {quantity <= 0 && 'Quantity must be greater than 0.'}
+                        {validationError}
                     </div>
                 )}
 

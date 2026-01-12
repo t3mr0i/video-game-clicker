@@ -3,7 +3,6 @@ import { Suspense } from 'react'
 import { GameProvider } from './contexts/GameContext'
 import ErrorBoundary from './components/ErrorBoundary'
 import './globals.css'
-import './styles.css'
 
 const inter = Inter({
   subsets: ['latin'],

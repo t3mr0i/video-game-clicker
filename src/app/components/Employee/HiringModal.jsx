@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { useGameContext } from '../../contexts/GameContext';
-import { EMPLOYEE_TYPES, EMPLOYEE_PERSONALITIES } from '../../config/gameConstants';
-import { calculateEmployeeCost } from '../../config/gameFormulas';
+import { useEmployeeHiring } from '../../hooks/useEmployeeHiring';
+import { EMPLOYEE_TYPES } from '../../config/gameConstants';
 import Modal from '../common/Modal';
 import Button from '../common/Button';
 import Card from '../common/Card';
@@ -9,96 +9,30 @@ import Loading from '../common/Loading';
 
 const HiringModal = ({ isOpen, onClose, onHire }) => {
   const { state } = useGameContext();
-  const [selectedType, setSelectedType] = useState(EMPLOYEE_TYPES.DEVELOPER);
-  const [isHiring, setIsHiring] = useState(false);
+  const {
+    selectedType,
+    isHiring,
+    previewEmployee,
+    setSelectedType,
+    executeHiring,
+    resetHiring,
+    hiringMetrics,
+    canAfford,
+    getEmployeeTypes
+  } = useEmployeeHiring(state.money, state.employees, state.currentDate);
 
-  const hiringCost = calculateEmployeeCost((state.employees || []).length);
-  const canAfford = state.money >= hiringCost;
-
-  const generateRandomEmployee = () => {
-    const personalities = EMPLOYEE_PERSONALITIES[selectedType] || [];
-    const personality = personalities[Math.floor(Math.random() * personalities.length)];
-
-    return {
-      name: generateRandomName(),
-      type: selectedType,
-      personality,
-      salary: Math.floor(hiringCost * 0.1), // 10% of hiring cost as monthly salary
-      skills: generateRandomSkills(selectedType),
-      skillPoints: 2, // Starting skill points
-      hireDate: state.currentDate,
-      experience: 0
-    };
-  };
-
-  const generateRandomName = () => {
-    const firstNames = [
-      'Alex', 'Jordan', 'Taylor', 'Morgan', 'Casey', 'Riley', 'Avery', 'Quinn',
-      'Sam', 'Jamie', 'Reese', 'Blake', 'Drew', 'Sage', 'Rowan', 'Finley'
-    ];
-    const lastNames = [
-      'Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller',
-      'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez'
-    ];
-    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-    return `${firstName} ${lastName}`;
-  };
-
-  const generateRandomSkills = (type) => {
-    const baseSkill = 30 + Math.floor(Math.random() * 40); // 30-70 base skill
-    const variation = () => baseSkill + Math.floor(Math.random() * 20) - 10; // ±10 variation
-
-    switch (type) {
-      case EMPLOYEE_TYPES.DEVELOPER:
-        return {
-          programming: variation(),
-          debugging: variation(),
-          testing: variation(),
-          architecture: variation()
-        };
-      case EMPLOYEE_TYPES.DESIGNER:
-        return {
-          ui_design: variation(),
-          ux_design: variation(),
-          prototyping: variation(),
-          creativity: variation()
-        };
-      case EMPLOYEE_TYPES.MARKETER:
-        return {
-          market_research: variation(),
-          advertising: variation(),
-          social_media: variation(),
-          analytics: variation()
-        };
-      default:
-        return {
-          general: variation(),
-          communication: variation(),
-          problem_solving: variation(),
-          teamwork: variation()
-        };
+  // Reset when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      resetHiring();
     }
-  };
+  }, [isOpen, resetHiring]);
 
   const handleHire = async () => {
-    if (canAfford) {
-      setIsHiring(true);
-
-      try {
-        // Simulate hiring processing time
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const newEmployee = generateRandomEmployee();
-        onHire(newEmployee);
-        onClose();
-      } finally {
-        setIsHiring(false);
-      }
-    }
+    await executeHiring(onHire, onClose);
   };
 
-  const [previewEmployee] = useState(generateRandomEmployee);
+  const employeeTypes = getEmployeeTypes();
 
   return (
     <Modal
@@ -122,19 +56,19 @@ const HiringModal = ({ isOpen, onClose, onHire }) => {
             Employee Type
           </label>
           <div className="grid grid-cols-2 gap-3">
-            {Object.values(EMPLOYEE_TYPES).map(type => (
+            {employeeTypes.map(type => (
               <button
-                key={type}
-                onClick={() => setSelectedType(type)}
+                key={type.id}
+                onClick={() => setSelectedType(type.id)}
                 className={`p-3 border rounded-lg text-left transition-colors ${
-                  selectedType === type
+                  selectedType === type.id
                     ? 'border-blue-500 bg-blue-50 text-blue-900'
                     : 'border-gray-300 hover:border-gray-400'
                 }`}
               >
-                <div className="font-medium">{type}</div>
+                <div className="font-medium">{type.name}</div>
                 <div className="text-sm text-gray-600">
-                  Specializes in {type.toLowerCase()} work
+                  {type.description}
                 </div>
               </button>
             ))}
@@ -146,11 +80,11 @@ const HiringModal = ({ isOpen, onClose, onHire }) => {
           <div className="space-y-2">
             <div className="flex justify-between">
               <span>Hiring Cost:</span>
-              <span className="font-bold">${hiringCost.toLocaleString()}</span>
+              <span className="font-bold">${hiringMetrics.hiringCost.toLocaleString()}</span>
             </div>
             <div className="flex justify-between">
               <span>Monthly Salary:</span>
-              <span>${Math.floor(hiringCost * 0.1).toLocaleString()}</span>
+              <span>${hiringMetrics.monthlySalary.toLocaleString()}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span>Your Money:</span>

@@ -1,24 +1,34 @@
 /**
  * Portfolio summary component showing overall portfolio metrics
+ * Optimized with React.memo and useMemo for better performance
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { formatCurrency, formatPercentage, getChangeColor } from '../../../utils/formatting';
 
-const PortfolioSummary = ({ portfolio, stocks }) => {
-  const calculatePortfolioValue = () => {
-    return portfolio.holdings.reduce((total, holding) => {
+const PortfolioSummary = React.memo(({ portfolio, stocks }) => {
+  // Memoize portfolio calculations to prevent unnecessary recalculation
+  const portfolioMetrics = useMemo(() => {
+    const portfolioValue = portfolio.holdings.reduce((total, holding) => {
       const stock = stocks.find(s => s.id === holding.stockId);
       return total + (stock ? stock.currentPrice * holding.quantity : 0);
     }, 0);
-  };
 
-  const portfolioValue = calculatePortfolioValue();
-  const unrealizedGainLoss = portfolioValue - portfolio.totalInvested;
-  const totalGainLoss = unrealizedGainLoss + portfolio.realizedGainLoss;
-  const gainLossPercentage = portfolio.totalInvested > 0
-    ? (totalGainLoss / portfolio.totalInvested) * 100
-    : 0;
+    const unrealizedGainLoss = portfolioValue - portfolio.totalInvested;
+    const totalGainLoss = unrealizedGainLoss + portfolio.realizedGainLoss;
+    const gainLossPercentage = portfolio.totalInvested > 0
+      ? (totalGainLoss / portfolio.totalInvested) * 100
+      : 0;
+
+    return {
+      portfolioValue,
+      unrealizedGainLoss,
+      totalGainLoss,
+      gainLossPercentage
+    };
+  }, [portfolio.holdings, portfolio.totalInvested, portfolio.realizedGainLoss, stocks]);
+
+  const { portfolioValue, totalGainLoss, gainLossPercentage } = portfolioMetrics;
 
   return (
     <div className="mb-3 p-2 bg-gray-900 rounded border border-gray-700">
@@ -45,6 +55,9 @@ const PortfolioSummary = ({ portfolio, stocks }) => {
       </div>
     </div>
   );
-};
+});
+
+// Add display name for debugging
+PortfolioSummary.displayName = 'PortfolioSummary';
 
 export default PortfolioSummary;

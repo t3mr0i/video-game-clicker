@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useGameContext } from '../../contexts/GameContext';
-import { calculateDevelopmentPoints } from '../../config/gameFormulas';
-import { GAME_SIZES } from '../../config/gameConstants';
+import { useProjectCreation } from '../../hooks/useProjectCreation';
 import Modal from '../common/Modal';
 import Button from '../common/Button';
 import Tooltip from '../common/Tooltip';
@@ -9,87 +8,29 @@ import Loading from '../common/Loading';
 
 const ProjectCreationModal = ({ isOpen, onClose, onCreateProject }) => {
   const { state } = useGameContext();
-  const [formData, setFormData] = useState({
-    name: '',
-    size: 'A',
-    platform: '',
-    genre: '',
-    gameEngine: '',
-    franchise: ''
-  });
-  const [developmentPoints, setDevelopmentPoints] = useState(0);
-  const [isCreating, setIsCreating] = useState(false);
+  const {
+    formData,
+    developmentPoints,
+    isCreating,
+    handleInputChange,
+    resetForm,
+    submitProject,
+    isFormValid,
+    validationErrors,
+    projectSummary
+  } = useProjectCreation(state.currentDate);
 
   // Reset form when modal opens
   useEffect(() => {
     if (isOpen) {
-      setFormData({
-        name: '',
-        size: 'A',
-        platform: '',
-        genre: '',
-        gameEngine: '',
-        franchise: ''
-      });
+      resetForm();
     }
-  }, [isOpen]);
-
-  // Recalculate development points when relevant form data changes
-  useEffect(() => {
-    if (formData.platform && formData.genre) {
-      const points = calculateDevelopmentPoints(
-        formData.platform,
-        formData.genre,
-        GAME_SIZES[formData.size],
-        state.currentDate.year
-      );
-      setDevelopmentPoints(points);
-    } else {
-      setDevelopmentPoints(0);
-    }
-  }, [formData.size, formData.platform, formData.genre, state.currentDate.year]);
-
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  const calculateEstimatedRevenue = (size, platform, genre) => {
-    const baseMoney = { 'A': 50000, 'AA': 200000, 'AAA': 1000000 };
-    const platformMultiplier = { 'PC': 1.0, 'Mobile': 0.8, 'Console': 1.5, 'Web': 0.5, 'VR': 2.0 };
-
-    return (baseMoney[size] || 50000) * (platformMultiplier[platform] || 1.0);
-  };
+  }, [isOpen, resetForm]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if ((formData.name || '').trim() && formData.platform && formData.genre) {
-      setIsCreating(true);
-
-      try {
-        // Simulate project creation processing time
-        await new Promise(resolve => setTimeout(resolve, 1200));
-
-        const projectData = {
-          ...formData,
-          estimatedDays: Math.max(30, developmentPoints / 100), // Estimate based on development points
-          estimatedRevenue: calculateEstimatedRevenue(formData.size, formData.platform, formData.genre),
-          progress: 0,
-          status: 'planning',
-          phase: 'concept',
-          startDate: state.currentDate
-        };
-        onCreateProject(projectData);
-        onClose();
-      } finally {
-        setIsCreating(false);
-      }
-    }
+    await submitProject(onCreateProject, onClose);
   };
-
-  const isFormValid = (formData.name || '').trim() && formData.platform && formData.genre;
 
   return (
     <Modal

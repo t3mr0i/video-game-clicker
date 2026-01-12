@@ -16,7 +16,7 @@ import MoraleComponent from './MoraleComponent';
 import StocksComponent from './StocksComponent';
 import DebugPanel from './common/DebugPanel';
 import Card from './common/Card';
-import '../styles/GameStudio.css';
+// GameStudio styles are now consolidated in globals.css
 
 function GameStudio() {
     const { state, actions } = useGameContext();
