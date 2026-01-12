@@ -5,6 +5,7 @@ import { GAME_SIZES } from '../../config/gameConstants';
 import Modal from '../common/Modal';
 import Button from '../common/Button';
 import Tooltip from '../common/Tooltip';
+import Loading from '../common/Loading';
 
 const ProjectCreationModal = ({ isOpen, onClose, onCreateProject }) => {
   const { state } = useGameContext();
@@ -17,6 +18,7 @@ const ProjectCreationModal = ({ isOpen, onClose, onCreateProject }) => {
     franchise: ''
   });
   const [developmentPoints, setDevelopmentPoints] = useState(0);
+  const [isCreating, setIsCreating] = useState(false);
 
   // Reset form when modal opens
   useEffect(() => {
@@ -61,20 +63,29 @@ const ProjectCreationModal = ({ isOpen, onClose, onCreateProject }) => {
     return (baseMoney[size] || 50000) * (platformMultiplier[platform] || 1.0);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if ((formData.name || '').trim() && formData.platform && formData.genre) {
-      const projectData = {
-        ...formData,
-        estimatedDays: Math.max(30, developmentPoints / 100), // Estimate based on development points
-        estimatedRevenue: calculateEstimatedRevenue(formData.size, formData.platform, formData.genre),
-        progress: 0,
-        status: 'planning',
-        phase: 'concept',
-        startDate: state.currentDate
-      };
-      onCreateProject(projectData);
-      onClose();
+      setIsCreating(true);
+
+      try {
+        // Simulate project creation processing time
+        await new Promise(resolve => setTimeout(resolve, 1200));
+
+        const projectData = {
+          ...formData,
+          estimatedDays: Math.max(30, developmentPoints / 100), // Estimate based on development points
+          estimatedRevenue: calculateEstimatedRevenue(formData.size, formData.platform, formData.genre),
+          progress: 0,
+          status: 'planning',
+          phase: 'concept',
+          startDate: state.currentDate
+        };
+        onCreateProject(projectData);
+        onClose();
+      } finally {
+        setIsCreating(false);
+      }
     }
   };
 
@@ -87,7 +98,16 @@ const ProjectCreationModal = ({ isOpen, onClose, onCreateProject }) => {
       title="Create New Project"
       size="large"
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="relative">
+        {isCreating && (
+          <Loading
+            overlay
+            size="large"
+            color="blue"
+            message="Creating your project..."
+          />
+        )}
+        <form onSubmit={handleSubmit} className="space-y-4">
         {/* Project Name */}
         <div>
           <label className="block text-sm font-medium mb-2">
@@ -207,12 +227,13 @@ const ProjectCreationModal = ({ isOpen, onClose, onCreateProject }) => {
           <Button
             variant="primary"
             type="submit"
-            disabled={!isFormValid}
+            disabled={!isFormValid || isCreating}
           >
-            Create Project
+            {isCreating ? 'Creating Project...' : 'Create Project'}
           </Button>
         </div>
       </form>
+      </div>
     </Modal>
   );
 };

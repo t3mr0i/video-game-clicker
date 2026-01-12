@@ -12,15 +12,31 @@ const Tooltip = ({ children, content, position = 'top', className = '' }) => {
 
   if (!content) return children;
 
+  const handleShow = () => setIsVisible(true);
+  const handleHide = () => setIsVisible(false);
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      handleHide();
+    }
+  };
+
   return (
     <div
       className="relative inline-block"
-      onMouseEnter={() => setIsVisible(true)}
-      onMouseLeave={() => setIsVisible(false)}
+      onMouseEnter={handleShow}
+      onMouseLeave={handleHide}
+      onFocus={handleShow}
+      onBlur={handleHide}
+      onKeyDown={handleKeyDown}
     >
       {children}
       {isVisible && (
-        <div className={`absolute z-50 px-2 py-1 text-sm text-white bg-gray-900 rounded shadow-lg whitespace-nowrap ${positionClasses[position]} ${className}`}>
+        <div
+          className={`absolute z-50 px-2 py-1 text-sm text-white bg-gray-900 rounded shadow-lg whitespace-nowrap ${positionClasses[position]} ${className}`}
+          role="tooltip"
+          aria-live="polite"
+        >
           {content}
           <div className={`absolute w-0 h-0 border-4 border-transparent ${
             position === 'top' ? 'top-full left-1/2 transform -translate-x-1/2 border-t-gray-900' :

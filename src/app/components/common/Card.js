@@ -7,7 +7,9 @@ const Card = ({
   headerActions,
   variant = 'default',
   onHover = false,
-  onClick
+  onClick,
+  focusable = false,
+  ariaLabel
 }) => {
   const variantClasses = {
     default: 'bg-gray-800 border-2 border-gray-700 text-white',
@@ -15,6 +17,13 @@ const Card = ({
     success: 'bg-green-800 border-2 border-green-700 text-white',
     warning: 'bg-yellow-800 border-2 border-yellow-700 text-white',
     error: 'bg-red-800 border-2 border-red-700 text-white'
+  };
+
+  const handleKeyPress = (e) => {
+    if ((e.key === 'Enter' || e.key === ' ') && onClick) {
+      e.preventDefault();
+      onClick(e);
+    }
   };
 
   return (
@@ -29,8 +38,13 @@ const Card = ({
         ${className}
         ${onHover ? 'hover:scale-105 hover:shadow-2xl cursor-pointer' : ''}
         ${onClick ? 'cursor-pointer' : ''}
+        ${focusable || onClick ? 'focus:outline-none' : ''}
       `}
       onClick={onClick}
+      onKeyDown={handleKeyPress}
+      tabIndex={focusable || onClick ? 0 : -1}
+      role={onClick ? 'button' : 'region'}
+      aria-label={ariaLabel || title}
     >
       {title && (
         <div className="flex justify-between items-center p-4 border-b border-inherit bg-gray-700/50">

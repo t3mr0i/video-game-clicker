@@ -10,29 +10,29 @@ const FinanceComponent = () => {
     const dailySalaryCosts = totalSalaryCosts / 30;
 
     return (
-        <div className="bg-white p-3 rounded-lg shadow-sm text-sm">
-            <h3 className="text-base font-bold text-gray-800 mb-1">Financial Overview</h3>
+        <div className="game-card bg-gray-800 border-2 border-blue-700 text-white p-3 rounded-lg shadow-xl text-sm">
+            <h3 className="text-base font-bold text-blue-300 mb-1 border-b border-blue-700 pb-1">Financial Overview</h3>
             <div className="flex flex-col space-y-2">
                 <div className="flex justify-between items-center text-xs">
-                    <span className="text-gray-700">Current Balance:</span>
-                    <span className={`font-medium ${state.money >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    <span className="text-gray-300">Current Balance:</span>
+                    <span className={`font-medium ${state.money >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                         ${state.money.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}
                     </span>
                 </div>
                 <div className="flex justify-between items-center text-xs">
-                    <span className="text-gray-700">Monthly Salaries:</span>
-                    <span className="font-medium text-gray-800">
+                    <span className="text-gray-300">Monthly Salaries:</span>
+                    <span className="font-medium text-yellow-400">
                         ${monthlySalaryCosts.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}
                     </span>
                 </div>
                 <div className="flex justify-between items-center text-xs">
-                    <span className="text-gray-700">Daily Expenses:</span>
-                    <span className="font-medium text-red-600">
+                    <span className="text-gray-300">Daily Expenses:</span>
+                    <span className="font-medium text-red-400">
                         ${dailySalaryCosts.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2})}
                     </span>
                 </div>
                 {state.employees.length > 0 && (
-                    <div className="text-xs text-gray-500 border-t pt-1">
+                    <div className="text-xs text-gray-400 border-t border-gray-600 pt-1">
                         Employees: {state.employees.length}
                     </div>
                 )}

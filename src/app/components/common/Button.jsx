@@ -30,15 +30,25 @@ const Button = ({
       onClick={onClick}
       disabled={disabled}
       className={`
-        font-bold rounded transition duration-300
+        font-bold rounded transition-all duration-300 relative overflow-hidden
         ${variantClasses[variant]}
         ${sizeClasses[size]}
-        ${disabled ? 'opacity-50 cursor-not-allowed' : 'transform hover:scale-105'}
+        ${disabled
+          ? 'opacity-40 cursor-not-allowed saturate-50 scale-95 shadow-none bg-gray-600 text-gray-300'
+          : 'transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl'
+        }
         ${className}
       `}
       {...props}
     >
-      {children}
+      {disabled && (
+        <div className="absolute inset-0 bg-gray-800 bg-opacity-60 flex items-center justify-center">
+          <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin opacity-75"></div>
+        </div>
+      )}
+      <span className={disabled ? 'opacity-60' : 'opacity-100'}>
+        {children}
+      </span>
     </button>
   );
 };

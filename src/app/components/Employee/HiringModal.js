@@ -5,10 +5,12 @@ import { calculateEmployeeCost } from '../../config/gameFormulas';
 import Modal from '../common/Modal';
 import Button from '../common/Button';
 import Card from '../common/Card';
+import Loading from '../common/Loading';
 
 const HiringModal = ({ isOpen, onClose, onHire }) => {
   const { state } = useGameContext();
   const [selectedType, setSelectedType] = useState(EMPLOYEE_TYPES.DEVELOPER);
+  const [isHiring, setIsHiring] = useState(false);
 
   const hiringCost = calculateEmployeeCost((state.employees || []).length);
   const canAfford = state.money >= hiringCost;
@@ -79,11 +81,20 @@ const HiringModal = ({ isOpen, onClose, onHire }) => {
     }
   };
 
-  const handleHire = () => {
+  const handleHire = async () => {
     if (canAfford) {
-      const newEmployee = generateRandomEmployee();
-      onHire(newEmployee);
-      onClose();
+      setIsHiring(true);
+
+      try {
+        // Simulate hiring processing time
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const newEmployee = generateRandomEmployee();
+        onHire(newEmployee);
+        onClose();
+      } finally {
+        setIsHiring(false);
+      }
     }
   };
 
@@ -96,7 +107,15 @@ const HiringModal = ({ isOpen, onClose, onHire }) => {
       title="Hire New Employee"
       size="large"
     >
-      <div className="space-y-6">
+      <div className="relative space-y-6">
+        {isHiring && (
+          <Loading
+            overlay
+            size="large"
+            color="green"
+            message="Processing hire..."
+          />
+        )}
         {/* Employee Type Selection */}
         <div>
           <label className="block text-sm font-medium mb-3">
@@ -182,9 +201,9 @@ const HiringModal = ({ isOpen, onClose, onHire }) => {
           <Button
             variant="primary"
             onClick={handleHire}
-            disabled={!canAfford}
+            disabled={!canAfford || isHiring}
           >
-            {canAfford ? 'Hire Employee' : 'Not Enough Money'}
+            {isHiring ? 'Hiring...' : (canAfford ? 'Hire Employee' : 'Not Enough Money')}
           </Button>
         </div>
       </div>

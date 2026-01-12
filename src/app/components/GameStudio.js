@@ -22,16 +22,17 @@ function GameStudio() {
     const addNotification = (message, type = 'info') => {
         const notification = {
             message,
-            type
+            type,
+            timestamp: Date.now()
         };
 
         // Create and get the new notification's ID
         const notificationId = actions.addNotification(notification);
 
-        // Auto-remove notification after 5 seconds
+        // Auto-remove notification after 8 seconds (increased for better UX)
         const timeoutId = setTimeout(() => {
             actions.removeNotification(notificationId);
-        }, 5000);
+        }, 8000);
 
         // Return the notification id to allow external cancellation
         return { id: notificationId, timeoutId };
@@ -116,26 +117,56 @@ function GameStudio() {
                 </div>
             </div>
 
-            {/* Event Log / Notifications - More Tycoon-like Sidebar */}
-            <div className="fixed right-0 top-1/2 transform -translate-y-1/2 w-72 bg-gray-800 shadow-lg p-4 rounded-l-lg z-50">
-                <h3 className="text-lg font-bold mb-4 text-blue-400">Recent Events</h3>
-                <div className="space-y-2 max-h-96 overflow-y-auto">
-                    {state.notifications.slice(-5).map(notification => (
+            {/* Event Log / Notifications - Enhanced with dismiss functionality */}
+            <div className="fixed right-0 top-1/2 transform -translate-y-1/2 w-80 bg-gray-800 border-l-2 border-blue-600 shadow-xl p-4 rounded-l-lg z-50 max-h-96">
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-bold text-blue-400">Recent Events</h3>
+                    {state.notifications.length > 0 && (
+                        <button
+                            onClick={() => actions.clearAllNotifications?.()}
+                            className="text-xs text-gray-400 hover:text-white transition-colors duration-200 px-2 py-1 rounded bg-gray-700 hover:bg-gray-600"
+                            title="Clear all notifications"
+                        >
+                            Clear All
+                        </button>
+                    )}
+                </div>
+                <div className="space-y-2 max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-600 scrollbar-track-gray-700">
+                    {state.notifications.slice(-8).map(notification => (
                         <div
                             key={notification.id}
-                            className={`p-3 rounded-lg text-sm transition-all duration-300 ${
+                            className={`relative p-3 pr-10 rounded-lg text-sm transition-all duration-300 transform hover:scale-105 ${
                                 notification.type === 'success'
-                                    ? 'bg-green-700 text-white'
+                                    ? 'bg-green-700 hover:bg-green-600 text-white border-l-4 border-green-400'
                                     : notification.type === 'error'
-                                    ? 'bg-red-700 text-white'
+                                    ? 'bg-red-700 hover:bg-red-600 text-white border-l-4 border-red-400'
                                     : notification.type === 'warning'
-                                    ? 'bg-yellow-700 text-white'
-                                    : 'bg-blue-700 text-white'
+                                    ? 'bg-yellow-700 hover:bg-yellow-600 text-white border-l-4 border-yellow-400'
+                                    : 'bg-blue-700 hover:bg-blue-600 text-white border-l-4 border-blue-400'
                             }`}
                         >
-                            {notification.message}
+                            <button
+                                onClick={() => actions.removeNotification(notification.id)}
+                                className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black bg-opacity-30 hover:bg-opacity-50 text-white text-xs flex items-center justify-center transition-all duration-200 hover:scale-110"
+                                title="Dismiss notification"
+                            >
+                                ×
+                            </button>
+                            <div className="pr-2">
+                                {notification.message}
+                            </div>
+                            {notification.timestamp && (
+                                <div className="text-xs opacity-75 mt-1">
+                                    {new Date(notification.timestamp).toLocaleTimeString()}
+                                </div>
+                            )}
                         </div>
                     ))}
+                    {state.notifications.length === 0 && (
+                        <div className="text-gray-500 text-center py-8 italic">
+                            No recent events
+                        </div>
+                    )}
                 </div>
             </div>
 
