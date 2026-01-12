@@ -45,6 +45,9 @@ export const PHASE_COLORS = {
 export const PLATFORMS = {
   PC: 'PC',
   CONSOLE: 'Console',
+  PLAYSTATION: 'PlayStation',
+  XBOX: 'Xbox',
+  NINTENDO: 'Nintendo Switch',
   MOBILE: 'Mobile',
   WEB: 'Web',
   VR: 'VR'

@@ -21,8 +21,32 @@ export const defaultPlatforms = [
     id: 3,
     name: PLATFORMS.CONSOLE,
     cost: 100000,
-    marketShare: 0.25,
+    marketShare: 0.1,
     developmentDifficulty: 1.2,
+    unlocked: false
+  },
+  {
+    id: 6,
+    name: PLATFORMS.PLAYSTATION,
+    cost: 150000,
+    marketShare: 0.15,
+    developmentDifficulty: 1.3,
+    unlocked: false
+  },
+  {
+    id: 7,
+    name: PLATFORMS.XBOX,
+    cost: 150000,
+    marketShare: 0.15,
+    developmentDifficulty: 1.3,
+    unlocked: false
+  },
+  {
+    id: 8,
+    name: PLATFORMS.NINTENDO,
+    cost: 125000,
+    marketShare: 0.1,
+    developmentDifficulty: 1.4,
     unlocked: false
   },
   {
