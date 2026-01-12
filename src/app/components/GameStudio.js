@@ -153,105 +153,214 @@ function GameStudio() {
                 </div>
             </div>
 
-            <div className="container mx-auto px-6 py-8">
-                {/* Studio Floor Layout - Organized by functional areas */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* 🏢 EXECUTIVE SUITE */}
-                    <div className="space-y-6">
-                        <div className="text-center mb-4">
-                            <h2 className="text-lg font-bold text-cyan-300 font-mono tracking-wider">
-                                🏢 EXECUTIVE SUITE
-                            </h2>
-                            <div className="w-full h-px bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
+            {/* Corporate Operations Floor */}
+            <div className="enterprise-workspace" style={{
+                padding: '2rem',
+                background: 'linear-gradient(180deg, rgba(26, 26, 36, 0.8) 0%, rgba(16, 16, 24, 0.9) 100%)',
+                position: 'relative'
+            }}>
+                {/* Floating data particles */}
+                <div className="data-particles absolute inset-0 pointer-events-none opacity-20"></div>
+
+                {/* Executive Dashboard Grid */}
+                <div className="executive-dashboard grid grid-cols-1 xl:grid-cols-12 gap-8" style={{
+                    maxWidth: '1800px',
+                    margin: '0 auto'
+                }}>
+                    {/* 💼 EXECUTIVE COMMAND CENTER */}
+                    <div className="executive-suite xl:col-span-4 space-y-6">
+                        <div className="department-header">
+                            <div className="department-title" style={{
+                                background: 'linear-gradient(135deg, rgba(0, 217, 255, 0.15), rgba(0, 217, 255, 0.05))',
+                                border: '2px solid rgba(0, 217, 255, 0.3)',
+                                borderRadius: '16px',
+                                padding: '1.5rem',
+                                marginBottom: '1.5rem',
+                                backdropFilter: 'blur(15px)',
+                                position: 'relative',
+                                overflow: 'hidden'
+                            }}>
+                                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 animate-pulse"></div>
+                                <div className="relative z-10 text-center">
+                                    <div className="text-4xl mb-3">💼</div>
+                                    <h2 className="text-xl font-bold text-cyan-300 font-mono tracking-wider uppercase">
+                                        Executive Command
+                                    </h2>
+                                    <div className="mt-2 text-sm text-cyan-400/70 font-mono">
+                                        Strategic Operations Control
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <Card className="game-card studio-executive">
+
+                        <Card className="game-card studio-executive premium-workstation">
                             <FinanceComponent />
                         </Card>
-                        <Card className="game-card studio-executive">
-                            <MoraleComponent
-                                onMoraleChange={handleMoraleChange}
-                            />
+                        <Card className="game-card studio-executive premium-workstation">
+                            <MoraleComponent onMoraleChange={handleMoraleChange} />
                         </Card>
-                        <Card className="game-card studio-executive">
-                            <AchievementsComponent
-                                onAchievementComplete={handleAchievementComplete}
-                            />
+                        <Card className="game-card studio-executive premium-workstation">
+                            <AchievementsComponent onAchievementComplete={handleAchievementComplete} />
                         </Card>
                     </div>
 
-                    {/* 🎯 DEVELOPMENT FLOOR */}
-                    <div className="space-y-6">
-                        <div className="text-center mb-4">
-                            <h2 className="text-lg font-bold text-green-300 font-mono tracking-wider">
-                                🎯 DEVELOPMENT FLOOR
-                            </h2>
-                            <div className="w-full h-px bg-gradient-to-r from-transparent via-green-400 to-transparent"></div>
+                    {/* 🎯 DEVELOPMENT OPERATIONS */}
+                    <div className="development-suite xl:col-span-5 space-y-6">
+                        <div className="department-header">
+                            <div className="department-title" style={{
+                                background: 'linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 255, 136, 0.05))',
+                                border: '2px solid rgba(0, 255, 136, 0.3)',
+                                borderRadius: '16px',
+                                padding: '1.5rem',
+                                marginBottom: '1.5rem',
+                                backdropFilter: 'blur(15px)',
+                                position: 'relative',
+                                overflow: 'hidden'
+                            }}>
+                                <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-emerald-500/10 animate-pulse"></div>
+                                <div className="relative z-10 text-center">
+                                    <div className="text-4xl mb-3">🎯</div>
+                                    <h2 className="text-xl font-bold text-green-300 font-mono tracking-wider uppercase">
+                                        Development Labs
+                                    </h2>
+                                    <div className="mt-2 text-sm text-green-400/70 font-mono">
+                                        Innovation & Creation Hub
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <Card className="game-card studio-dev">
+
+                        <Card className="game-card studio-dev premium-workstation">
                             <ProjectComponent />
                         </Card>
-                        <Card className="game-card studio-dev">
+                        <Card className="game-card studio-dev premium-workstation">
                             <EmployeeComponent />
                         </Card>
-                        <Card className="game-card studio-dev">
+                        <Card className="game-card studio-dev premium-workstation">
                             <ResearchComponent />
                         </Card>
                     </div>
 
-                    {/* 📈 BUSINESS OPERATIONS */}
-                    <div className="space-y-6">
-                        <div className="text-center mb-4">
-                            <h2 className="text-lg font-bold text-purple-300 font-mono tracking-wider">
-                                📈 BUSINESS OPS
-                            </h2>
-                            <div className="w-full h-px bg-gradient-to-r from-transparent via-purple-400 to-transparent"></div>
+                    {/* 📈 BUSINESS INTELLIGENCE */}
+                    <div className="business-suite xl:col-span-3 space-y-6">
+                        <div className="department-header">
+                            <div className="department-title" style={{
+                                background: 'linear-gradient(135deg, rgba(136, 0, 255, 0.15), rgba(136, 0, 255, 0.05))',
+                                border: '2px solid rgba(136, 0, 255, 0.3)',
+                                borderRadius: '16px',
+                                padding: '1.5rem',
+                                marginBottom: '1.5rem',
+                                backdropFilter: 'blur(15px)',
+                                position: 'relative',
+                                overflow: 'hidden'
+                            }}>
+                                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-violet-500/10 animate-pulse"></div>
+                                <div className="relative z-10 text-center">
+                                    <div className="text-4xl mb-3">📈</div>
+                                    <h2 className="text-xl font-bold text-purple-300 font-mono tracking-wider uppercase">
+                                        Business Intel
+                                    </h2>
+                                    <div className="mt-2 text-sm text-purple-400/70 font-mono">
+                                        Market & Analytics Center
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <Card className="game-card studio-business">
-                            <ShippingComponent
-                                addNotification={addNotification}
-                            />
+
+                        <Card className="game-card studio-business premium-workstation">
+                            <ShippingComponent addNotification={addNotification} />
                         </Card>
-                        <Card className="game-card studio-business">
+                        <Card className="game-card studio-business premium-workstation">
                             <EventsComponent />
                         </Card>
-                        <Card className="game-card studio-business">
+                        <Card className="game-card studio-business premium-workstation">
                             <FranchisesComponent />
                         </Card>
-                        <Card className="game-card studio-business">
+                        <Card className="game-card studio-business premium-workstation">
                             <StocksComponent />
                         </Card>
-                        <Card className="game-card studio-business">
+                        <Card className="game-card studio-business premium-workstation">
                             <StudioCultureComponent />
                         </Card>
                     </div>
                 </div>
             </div>
 
-            {/* 📡 STUDIO ACTIVITY MONITOR */}
-            <div className="fixed right-4 top-1/2 transform -translate-y-1/2 w-96 z-50 max-h-96"
+            {/* 🚀 ENTERPRISE MISSION CONTROL */}
+            <div className="enterprise-mission-control fixed right-6 top-1/2 transform -translate-y-1/2 w-[420px] z-50 max-h-[500px]"
                  style={{
-                     background: 'var(--gradient-screen)',
-                     border: '2px solid var(--color-neon-blue)',
-                     borderRadius: '12px',
-                     boxShadow: 'var(--shadow-studio), 0 0 25px rgba(0, 217, 255, 0.3)',
-                     backdropFilter: 'blur(10px)'
+                     background: 'linear-gradient(135deg, rgba(10, 10, 15, 0.95), rgba(26, 26, 36, 0.9))',
+                     border: '3px solid transparent',
+                     borderImage: 'linear-gradient(45deg, #00D9FF, #FF0080, #8800FF) 1',
+                     borderRadius: '20px',
+                     boxShadow: '0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 217, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                     backdropFilter: 'blur(20px)',
+                     position: 'relative',
+                     overflow: 'hidden'
                  }}>
-                <div className="p-4">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-bold font-mono tracking-wider" style={{
-                            color: 'var(--text-neon-bright)',
-                            textShadow: '0 0 10px rgba(0, 217, 255, 0.5)'
-                        }}>
-                            📡 ACTIVITY LOG
-                        </h3>
+                {/* Mission Control Header */}
+                <div className="absolute inset-0">
+                    <div className="holographic-overlay"></div>
+                </div>
+
+                <div className="relative z-10 p-6">
+                    <div className="mission-control-header flex justify-between items-center mb-6" style={{
+                        borderBottom: '2px solid rgba(0, 217, 255, 0.3)',
+                        paddingBottom: '1rem'
+                    }}>
+                        <div className="control-title">
+                            <div className="flex items-center space-x-3">
+                                <div className="control-icon" style={{
+                                    width: '40px',
+                                    height: '40px',
+                                    background: 'linear-gradient(135deg, #00D9FF, #FF0080)',
+                                    borderRadius: '50%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '1.2rem',
+                                    animation: 'rotate-glow 4s linear infinite'
+                                }}>
+                                    🚀
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-bold font-mono tracking-wider" style={{
+                                        color: 'var(--text-neon-bright)',
+                                        textShadow: '0 0 15px rgba(0, 217, 255, 0.8)',
+                                        fontSize: '1.1rem',
+                                        letterSpacing: '0.1em'
+                                    }}>
+                                        MISSION CONTROL
+                                    </h3>
+                                    <div className="text-xs font-mono" style={{
+                                        color: 'rgba(0, 217, 255, 0.7)',
+                                        letterSpacing: '0.05em'
+                                    }}>
+                                        Enterprise Operations Feed
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         {state.notifications.length > 0 && (
                             <button
                                 onClick={() => actions.clearAllNotifications?.()}
-                                className="game-button text-xs px-3 py-1"
-                                title="Clear all notifications"
-                                style={{fontSize: '0.7rem', padding: '0.3rem 0.6rem'}}
+                                className="clear-feed-btn"
+                                title="Clear mission feed"
+                                style={{
+                                    background: 'linear-gradient(135deg, rgba(255, 68, 68, 0.2), rgba(255, 68, 68, 0.1))',
+                                    border: '1px solid rgba(255, 68, 68, 0.4)',
+                                    borderRadius: '8px',
+                                    padding: '0.5rem 1rem',
+                                    color: '#FF4444',
+                                    fontSize: '0.75rem',
+                                    fontFamily: 'Fira Code, monospace',
+                                    fontWeight: 'bold',
+                                    letterSpacing: '0.05em',
+                                    transition: 'all 0.3s ease',
+                                    backdropFilter: 'blur(10px)'
+                                }}
                             >
-                                CLEAR
+                                🗑️ PURGE
                             </button>
                         )}
                     </div>
