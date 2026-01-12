@@ -40,7 +40,27 @@ export const calculateDevelopmentPoints = (platform, genre, size, year, employee
     Console: { baseModifier: 1.2, complexityFactor: 1.1, marketReach: 1.0 },
     Mobile: { baseModifier: 1.5, complexityFactor: 0.9, marketReach: 1.5 },
     Web: { baseModifier: 0.4, complexityFactor: 0.5, marketReach: 0.6 },
-    VR: { baseModifier: 2.5, complexityFactor: 1.5, marketReach: 0.4 }
+    VR: { baseModifier: 2.5, complexityFactor: 1.5, marketReach: 0.4 },
+
+    // PlayStation Family
+    PlayStation: { baseModifier: 1.3, complexityFactor: 1.2, marketReach: 1.0 },
+    'PlayStation 2': { baseModifier: 1.1, complexityFactor: 1.0, marketReach: 1.2 },
+    'PlayStation 3': { baseModifier: 1.4, complexityFactor: 1.3, marketReach: 0.9 },
+    'PlayStation 4': { baseModifier: 1.2, complexityFactor: 1.1, marketReach: 1.3 },
+    'PlayStation 5': { baseModifier: 1.5, complexityFactor: 1.4, marketReach: 1.1 },
+
+    // Xbox Family
+    Xbox: { baseModifier: 1.3, complexityFactor: 1.2, marketReach: 1.0 },
+    'Xbox 360': { baseModifier: 1.2, complexityFactor: 1.1, marketReach: 1.1 },
+    'Xbox One': { baseModifier: 1.3, complexityFactor: 1.2, marketReach: 1.0 },
+    'Xbox Series X/S': { baseModifier: 1.4, complexityFactor: 1.3, marketReach: 1.0 },
+
+    // Nintendo Family
+    'Nintendo Switch': { baseModifier: 1.4, complexityFactor: 1.3, marketReach: 0.9 },
+    'Nintendo 64': { baseModifier: 1.1, complexityFactor: 1.0, marketReach: 0.8 },
+    GameCube: { baseModifier: 1.2, complexityFactor: 1.1, marketReach: 0.7 },
+    Wii: { baseModifier: 1.0, complexityFactor: 0.9, marketReach: 1.0 },
+    'Wii U': { baseModifier: 1.3, complexityFactor: 1.2, marketReach: 0.6 }
   };
 
   const genreModifiers = {
@@ -124,7 +144,27 @@ export const calculateGameRevenue = (quality, hype, platform, genre, marketSize 
     Console: 1.2,
     Mobile: 1.5,
     Web: 0.3,
-    VR: 0.6
+    VR: 0.6,
+
+    // PlayStation Family
+    PlayStation: 1.0,
+    'PlayStation 2': 1.3,
+    'PlayStation 3': 1.1,
+    'PlayStation 4': 1.4,
+    'PlayStation 5': 1.2,
+
+    // Xbox Family
+    Xbox: 1.0,
+    'Xbox 360': 1.2,
+    'Xbox One': 1.1,
+    'Xbox Series X/S': 1.3,
+
+    // Nintendo Family
+    'Nintendo Switch': 1.1,
+    'Nintendo 64': 0.9,
+    GameCube: 0.8,
+    Wii: 1.2,
+    'Wii U': 0.7
   };
 
   const baseRevenue = marketSize * qualityMultiplier * hypeMultiplier;
@@ -217,7 +257,27 @@ export const calculateMarketDemand = (genre, platform, year, previousGameSuccess
     Console: { baseValue: 1.0, innovationFactor: 1.2 },
     Mobile: { baseValue: 1.5, innovationFactor: 0.9 },
     Web: { baseValue: 0.4, innovationFactor: 0.7 },
-    VR: { baseValue: 0.3, innovationFactor: 1.3 }
+    VR: { baseValue: 0.3, innovationFactor: 1.3 },
+
+    // PlayStation Family
+    PlayStation: { baseValue: 0.9, innovationFactor: 1.0 },
+    'PlayStation 2': { baseValue: 1.2, innovationFactor: 1.1 },
+    'PlayStation 3': { baseValue: 0.8, innovationFactor: 1.2 },
+    'PlayStation 4': { baseValue: 1.3, innovationFactor: 1.1 },
+    'PlayStation 5': { baseValue: 1.0, innovationFactor: 1.4 },
+
+    // Xbox Family
+    Xbox: { baseValue: 0.8, innovationFactor: 1.0 },
+    'Xbox 360': { baseValue: 1.1, innovationFactor: 1.1 },
+    'Xbox One': { baseValue: 0.9, innovationFactor: 1.2 },
+    'Xbox Series X/S': { baseValue: 0.9, innovationFactor: 1.3 },
+
+    // Nintendo Family
+    'Nintendo Switch': { baseValue: 1.0, innovationFactor: 1.2 },
+    'Nintendo 64': { baseValue: 0.7, innovationFactor: 1.0 },
+    GameCube: { baseValue: 0.6, innovationFactor: 1.1 },
+    Wii: { baseValue: 1.1, innovationFactor: 1.3 },
+    'Wii U': { baseValue: 0.4, innovationFactor: 1.1 }
   };
 
   // Precompute and memoize the trend calculation for significant performance boost

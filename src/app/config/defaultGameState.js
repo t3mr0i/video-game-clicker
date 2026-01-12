@@ -26,30 +26,6 @@ export const defaultPlatforms = [
     unlocked: false
   },
   {
-    id: 6,
-    name: PLATFORMS.PLAYSTATION,
-    cost: 150000,
-    marketShare: 0.15,
-    developmentDifficulty: 1.3,
-    unlocked: false
-  },
-  {
-    id: 7,
-    name: PLATFORMS.XBOX,
-    cost: 150000,
-    marketShare: 0.15,
-    developmentDifficulty: 1.3,
-    unlocked: false
-  },
-  {
-    id: 8,
-    name: PLATFORMS.NINTENDO,
-    cost: 125000,
-    marketShare: 0.1,
-    developmentDifficulty: 1.4,
-    unlocked: false
-  },
-  {
     id: 4,
     name: PLATFORMS.WEB,
     cost: 25000,
@@ -63,6 +39,121 @@ export const defaultPlatforms = [
     cost: 200000,
     marketShare: 0.02,
     developmentDifficulty: 2.0,
+    unlocked: false
+  },
+  // PlayStation Family
+  {
+    id: 6,
+    name: PLATFORMS.PLAYSTATION,
+    cost: 150000,
+    marketShare: 0.15,
+    developmentDifficulty: 1.3,
+    unlocked: false
+  },
+  {
+    id: 9,
+    name: PLATFORMS.PLAYSTATION_2,
+    cost: 120000,
+    marketShare: 0.18,
+    developmentDifficulty: 1.1,
+    unlocked: false
+  },
+  {
+    id: 10,
+    name: PLATFORMS.PLAYSTATION_3,
+    cost: 180000,
+    marketShare: 0.12,
+    developmentDifficulty: 1.4,
+    unlocked: false
+  },
+  {
+    id: 11,
+    name: PLATFORMS.PLAYSTATION_4,
+    cost: 220000,
+    marketShare: 0.20,
+    developmentDifficulty: 1.2,
+    unlocked: false
+  },
+  {
+    id: 12,
+    name: PLATFORMS.PLAYSTATION_5,
+    cost: 300000,
+    marketShare: 0.15,
+    developmentDifficulty: 1.5,
+    unlocked: false
+  },
+  // Xbox Family
+  {
+    id: 7,
+    name: PLATFORMS.XBOX,
+    cost: 150000,
+    marketShare: 0.15,
+    developmentDifficulty: 1.3,
+    unlocked: false
+  },
+  {
+    id: 13,
+    name: PLATFORMS.XBOX_360,
+    cost: 160000,
+    marketShare: 0.17,
+    developmentDifficulty: 1.2,
+    unlocked: false
+  },
+  {
+    id: 14,
+    name: PLATFORMS.XBOX_ONE,
+    cost: 200000,
+    marketShare: 0.14,
+    developmentDifficulty: 1.3,
+    unlocked: false
+  },
+  {
+    id: 15,
+    name: PLATFORMS.XBOX_SERIES,
+    cost: 280000,
+    marketShare: 0.12,
+    developmentDifficulty: 1.4,
+    unlocked: false
+  },
+  // Nintendo Family
+  {
+    id: 8,
+    name: PLATFORMS.NINTENDO,
+    cost: 125000,
+    marketShare: 0.1,
+    developmentDifficulty: 1.4,
+    unlocked: false
+  },
+  {
+    id: 16,
+    name: PLATFORMS.NINTENDO_64,
+    cost: 90000,
+    marketShare: 0.08,
+    developmentDifficulty: 1.1,
+    unlocked: false
+  },
+  {
+    id: 17,
+    name: PLATFORMS.GAME_CUBE,
+    cost: 110000,
+    marketShare: 0.06,
+    developmentDifficulty: 1.2,
+    unlocked: false
+  },
+  {
+    id: 18,
+    name: PLATFORMS.WII,
+    cost: 140000,
+    marketShare: 0.12,
+    developmentDifficulty: 1.0,
+    unlocked: false
+  },
+  {
+    id: 19,
+    name: PLATFORMS.WII_U,
+    cost: 100000,
+    marketShare: 0.04,
+    developmentDifficulty: 1.3,
     unlocked: false
   }
 ];
