@@ -50,6 +50,8 @@ export const PLATFORMS = {
   PLAYSTATION_3: 'PlayStation 3',
   PLAYSTATION_4: 'PlayStation 4',
   PLAYSTATION_5: 'PlayStation 5',
+  PSP: 'PlayStation Portable',
+  PS_VITA: 'PlayStation Vita',
   XBOX: 'Xbox',
   XBOX_360: 'Xbox 360',
   XBOX_ONE: 'Xbox One',
@@ -59,9 +61,21 @@ export const PLATFORMS = {
   GAME_CUBE: 'GameCube',
   WII: 'Wii',
   WII_U: 'Wii U',
+  NINTENDO_DS: 'Nintendo DS',
+  NINTENDO_3DS: 'Nintendo 3DS',
+  GAME_BOY: 'Game Boy',
+  GAME_BOY_COLOR: 'Game Boy Color',
+  GAME_BOY_ADVANCE: 'Game Boy Advance',
+  NES: 'Nintendo Entertainment System',
+  SNES: 'Super Nintendo',
+  GENESIS: 'Sega Genesis',
+  DREAMCAST: 'Sega Dreamcast',
+  SATURN: 'Sega Saturn',
+  STEAM_DECK: 'Steam Deck',
   MOBILE: 'Mobile',
   WEB: 'Web',
-  VR: 'VR'
+  VR: 'VR',
+  AR: 'Augmented Reality'
 };
 
 export const GENRES = {

@@ -60,7 +60,33 @@ export const calculateDevelopmentPoints = (platform, genre, size, year, employee
     'Nintendo 64': { baseModifier: 1.1, complexityFactor: 1.0, marketReach: 0.8 },
     GameCube: { baseModifier: 1.2, complexityFactor: 1.1, marketReach: 0.7 },
     Wii: { baseModifier: 1.0, complexityFactor: 0.9, marketReach: 1.0 },
-    'Wii U': { baseModifier: 1.3, complexityFactor: 1.2, marketReach: 0.6 }
+    'Wii U': { baseModifier: 1.3, complexityFactor: 1.2, marketReach: 0.6 },
+
+    // PlayStation Portable Family
+    'PlayStation Portable': { baseModifier: 1.1, complexityFactor: 1.0, marketReach: 0.7 },
+    'PlayStation Vita': { baseModifier: 1.2, complexityFactor: 1.1, marketReach: 0.5 },
+
+    // Nintendo Handheld Family
+    'Nintendo DS': { baseModifier: 0.9, complexityFactor: 0.8, marketReach: 0.9 },
+    'Nintendo 3DS': { baseModifier: 1.0, complexityFactor: 0.9, marketReach: 0.8 },
+    'Game Boy': { baseModifier: 0.7, complexityFactor: 0.6, marketReach: 0.6 },
+    'Game Boy Color': { baseModifier: 0.8, complexityFactor: 0.7, marketReach: 0.7 },
+    'Game Boy Advance': { baseModifier: 0.9, complexityFactor: 0.8, marketReach: 0.8 },
+
+    // Classic Nintendo Consoles
+    'Nintendo Entertainment System': { baseModifier: 0.6, complexityFactor: 0.5, marketReach: 0.5 },
+    'Super Nintendo': { baseModifier: 0.8, complexityFactor: 0.7, marketReach: 0.6 },
+
+    // Sega Consoles
+    'Sega Genesis': { baseModifier: 0.9, complexityFactor: 0.8, marketReach: 0.6 },
+    'Sega Dreamcast': { baseModifier: 1.1, complexityFactor: 1.0, marketReach: 0.5 },
+    'Sega Saturn': { baseModifier: 1.3, complexityFactor: 1.2, marketReach: 0.4 },
+
+    // Modern Handheld PC
+    'Steam Deck': { baseModifier: 1.1, complexityFactor: 1.0, marketReach: 0.4 },
+
+    // Augmented Reality
+    'Augmented Reality': { baseModifier: 2.8, complexityFactor: 1.8, marketReach: 0.2 }
   };
 
   const genreModifiers = {
@@ -164,7 +190,33 @@ export const calculateGameRevenue = (quality, hype, platform, genre, marketSize 
     'Nintendo 64': 0.9,
     GameCube: 0.8,
     Wii: 1.2,
-    'Wii U': 0.7
+    'Wii U': 0.7,
+
+    // PlayStation Portable Family
+    'PlayStation Portable': 0.8,
+    'PlayStation Vita': 0.6,
+
+    // Nintendo Handheld Family
+    'Nintendo DS': 1.0,
+    'Nintendo 3DS': 0.9,
+    'Game Boy': 0.7,
+    'Game Boy Color': 0.8,
+    'Game Boy Advance': 0.9,
+
+    // Classic Nintendo Consoles
+    'Nintendo Entertainment System': 0.6,
+    'Super Nintendo': 0.7,
+
+    // Sega Consoles
+    'Sega Genesis': 0.8,
+    'Sega Dreamcast': 0.5,
+    'Sega Saturn': 0.4,
+
+    // Modern Handheld PC
+    'Steam Deck': 0.6,
+
+    // Augmented Reality
+    'Augmented Reality': 0.3
   };
 
   const baseRevenue = marketSize * qualityMultiplier * hypeMultiplier;
@@ -277,7 +329,33 @@ export const calculateMarketDemand = (genre, platform, year, previousGameSuccess
     'Nintendo 64': { baseValue: 0.7, innovationFactor: 1.0 },
     GameCube: { baseValue: 0.6, innovationFactor: 1.1 },
     Wii: { baseValue: 1.1, innovationFactor: 1.3 },
-    'Wii U': { baseValue: 0.4, innovationFactor: 1.1 }
+    'Wii U': { baseValue: 0.4, innovationFactor: 1.1 },
+
+    // PlayStation Portable Family
+    'PlayStation Portable': { baseValue: 0.7, innovationFactor: 1.0 },
+    'PlayStation Vita': { baseValue: 0.4, innovationFactor: 1.1 },
+
+    // Nintendo Handheld Family
+    'Nintendo DS': { baseValue: 0.9, innovationFactor: 1.0 },
+    'Nintendo 3DS': { baseValue: 0.6, innovationFactor: 1.1 },
+    'Game Boy': { baseValue: 0.5, innovationFactor: 0.8 },
+    'Game Boy Color': { baseValue: 0.6, innovationFactor: 0.9 },
+    'Game Boy Advance': { baseValue: 0.7, innovationFactor: 1.0 },
+
+    // Classic Nintendo Consoles
+    'Nintendo Entertainment System': { baseValue: 0.4, innovationFactor: 0.7 },
+    'Super Nintendo': { baseValue: 0.5, innovationFactor: 0.8 },
+
+    // Sega Consoles
+    'Sega Genesis': { baseValue: 0.6, innovationFactor: 0.9 },
+    'Sega Dreamcast': { baseValue: 0.3, innovationFactor: 1.2 },
+    'Sega Saturn': { baseValue: 0.2, innovationFactor: 1.0 },
+
+    // Modern Handheld PC
+    'Steam Deck': { baseValue: 0.3, innovationFactor: 1.3 },
+
+    // Augmented Reality
+    'Augmented Reality': { baseValue: 0.1, innovationFactor: 1.5 }
   };
 
   // Precompute and memoize the trend calculation for significant performance boost

@@ -155,6 +155,124 @@ export const defaultPlatforms = [
     marketShare: 0.04,
     developmentDifficulty: 1.3,
     unlocked: false
+  },
+  // PlayStation Portable Family
+  {
+    id: 20,
+    name: PLATFORMS.PSP,
+    cost: 80000,
+    marketShare: 0.07,
+    developmentDifficulty: 1.1,
+    unlocked: false
+  },
+  {
+    id: 21,
+    name: PLATFORMS.PS_VITA,
+    cost: 95000,
+    marketShare: 0.03,
+    developmentDifficulty: 1.2,
+    unlocked: false
+  },
+  // Nintendo Handheld Family
+  {
+    id: 22,
+    name: PLATFORMS.NINTENDO_DS,
+    cost: 70000,
+    marketShare: 0.09,
+    developmentDifficulty: 0.9,
+    unlocked: false
+  },
+  {
+    id: 23,
+    name: PLATFORMS.NINTENDO_3DS,
+    cost: 85000,
+    marketShare: 0.06,
+    developmentDifficulty: 1.0,
+    unlocked: false
+  },
+  {
+    id: 24,
+    name: PLATFORMS.GAME_BOY,
+    cost: 40000,
+    marketShare: 0.05,
+    developmentDifficulty: 0.7,
+    unlocked: false
+  },
+  {
+    id: 25,
+    name: PLATFORMS.GAME_BOY_COLOR,
+    cost: 45000,
+    marketShare: 0.06,
+    developmentDifficulty: 0.8,
+    unlocked: false
+  },
+  {
+    id: 26,
+    name: PLATFORMS.GAME_BOY_ADVANCE,
+    cost: 60000,
+    marketShare: 0.07,
+    developmentDifficulty: 0.9,
+    unlocked: false
+  },
+  // Classic Nintendo Consoles
+  {
+    id: 27,
+    name: PLATFORMS.NES,
+    cost: 35000,
+    marketShare: 0.04,
+    developmentDifficulty: 0.6,
+    unlocked: false
+  },
+  {
+    id: 28,
+    name: PLATFORMS.SNES,
+    cost: 50000,
+    marketShare: 0.05,
+    developmentDifficulty: 0.8,
+    unlocked: false
+  },
+  // Sega Consoles
+  {
+    id: 29,
+    name: PLATFORMS.GENESIS,
+    cost: 55000,
+    marketShare: 0.06,
+    developmentDifficulty: 0.9,
+    unlocked: false
+  },
+  {
+    id: 30,
+    name: PLATFORMS.DREAMCAST,
+    cost: 75000,
+    marketShare: 0.03,
+    developmentDifficulty: 1.1,
+    unlocked: false
+  },
+  {
+    id: 31,
+    name: PLATFORMS.SATURN,
+    cost: 65000,
+    marketShare: 0.02,
+    developmentDifficulty: 1.3,
+    unlocked: false
+  },
+  // Modern Handheld PC
+  {
+    id: 32,
+    name: PLATFORMS.STEAM_DECK,
+    cost: 180000,
+    marketShare: 0.02,
+    developmentDifficulty: 1.1,
+    unlocked: false
+  },
+  // Augmented Reality
+  {
+    id: 33,
+    name: PLATFORMS.AR,
+    cost: 250000,
+    marketShare: 0.01,
+    developmentDifficulty: 2.2,
+    unlocked: false
   }
 ];
 
