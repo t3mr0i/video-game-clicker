@@ -28,7 +28,13 @@ const ACTIONS = {
   UNLOCK_PLATFORM: 'UNLOCK_PLATFORM',
   UNLOCK_GENRE: 'UNLOCK_GENRE',
   UPDATE_STATS: 'UPDATE_STATS',
-  RESET_GAME: 'RESET_GAME'
+  RESET_GAME: 'RESET_GAME',
+
+  // Stock market actions
+  BUY_STOCK: 'BUY_STOCK',
+  SELL_STOCK: 'SELL_STOCK',
+  UPDATE_STOCK_PRICES: 'UPDATE_STOCK_PRICES',
+  UPDATE_PORTFOLIO: 'UPDATE_PORTFOLIO'
 };
 
 // Use the default game state from config
@@ -202,6 +208,104 @@ function gameReducer(state, action) {
     case ACTIONS.RESET_GAME:
       return initialState;
 
+    case ACTIONS.BUY_STOCK:
+      {
+        const { stockId, quantity, price } = action.payload;
+        const totalCost = quantity * price;
+
+        if (state.money < totalCost) {
+          return state; // Not enough money
+        }
+
+        const existingHolding = state.portfolio.holdings.find(h => h.stockId === stockId);
+        let newHoldings;
+
+        if (existingHolding) {
+          // Update existing holding with average cost basis
+          const newQuantity = existingHolding.quantity + quantity;
+          const newAveragePurchasePrice =
+            (existingHolding.averagePurchasePrice * existingHolding.quantity + price * quantity) / newQuantity;
+
+          newHoldings = state.portfolio.holdings.map(h =>
+            h.stockId === stockId
+              ? { ...h, quantity: newQuantity, averagePurchasePrice: newAveragePurchasePrice }
+              : h
+          );
+        } else {
+          // Create new holding
+          newHoldings = [
+            ...state.portfolio.holdings,
+            { stockId, quantity, averagePurchasePrice: price }
+          ];
+        }
+
+        return {
+          ...state,
+          money: state.money - totalCost,
+          portfolio: {
+            ...state.portfolio,
+            holdings: newHoldings,
+            totalInvested: state.portfolio.totalInvested + totalCost
+          }
+        };
+      }
+
+    case ACTIONS.SELL_STOCK:
+      {
+        const { stockId, quantity, price } = action.payload;
+        const existingHolding = state.portfolio.holdings.find(h => h.stockId === stockId);
+
+        if (!existingHolding || existingHolding.quantity < quantity) {
+          return state; // Not enough shares
+        }
+
+        const saleProceeds = quantity * price;
+        const costBasis = quantity * existingHolding.averagePurchasePrice;
+        const realizedGain = saleProceeds - costBasis;
+
+        let newHoldings;
+        if (existingHolding.quantity === quantity) {
+          // Remove holding entirely
+          newHoldings = state.portfolio.holdings.filter(h => h.stockId !== stockId);
+        } else {
+          // Reduce quantity
+          newHoldings = state.portfolio.holdings.map(h =>
+            h.stockId === stockId
+              ? { ...h, quantity: h.quantity - quantity }
+              : h
+          );
+        }
+
+        return {
+          ...state,
+          money: state.money + saleProceeds,
+          portfolio: {
+            ...state.portfolio,
+            holdings: newHoldings,
+            totalInvested: state.portfolio.totalInvested - costBasis,
+            realizedGainLoss: state.portfolio.realizedGainLoss + realizedGain
+          }
+        };
+      }
+
+    case ACTIONS.UPDATE_STOCK_PRICES:
+      {
+        const updatedStocks = action.payload;
+        return {
+          ...state,
+          stocks: state.stocks.map(stock => {
+            const update = updatedStocks.find(u => u.id === stock.id);
+            return update ? { ...stock, ...update } : stock;
+          })
+        };
+      }
+
+    case ACTIONS.UPDATE_PORTFOLIO:
+      return {
+        ...state,
+        portfolio: { ...state.portfolio, ...action.payload }
+      };
+
     default:
       return state;
   }
@@ -326,6 +430,27 @@ export function GameProvider({ children }) {
     updateStats: (stats) => dispatch({
       type: ACTIONS.UPDATE_STATS,
       payload: stats
+    }),
+
+    // Stock market management
+    buyStock: (stockId, quantity, price) => dispatch({
+      type: ACTIONS.BUY_STOCK,
+      payload: { stockId, quantity, price }
+    }),
+
+    sellStock: (stockId, quantity, price) => dispatch({
+      type: ACTIONS.SELL_STOCK,
+      payload: { stockId, quantity, price }
+    }),
+
+    updateStockPrices: (stockUpdates) => dispatch({
+      type: ACTIONS.UPDATE_STOCK_PRICES,
+      payload: stockUpdates
+    }),
+
+    updatePortfolio: (portfolioUpdate) => dispatch({
+      type: ACTIONS.UPDATE_PORTFOLIO,
+      payload: portfolioUpdate
     }),
 
     // Game management

@@ -273,6 +273,603 @@ export const defaultPlatforms = [
     marketShare: 0.01,
     developmentDifficulty: 2.2,
     unlocked: false
+  },
+  // Additional PlayStation Platforms
+  {
+    id: 34,
+    name: PLATFORMS.PLAYSTATION_PORTAL,
+    cost: 160000,
+    marketShare: 0.02,
+    developmentDifficulty: 1.1,
+    unlocked: false
+  },
+  // Additional Nintendo Switch Variants
+  {
+    id: 35,
+    name: PLATFORMS.NINTENDO_OLED,
+    cost: 140000,
+    marketShare: 0.08,
+    developmentDifficulty: 1.4,
+    unlocked: false
+  },
+  {
+    id: 36,
+    name: PLATFORMS.NINTENDO_LITE,
+    cost: 110000,
+    marketShare: 0.05,
+    developmentDifficulty: 1.2,
+    unlocked: false
+  },
+  // Additional Sega Platforms
+  {
+    id: 37,
+    name: PLATFORMS.MEGA_DRIVE,
+    cost: 55000,
+    marketShare: 0.06,
+    developmentDifficulty: 0.9,
+    unlocked: false
+  },
+  {
+    id: 38,
+    name: PLATFORMS.GAME_GEAR,
+    cost: 45000,
+    marketShare: 0.03,
+    developmentDifficulty: 0.8,
+    unlocked: false
+  },
+  {
+    id: 39,
+    name: PLATFORMS.MASTER_SYSTEM,
+    cost: 35000,
+    marketShare: 0.04,
+    developmentDifficulty: 0.7,
+    unlocked: false
+  },
+  // Classic Atari Platforms
+  {
+    id: 40,
+    name: PLATFORMS.ATARI_2600,
+    cost: 25000,
+    marketShare: 0.03,
+    developmentDifficulty: 0.5,
+    unlocked: false
+  },
+  {
+    id: 41,
+    name: PLATFORMS.ATARI_7800,
+    cost: 30000,
+    marketShare: 0.02,
+    developmentDifficulty: 0.6,
+    unlocked: false
+  },
+  {
+    id: 42,
+    name: PLATFORMS.ATARI_JAGUAR,
+    cost: 60000,
+    marketShare: 0.01,
+    developmentDifficulty: 1.2,
+    unlocked: false
+  },
+  {
+    id: 43,
+    name: PLATFORMS.LYNX,
+    cost: 40000,
+    marketShare: 0.02,
+    developmentDifficulty: 0.8,
+    unlocked: false
+  },
+  // Other Classic Platforms
+  {
+    id: 44,
+    name: PLATFORMS.TURBOGRAFX_16,
+    cost: 50000,
+    marketShare: 0.03,
+    developmentDifficulty: 0.9,
+    unlocked: false
+  },
+  {
+    id: 45,
+    name: PLATFORMS.NEO_GEO,
+    cost: 85000,
+    marketShare: 0.02,
+    developmentDifficulty: 1.1,
+    unlocked: false
+  },
+  {
+    id: 46,
+    name: PLATFORMS.NEO_GEO_POCKET,
+    cost: 55000,
+    marketShare: 0.01,
+    developmentDifficulty: 0.9,
+    unlocked: false
+  },
+  {
+    id: 47,
+    name: PLATFORMS.WONDERSWAN,
+    cost: 45000,
+    marketShare: 0.01,
+    developmentDifficulty: 0.8,
+    unlocked: false
+  },
+  // Modern Handheld PC Gaming
+  {
+    id: 48,
+    name: PLATFORMS.ASUS_ROG_ALLY,
+    cost: 190000,
+    marketShare: 0.015,
+    developmentDifficulty: 1.2,
+    unlocked: false
+  },
+  {
+    id: 49,
+    name: PLATFORMS.LEGION_GO,
+    cost: 185000,
+    marketShare: 0.01,
+    developmentDifficulty: 1.2,
+    unlocked: false
+  },
+  // Retro/Indie Gaming Platforms
+  {
+    id: 50,
+    name: PLATFORMS.ANALOGUE_POCKET,
+    cost: 70000,
+    marketShare: 0.005,
+    developmentDifficulty: 0.8,
+    unlocked: false
+  },
+  {
+    id: 51,
+    name: PLATFORMS.EVERCADE,
+    cost: 35000,
+    marketShare: 0.003,
+    developmentDifficulty: 0.7,
+    unlocked: false
+  },
+  {
+    id: 52,
+    name: PLATFORMS.PLAYDATE,
+    cost: 40000,
+    marketShare: 0.002,
+    developmentDifficulty: 0.6,
+    unlocked: false
+  },
+  {
+    id: 53,
+    name: PLATFORMS.OUYA,
+    cost: 45000,
+    marketShare: 0.001,
+    developmentDifficulty: 0.9,
+    unlocked: false
+  },
+  // Mobile Platform Variants
+  {
+    id: 54,
+    name: PLATFORMS.ANDROID,
+    cost: 45000,
+    marketShare: 0.25,
+    developmentDifficulty: 0.8,
+    unlocked: false
+  },
+  {
+    id: 55,
+    name: PLATFORMS.IOS,
+    cost: 55000,
+    marketShare: 0.15,
+    developmentDifficulty: 0.9,
+    unlocked: false
+  },
+  // Web Platform Variants
+  {
+    id: 56,
+    name: PLATFORMS.WEBGL,
+    cost: 35000,
+    marketShare: 0.08,
+    developmentDifficulty: 0.7,
+    unlocked: false
+  },
+  {
+    id: 57,
+    name: PLATFORMS.WEBASSEMBLY,
+    cost: 45000,
+    marketShare: 0.04,
+    developmentDifficulty: 1.0,
+    unlocked: false
+  },
+  // VR Platform Variants
+  {
+    id: 58,
+    name: PLATFORMS.OCULUS_QUEST,
+    cost: 180000,
+    marketShare: 0.015,
+    developmentDifficulty: 1.8,
+    unlocked: false
+  },
+  {
+    id: 59,
+    name: PLATFORMS.PSVR,
+    cost: 160000,
+    marketShare: 0.008,
+    developmentDifficulty: 1.6,
+    unlocked: false
+  },
+  {
+    id: 60,
+    name: PLATFORMS.PSVR2,
+    cost: 220000,
+    marketShare: 0.006,
+    developmentDifficulty: 2.0,
+    unlocked: false
+  },
+  {
+    id: 61,
+    name: PLATFORMS.VALVE_INDEX,
+    cost: 200000,
+    marketShare: 0.005,
+    developmentDifficulty: 1.9,
+    unlocked: false
+  },
+  {
+    id: 62,
+    name: PLATFORMS.HTC_VIVE,
+    cost: 190000,
+    marketShare: 0.007,
+    developmentDifficulty: 1.8,
+    unlocked: false
+  },
+  // AR Platform Variants
+  {
+    id: 63,
+    name: PLATFORMS.HOLOLENS,
+    cost: 300000,
+    marketShare: 0.003,
+    developmentDifficulty: 2.5,
+    unlocked: false
+  },
+  {
+    id: 64,
+    name: PLATFORMS.MAGIC_LEAP,
+    cost: 280000,
+    marketShare: 0.002,
+    developmentDifficulty: 2.4,
+    unlocked: false
+  },
+  {
+    id: 65,
+    name: PLATFORMS.GOOGLE_GLASS,
+    cost: 200000,
+    marketShare: 0.001,
+    developmentDifficulty: 2.1,
+    unlocked: false
+  },
+  // TV/Streaming Platforms
+  {
+    id: 66,
+    name: PLATFORMS.SMART_TV,
+    cost: 75000,
+    marketShare: 0.03,
+    developmentDifficulty: 1.0,
+    unlocked: false
+  },
+  {
+    id: 67,
+    name: PLATFORMS.APPLE_TV,
+    cost: 85000,
+    marketShare: 0.02,
+    developmentDifficulty: 1.1,
+    unlocked: false
+  },
+  {
+    id: 68,
+    name: PLATFORMS.NVIDIA_SHIELD,
+    cost: 90000,
+    marketShare: 0.015,
+    developmentDifficulty: 1.1,
+    unlocked: false
+  },
+  {
+    id: 69,
+    name: PLATFORMS.AMAZON_FIRE_TV,
+    cost: 70000,
+    marketShare: 0.025,
+    developmentDifficulty: 0.9,
+    unlocked: false
+  },
+  // Retro Consoles
+  {
+    id: 70,
+    name: PLATFORMS.COLECOVISION,
+    cost: 25000,
+    marketShare: 0.02,
+    developmentDifficulty: 0.6,
+    unlocked: false
+  },
+  {
+    id: 71,
+    name: PLATFORMS.INTELLIVISION,
+    cost: 20000,
+    marketShare: 0.015,
+    developmentDifficulty: 0.5,
+    unlocked: false
+  },
+  {
+    id: 72,
+    name: PLATFORMS.VECTREX,
+    cost: 30000,
+    marketShare: 0.005,
+    developmentDifficulty: 0.7,
+    unlocked: false
+  },
+  {
+    id: 73,
+    name: PLATFORMS.CHANNEL_F,
+    cost: 15000,
+    marketShare: 0.008,
+    developmentDifficulty: 0.4,
+    unlocked: false
+  },
+  {
+    id: 74,
+    name: PLATFORMS.ODYSSEY,
+    cost: 12000,
+    marketShare: 0.01,
+    developmentDifficulty: 0.3,
+    unlocked: false
+  },
+  {
+    id: 75,
+    name: PLATFORMS.ODYSSEY_2,
+    cost: 18000,
+    marketShare: 0.01,
+    developmentDifficulty: 0.4,
+    unlocked: false
+  },
+  // Modern Handheld Consoles
+  {
+    id: 76,
+    name: PLATFORMS.ANBERNIC_RG35XX,
+    cost: 50000,
+    marketShare: 0.003,
+    developmentDifficulty: 0.6,
+    unlocked: false
+  },
+  {
+    id: 77,
+    name: PLATFORMS.MIYOO_MINI,
+    cost: 40000,
+    marketShare: 0.002,
+    developmentDifficulty: 0.5,
+    unlocked: false
+  },
+  {
+    id: 78,
+    name: PLATFORMS.RETROID_POCKET,
+    cost: 60000,
+    marketShare: 0.004,
+    developmentDifficulty: 0.7,
+    unlocked: false
+  },
+  {
+    id: 79,
+    name: PLATFORMS.GPD_WIN,
+    cost: 150000,
+    marketShare: 0.008,
+    developmentDifficulty: 1.1,
+    unlocked: false
+  },
+  {
+    id: 80,
+    name: PLATFORMS.AYANEO_AIR,
+    cost: 170000,
+    marketShare: 0.006,
+    developmentDifficulty: 1.2,
+    unlocked: false
+  },
+  // Mini Consoles
+  {
+    id: 81,
+    name: PLATFORMS.NES_CLASSIC,
+    cost: 45000,
+    marketShare: 0.015,
+    developmentDifficulty: 0.6,
+    unlocked: false
+  },
+  {
+    id: 82,
+    name: PLATFORMS.SNES_CLASSIC,
+    cost: 55000,
+    marketShare: 0.018,
+    developmentDifficulty: 0.7,
+    unlocked: false
+  },
+  {
+    id: 83,
+    name: PLATFORMS.PLAYSTATION_CLASSIC,
+    cost: 65000,
+    marketShare: 0.012,
+    developmentDifficulty: 0.8,
+    unlocked: false
+  },
+  {
+    id: 84,
+    name: PLATFORMS.GENESIS_MINI,
+    cost: 50000,
+    marketShare: 0.01,
+    developmentDifficulty: 0.7,
+    unlocked: false
+  },
+  {
+    id: 85,
+    name: PLATFORMS.NEO_GEO_MINI,
+    cost: 75000,
+    marketShare: 0.005,
+    developmentDifficulty: 0.8,
+    unlocked: false
+  },
+  // Arcade Systems
+  {
+    id: 86,
+    name: PLATFORMS.NEOGEO_MVS,
+    cost: 120000,
+    marketShare: 0.008,
+    developmentDifficulty: 1.1,
+    unlocked: false
+  },
+  {
+    id: 87,
+    name: PLATFORMS.NEOGEO_AES,
+    cost: 110000,
+    marketShare: 0.005,
+    developmentDifficulty: 1.0,
+    unlocked: false
+  },
+  {
+    id: 88,
+    name: PLATFORMS.CPS1,
+    cost: 90000,
+    marketShare: 0.006,
+    developmentDifficulty: 0.9,
+    unlocked: false
+  },
+  {
+    id: 89,
+    name: PLATFORMS.CPS2,
+    cost: 100000,
+    marketShare: 0.007,
+    developmentDifficulty: 1.0,
+    unlocked: false
+  },
+  {
+    id: 90,
+    name: PLATFORMS.NAOMI,
+    cost: 130000,
+    marketShare: 0.004,
+    developmentDifficulty: 1.2,
+    unlocked: false
+  },
+  // Computer Platforms
+  {
+    id: 91,
+    name: PLATFORMS.COMMODORE_64,
+    cost: 35000,
+    marketShare: 0.012,
+    developmentDifficulty: 0.6,
+    unlocked: false
+  },
+  {
+    id: 92,
+    name: PLATFORMS.AMIGA,
+    cost: 45000,
+    marketShare: 0.008,
+    developmentDifficulty: 0.7,
+    unlocked: false
+  },
+  {
+    id: 93,
+    name: PLATFORMS.ZX_SPECTRUM,
+    cost: 25000,
+    marketShare: 0.01,
+    developmentDifficulty: 0.5,
+    unlocked: false
+  },
+  {
+    id: 94,
+    name: PLATFORMS.MSX,
+    cost: 30000,
+    marketShare: 0.006,
+    developmentDifficulty: 0.6,
+    unlocked: false
+  },
+  {
+    id: 95,
+    name: PLATFORMS.APPLE_II,
+    cost: 40000,
+    marketShare: 0.008,
+    developmentDifficulty: 0.6,
+    unlocked: false
+  },
+  // Cloud Gaming
+  {
+    id: 96,
+    name: PLATFORMS.STADIA,
+    cost: 180000,
+    marketShare: 0.003,
+    developmentDifficulty: 1.4,
+    unlocked: false
+  },
+  {
+    id: 97,
+    name: PLATFORMS.GEFORCE_NOW,
+    cost: 150000,
+    marketShare: 0.01,
+    developmentDifficulty: 1.2,
+    unlocked: false
+  },
+  {
+    id: 98,
+    name: PLATFORMS.XBOX_CLOUD,
+    cost: 160000,
+    marketShare: 0.012,
+    developmentDifficulty: 1.3,
+    unlocked: false
+  },
+  {
+    id: 99,
+    name: PLATFORMS.AMAZON_LUNA,
+    cost: 140000,
+    marketShare: 0.005,
+    developmentDifficulty: 1.1,
+    unlocked: false
+  },
+  // Alternative Consoles
+  {
+    id: 100,
+    name: PLATFORMS.ATARI_VCS,
+    cost: 80000,
+    marketShare: 0.002,
+    developmentDifficulty: 0.8,
+    unlocked: false
+  },
+  {
+    id: 101,
+    name: PLATFORMS.KFC_CONSOLE,
+    cost: 95000,
+    marketShare: 0.001,
+    developmentDifficulty: 0.9,
+    unlocked: false
+  },
+  {
+    id: 102,
+    name: PLATFORMS.POLYMEGA,
+    cost: 110000,
+    marketShare: 0.003,
+    developmentDifficulty: 1.0,
+    unlocked: false
+  },
+  // Educational/Kids Consoles
+  {
+    id: 103,
+    name: PLATFORMS.LEAPFROG_LEAPSTER,
+    cost: 35000,
+    marketShare: 0.008,
+    developmentDifficulty: 0.4,
+    unlocked: false
+  },
+  {
+    id: 104,
+    name: PLATFORMS.VTECH_VSMILE,
+    cost: 30000,
+    marketShare: 0.006,
+    developmentDifficulty: 0.3,
+    unlocked: false
+  },
+  // Future/Concept Consoles
+  {
+    id: 105,
+    name: PLATFORMS.TESLA_ARCADE,
+    cost: 200000,
+    marketShare: 0.005,
+    developmentDifficulty: 1.5,
+    unlocked: false
   }
 ];
 
@@ -325,6 +922,77 @@ export const defaultGameState = {
 
   // Notifications
   notifications: [],
+
+  // Stocks and Investment Portfolio
+  stocks: [
+    {
+      id: 'stock_ea',
+      symbol: 'EA',
+      name: 'Electronic Arts',
+      currentPrice: 145.50,
+      historicalPrices: [145.50],
+      volatility: 0.03,
+      trend: 1.0,
+      sector: 'gaming'
+    },
+    {
+      id: 'stock_activision',
+      symbol: 'ATVI',
+      name: 'Activision Blizzard',
+      currentPrice: 82.75,
+      historicalPrices: [82.75],
+      volatility: 0.04,
+      trend: 1.0,
+      sector: 'gaming'
+    },
+    {
+      id: 'stock_take_two',
+      symbol: 'TTWO',
+      name: 'Take-Two Interactive',
+      currentPrice: 156.25,
+      historicalPrices: [156.25],
+      volatility: 0.05,
+      trend: 1.0,
+      sector: 'gaming'
+    },
+    {
+      id: 'stock_unity',
+      symbol: 'U',
+      name: 'Unity Software',
+      currentPrice: 34.80,
+      historicalPrices: [34.80],
+      volatility: 0.08,
+      trend: 1.0,
+      sector: 'tech'
+    },
+    {
+      id: 'stock_nvidia',
+      symbol: 'NVDA',
+      name: 'NVIDIA Corporation',
+      currentPrice: 485.60,
+      historicalPrices: [485.60],
+      volatility: 0.06,
+      trend: 1.0,
+      sector: 'tech'
+    },
+    {
+      id: 'stock_microsoft',
+      symbol: 'MSFT',
+      name: 'Microsoft Corporation',
+      currentPrice: 378.85,
+      historicalPrices: [378.85],
+      volatility: 0.02,
+      trend: 1.0,
+      sector: 'tech'
+    }
+  ],
+  portfolio: {
+    holdings: [], // { stockId, quantity, averagePurchasePrice }
+    totalInvested: 0,
+    totalValue: 0,
+    unrealizedGainLoss: 0,
+    realizedGainLoss: 0
+  },
 
   // Statistics
   stats: {

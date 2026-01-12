@@ -158,9 +158,12 @@ export function useGameLoop() {
     // Check for achievements
     changes.achievements = checkForNewAchievements();
 
+    // Process stock price fluctuations
+    processStockPriceFluctuations(dayProgress);
+
     // Batch apply all changes
     applyBatchedChanges(changes);
-  }, [state.projects, state.employees, state.morale, state.currentDate, state.money, actions]);
+  }, [state.projects, state.employees, state.morale, state.currentDate, state.money, state.stocks, actions]);
 
   const applyBatchedChanges = useCallback((changes) => {
     // Apply project updates
@@ -445,6 +448,70 @@ export function useGameLoop() {
   const getAchievementTitle = (id) => ACHIEVEMENTS_CONFIG[id]?.title || 'Achievement';
   const getAchievementDescription = (id) => ACHIEVEMENTS_CONFIG[id]?.description || 'Achievement unlocked';
   const getAchievementReward = (id) => ACHIEVEMENTS_CONFIG[id]?.reward || 0;
+
+  const processStockPriceFluctuations = useCallback((dayProgress) => {
+    // Only update stock prices occasionally to prevent excessive volatility
+    // Update roughly every game hour (1/24 of a day)
+    const updateChance = dayProgress * 24; // Convert to hourly chance
+    if (Math.random() > updateChance) return;
+
+    const stockUpdates = state.stocks.map(stock => {
+      // Base volatility affects price movement range
+      const volatility = stock.volatility || 0.03;
+
+      // Random walk with trend influence
+      const randomFactor = (Math.random() - 0.5) * 2; // -1 to 1
+      const trendFactor = (stock.trend - 1.0) * 0.5; // Trend bias
+
+      // Combine random and trend for price change
+      const priceChangePercent = (randomFactor + trendFactor) * volatility;
+
+      // Calculate new price (with minimum floor of $1.00)
+      const newPrice = Math.max(1.0, stock.currentPrice * (1 + priceChangePercent));
+
+      // Update trend based on price movement (momentum effect)
+      const momentumFactor = priceChangePercent > 0 ? 1.001 : 0.999;
+      const newTrend = Math.max(0.95, Math.min(1.05, stock.trend * momentumFactor));
+
+      // Add some sector-based correlation
+      let sectorInfluence = 0;
+      if (stock.sector === 'gaming') {
+        // Gaming stocks are influenced by overall game industry success
+        const recentCompletedProjects = state.completedProjects.filter(p => {
+          const projectDate = new Date(2024, 0, 1); // Base date
+          projectDate.setMonth(projectDate.getMonth() + (state.currentDate.year - 2024) * 12 + state.currentDate.month - 1);
+          const cutoffDate = new Date(projectDate);
+          cutoffDate.setMonth(cutoffDate.getMonth() - 3); // Last 3 months
+          return p.completedDate >= cutoffDate;
+        });
+
+        if (recentCompletedProjects.length > 0) {
+          const avgSuccess = recentCompletedProjects.reduce((sum, p) => sum + (p.revenue || 0), 0) / recentCompletedProjects.length;
+          sectorInfluence = avgSuccess > 100000 ? 0.001 : -0.001; // Small positive/negative influence
+        }
+      }
+
+      const finalPrice = Math.max(1.0, newPrice * (1 + sectorInfluence));
+
+      // Update historical prices (keep last 30 prices)
+      const newHistoricalPrices = [...(stock.historicalPrices || []), finalPrice];
+      if (newHistoricalPrices.length > 30) {
+        newHistoricalPrices.shift(); // Remove oldest price
+      }
+
+      return {
+        id: stock.id,
+        currentPrice: parseFloat(finalPrice.toFixed(2)),
+        trend: parseFloat(newTrend.toFixed(4)),
+        historicalPrices: newHistoricalPrices
+      };
+    });
+
+    // Apply stock updates
+    if (stockUpdates.length > 0) {
+      actions.updateStockPrices(stockUpdates);
+    }
+  }, [state.stocks, state.completedProjects, state.currentDate, actions]);
 
   // Start/stop game loop based on game speed
   useEffect(() => {

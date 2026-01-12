@@ -12,6 +12,7 @@ import FranchisesComponent from './FranchisesComponent';
 import StudioCultureComponent from './StudioCultureComponent';
 import AchievementsComponent from './AchievementsComponent';
 import MoraleComponent from './MoraleComponent';
+import StocksComponent from './StocksComponent';
 import DebugPanel from './common/DebugPanel';
 import Card from './common/Card';
 
@@ -109,6 +110,9 @@ function GameStudio() {
                         </Card>
                         <Card className="bg-gray-800 border-2 border-pink-900">
                             <FranchisesComponent />
+                        </Card>
+                        <Card className="bg-gray-800 border-2 border-purple-700">
+                            <StocksComponent />
                         </Card>
                         <Card className="bg-gray-800 border-2 border-cyan-900">
                             <StudioCultureComponent />

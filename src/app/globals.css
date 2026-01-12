@@ -2,20 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --color-primary: #4380f6;       /* Enhanced vibrant blue */
-  --color-secondary: #12c49b;     /* Brighter emerald green */
-  --color-accent: #f64f6e;        /* More vibrant red-pink */
-  --color-background-dark: #0d1015; /* Even darker background */
-  --color-background-medium: #1c2634; /* Enhanced medium background */
-  --color-background-light: #273645; /* Refined lighter background */
-  --color-text-primary: #f0f0f0;   /* Slightly brighter primary text */
-  --color-text-secondary: #b0b0b0; /* More readable secondary text */
-  --color-text-tertiary: #7c8491;  /* Refined tertiary text */
+/* Import Unified Design System */
+@import '../../../shared-design-system/index.css';
 
-  --foreground-rgb: 240, 240, 240; /* Updated to match new primary text */
-  --background-start-rgb: 13, 16, 21; /* Darker background */
-  --background-end-rgb: 13, 16, 21;
+/* Video Game Clicker Theme Override */
+[data-theme="game"] {
+  /* Use unified color system with game-specific overrides */
+  --color-primary-600: #4380f6;       /* Enhanced vibrant blue */
+  --color-accent-600: #12c49b;        /* Brighter emerald green */
+  --color-error-600: #f64f6e;         /* More vibrant red-pink */
+
+  /* Dark theme by default for gaming */
+  --bg-primary: #0d1015;              /* Even darker background */
+  --bg-secondary: #1c2634;            /* Enhanced medium background */
+  --bg-muted: #273645;                /* Refined lighter background */
+  --text-primary: #f0f0f0;            /* Slightly brighter primary text */
+  --text-secondary: #b0b0b0;          /* More readable secondary text */
+  --text-muted: #7c8491;              /* Refined tertiary text */
 
   /* Enhanced accessibility color ratios */
   color-scheme: dark;

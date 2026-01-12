@@ -48,6 +48,7 @@ export const calculateDevelopmentPoints = (platform, genre, size, year, employee
     'PlayStation 3': { baseModifier: 1.4, complexityFactor: 1.3, marketReach: 0.9 },
     'PlayStation 4': { baseModifier: 1.2, complexityFactor: 1.1, marketReach: 1.3 },
     'PlayStation 5': { baseModifier: 1.5, complexityFactor: 1.4, marketReach: 1.1 },
+    'PlayStation Portal': { baseModifier: 1.1, complexityFactor: 1.0, marketReach: 0.3 },
 
     // Xbox Family
     Xbox: { baseModifier: 1.3, complexityFactor: 1.2, marketReach: 1.0 },
@@ -57,6 +58,8 @@ export const calculateDevelopmentPoints = (platform, genre, size, year, employee
 
     // Nintendo Family
     'Nintendo Switch': { baseModifier: 1.4, complexityFactor: 1.3, marketReach: 0.9 },
+    'Nintendo Switch OLED': { baseModifier: 1.4, complexityFactor: 1.3, marketReach: 1.0 },
+    'Nintendo Switch Lite': { baseModifier: 1.2, complexityFactor: 1.1, marketReach: 0.7 },
     'Nintendo 64': { baseModifier: 1.1, complexityFactor: 1.0, marketReach: 0.8 },
     GameCube: { baseModifier: 1.2, complexityFactor: 1.1, marketReach: 0.7 },
     Wii: { baseModifier: 1.0, complexityFactor: 0.9, marketReach: 1.0 },
@@ -79,14 +82,61 @@ export const calculateDevelopmentPoints = (platform, genre, size, year, employee
 
     // Sega Consoles
     'Sega Genesis': { baseModifier: 0.9, complexityFactor: 0.8, marketReach: 0.6 },
+    'Sega Mega Drive': { baseModifier: 0.9, complexityFactor: 0.8, marketReach: 0.6 },
+    'Sega Game Gear': { baseModifier: 0.8, complexityFactor: 0.7, marketReach: 0.4 },
+    'Sega Master System': { baseModifier: 0.7, complexityFactor: 0.6, marketReach: 0.4 },
     'Sega Dreamcast': { baseModifier: 1.1, complexityFactor: 1.0, marketReach: 0.5 },
     'Sega Saturn': { baseModifier: 1.3, complexityFactor: 1.2, marketReach: 0.4 },
 
+    // Classic Atari Platforms
+    'Atari 2600': { baseModifier: 0.5, complexityFactor: 0.4, marketReach: 0.3 },
+    'Atari 7800': { baseModifier: 0.6, complexityFactor: 0.5, marketReach: 0.3 },
+    'Atari Jaguar': { baseModifier: 1.2, complexityFactor: 1.1, marketReach: 0.2 },
+    'Atari Lynx': { baseModifier: 0.8, complexityFactor: 0.7, marketReach: 0.3 },
+
+    // Other Classic Platforms
+    'TurboGrafx-16': { baseModifier: 0.9, complexityFactor: 0.8, marketReach: 0.4 },
+    'Neo Geo': { baseModifier: 1.1, complexityFactor: 1.0, marketReach: 0.3 },
+    'Neo Geo Pocket': { baseModifier: 0.9, complexityFactor: 0.8, marketReach: 0.2 },
+    WonderSwan: { baseModifier: 0.8, complexityFactor: 0.7, marketReach: 0.2 },
+    Ouya: { baseModifier: 0.9, complexityFactor: 0.8, marketReach: 0.1 },
+
     // Modern Handheld PC
     'Steam Deck': { baseModifier: 1.1, complexityFactor: 1.0, marketReach: 0.4 },
+    'ASUS ROG Ally': { baseModifier: 1.2, complexityFactor: 1.1, marketReach: 0.3 },
+    'Lenovo Legion Go': { baseModifier: 1.2, complexityFactor: 1.1, marketReach: 0.2 },
 
-    // Augmented Reality
-    'Augmented Reality': { baseModifier: 2.8, complexityFactor: 1.8, marketReach: 0.2 }
+    // Retro/Indie Gaming Platforms
+    'Analogue Pocket': { baseModifier: 0.8, complexityFactor: 0.7, marketReach: 0.1 },
+    Evercade: { baseModifier: 0.7, complexityFactor: 0.6, marketReach: 0.1 },
+    Playdate: { baseModifier: 0.6, complexityFactor: 0.5, marketReach: 0.1 },
+
+    // Mobile Platform Variants
+    Android: { baseModifier: 0.8, complexityFactor: 0.7, marketReach: 1.8 },
+    iOS: { baseModifier: 0.9, complexityFactor: 0.8, marketReach: 1.5 },
+
+    // Web Platform Variants
+    WebGL: { baseModifier: 0.7, complexityFactor: 0.6, marketReach: 0.8 },
+    WebAssembly: { baseModifier: 1.0, complexityFactor: 0.9, marketReach: 0.7 },
+
+    // VR Platform Variants
+    'Meta Quest': { baseModifier: 1.8, complexityFactor: 1.6, marketReach: 0.5 },
+    'PlayStation VR': { baseModifier: 1.6, complexityFactor: 1.4, marketReach: 0.4 },
+    'PlayStation VR2': { baseModifier: 2.0, complexityFactor: 1.8, marketReach: 0.4 },
+    'Valve Index': { baseModifier: 1.9, complexityFactor: 1.7, marketReach: 0.3 },
+    'HTC Vive': { baseModifier: 1.8, complexityFactor: 1.6, marketReach: 0.3 },
+
+    // AR Platform Variants
+    'Microsoft HoloLens': { baseModifier: 2.5, complexityFactor: 2.2, marketReach: 0.2 },
+    'Magic Leap': { baseModifier: 2.4, complexityFactor: 2.1, marketReach: 0.2 },
+    'Google Glass': { baseModifier: 2.1, complexityFactor: 1.9, marketReach: 0.1 },
+    'Augmented Reality': { baseModifier: 2.8, complexityFactor: 1.8, marketReach: 0.2 },
+
+    // TV/Streaming Platforms
+    'Smart TV': { baseModifier: 1.0, complexityFactor: 0.9, marketReach: 0.5 },
+    'Apple TV': { baseModifier: 1.1, complexityFactor: 1.0, marketReach: 0.4 },
+    'NVIDIA Shield': { baseModifier: 1.1, complexityFactor: 1.0, marketReach: 0.3 },
+    'Amazon Fire TV': { baseModifier: 0.9, complexityFactor: 0.8, marketReach: 0.5 }
   };
 
   const genreModifiers = {
@@ -178,6 +228,7 @@ export const calculateGameRevenue = (quality, hype, platform, genre, marketSize 
     'PlayStation 3': 1.1,
     'PlayStation 4': 1.4,
     'PlayStation 5': 1.2,
+    'PlayStation Portal': 0.4,
 
     // Xbox Family
     Xbox: 1.0,
@@ -187,6 +238,8 @@ export const calculateGameRevenue = (quality, hype, platform, genre, marketSize 
 
     // Nintendo Family
     'Nintendo Switch': 1.1,
+    'Nintendo Switch OLED': 1.2,
+    'Nintendo Switch Lite': 0.9,
     'Nintendo 64': 0.9,
     GameCube: 0.8,
     Wii: 1.2,
@@ -209,14 +262,61 @@ export const calculateGameRevenue = (quality, hype, platform, genre, marketSize 
 
     // Sega Consoles
     'Sega Genesis': 0.8,
+    'Sega Mega Drive': 0.8,
+    'Sega Game Gear': 0.5,
+    'Sega Master System': 0.4,
     'Sega Dreamcast': 0.5,
     'Sega Saturn': 0.4,
 
+    // Classic Atari Platforms
+    'Atari 2600': 0.3,
+    'Atari 7800': 0.35,
+    'Atari Jaguar': 0.3,
+    'Atari Lynx': 0.35,
+
+    // Other Classic Platforms
+    'TurboGrafx-16': 0.4,
+    'Neo Geo': 0.6,
+    'Neo Geo Pocket': 0.3,
+    WonderSwan: 0.25,
+    Ouya: 0.2,
+
     // Modern Handheld PC
     'Steam Deck': 0.6,
+    'ASUS ROG Ally': 0.55,
+    'Lenovo Legion Go': 0.5,
 
-    // Augmented Reality
-    'Augmented Reality': 0.3
+    // Retro/Indie Gaming Platforms
+    'Analogue Pocket': 0.2,
+    Evercade: 0.15,
+    Playdate: 0.1,
+
+    // Mobile Platform Variants
+    Android: 1.6,
+    iOS: 1.3,
+
+    // Web Platform Variants
+    WebGL: 0.4,
+    WebAssembly: 0.5,
+
+    // VR Platform Variants
+    'Meta Quest': 0.7,
+    'PlayStation VR': 0.5,
+    'PlayStation VR2': 0.6,
+    'Valve Index': 0.6,
+    'HTC Vive': 0.55,
+
+    // AR Platform Variants
+    'Microsoft HoloLens': 0.25,
+    'Magic Leap': 0.2,
+    'Google Glass': 0.15,
+    'Augmented Reality': 0.3,
+
+    // TV/Streaming Platforms
+    'Smart TV': 0.4,
+    'Apple TV': 0.45,
+    'NVIDIA Shield': 0.5,
+    'Amazon Fire TV': 0.4
   };
 
   const baseRevenue = marketSize * qualityMultiplier * hypeMultiplier;
