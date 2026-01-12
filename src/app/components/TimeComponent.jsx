@@ -21,48 +21,43 @@ const TimeComponent = () => {
     const monthProgress = (day / GAME_MECHANICS.DAYS_PER_MONTH) * 100;
 
     const speedButtonClass = (speed) => {
-        return `px-2 py-1 text-xs font-medium rounded transition-all duration-300 ${gameSpeed === speed
-            ? 'bg-blue-500 hover:bg-blue-600 text-white scale-105 shadow-lg'
-            : 'bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white hover:scale-105'}`;
+        return `px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200 ${gameSpeed === speed
+            ? 'bg-blue-600 text-white shadow-md'
+            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`;
     };
 
     return (
-        <div className="game-card bg-gray-800 border-2 border-purple-700 text-white p-3 rounded-lg shadow-xl mb-2">
-            <div className="flex justify-between items-center mb-2">
-                <h2 className="text-lg font-bold text-purple-300 border-b border-purple-700 pb-1">Time Control</h2>
-                <div className="text-gray-200">
-                    <span className="font-semibold text-blue-300">{formatMonth(month)} {year}</span>
+        <div className="time-controls">
+            <div className="flex items-center gap-3">
+                <div className="text-sm font-medium text-slate-600">
+                    {formatMonth(month)} {year}
                 </div>
-            </div>
 
-            <div className="mb-2">
-                <div className="w-full bg-gray-700 rounded-full h-2 border border-gray-600">
-                    <div
-                        className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300 ease-in-out shadow-lg"
-                        style={{ width: `${monthProgress}%` }}
-                    ></div>
+                <div className="flex items-center gap-2">
+                    <span className="text-xs text-slate-500">Day {day}/{GAME_MECHANICS.DAYS_PER_MONTH}</span>
+                    <div className="w-16 bg-slate-200 rounded-full h-1.5">
+                        <div
+                            className="bg-blue-600 h-1.5 rounded-full transition-all duration-300"
+                            style={{ width: `${monthProgress}%` }}
+                        ></div>
+                    </div>
                 </div>
-                <div className="text-xs text-gray-400 mt-1">
-                    Day {day} of {GAME_MECHANICS.DAYS_PER_MONTH}
-                </div>
-            </div>
 
-            <div className="flex flex-wrap items-center gap-1">
                 <button
                     onClick={() => handleSpeedChange(gameSpeed === 0 ? 1 : 0)}
-                    className={`px-3 py-1 font-medium rounded flex items-center transition-all duration-300 transform hover:scale-105 ${gameSpeed === 0
-                        ? 'bg-green-500 hover:bg-green-600 text-white shadow-lg'
-                        : 'bg-yellow-500 hover:bg-yellow-600 text-white shadow-lg'}`}
+                    className={`px-3 py-1.5 font-medium rounded-md flex items-center gap-2 transition-all duration-200 ${gameSpeed === 0
+                        ? 'bg-green-600 hover:bg-green-700 text-white shadow-md'
+                        : 'bg-amber-500 hover:bg-amber-600 text-white shadow-md'}`}
                 >
-                    <FontAwesomeIcon icon={gameSpeed === 0 ? faPlay : faPause} className="mr-1" />
-                    {gameSpeed === 0 ? "Play" : "Pause"}
+                    <FontAwesomeIcon icon={gameSpeed === 0 ? faPlay : faPause} className="text-xs" />
+                    {gameSpeed === 0 ? "Start" : "Pause"}
                 </button>
 
-                <div className="flex gap-1 ml-1">
-                    <button onClick={() => handleSpeedChange(1)} className={speedButtonClass(1)}>1x</button>
-                    <button onClick={() => handleSpeedChange(2)} className={speedButtonClass(2)}>2x</button>
-                    <button onClick={() => handleSpeedChange(5)} className={speedButtonClass(5)}>5x</button>
-                    <button onClick={() => handleSpeedChange(10)} className={speedButtonClass(10)}>10x</button>
+                <div className="flex gap-1">
+                    <button onClick={() => handleSpeedChange(1)} className={speedButtonClass(1)}>1×</button>
+                    <button onClick={() => handleSpeedChange(2)} className={speedButtonClass(2)}>2×</button>
+                    <button onClick={() => handleSpeedChange(5)} className={speedButtonClass(5)}>5×</button>
+                    <button onClick={() => handleSpeedChange(10)} className={speedButtonClass(10)}>10×</button>
                 </div>
             </div>
         </div>

@@ -36,234 +36,193 @@ function GameStudio() {
     };
 
     return (
-        <div className="flex flex-col min-h-screen enterprise-dashboard">
-            {/* Executive Command Center - Premium Header */}
-            <div className="executive-header">
-                {/* Animated background pattern */}
-                <div className="absolute inset-0 opacity-10">
-                    <div className="circuit-pattern"></div>
-                </div>
-
-                <div className="relative z-10 p-8 flex justify-between items-center">
-                    {/* Studio Brand Identity */}
-                    <div className="flex items-center space-x-6">
-                        <div className="studio-logo-container">
-                            <div className="text-5xl relative">
-                                <span className="studio-logo-icon">🏢</span>
-                                <div className="logo-glow"></div>
-                            </div>
-                        </div>
-                        <div className="studio-brand">
-                            <h1 className="studio-title">
-                                GAMING EMPIRE
-                            </h1>
-                            <div className="studio-subtitle">
-                                &gt; NEXT-GEN ENTERTAINMENT CORPORATION
-                            </div>
-                        </div>
+        <div className="flex flex-col min-h-screen">
+            {/* Application Header */}
+            <div className="app-header">
+                <div className="header-content">
+                    {/* Brand Identity */}
+                    <div className="app-logo">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="currentColor" className="mr-2">
+                            <rect x="4" y="8" width="24" height="16" rx="2" fill="none" stroke="currentColor" strokeWidth="2"/>
+                            <rect x="8" y="12" width="4" height="8" fill="currentColor"/>
+                            <rect x="14" y="12" width="4" height="8" fill="currentColor"/>
+                            <rect x="20" y="12" width="4" height="8" fill="currentColor"/>
+                        </svg>
+                        Game Studio
                     </div>
 
-                    {/* Executive Control Panel */}
-                    <div className="executive-controls flex items-center space-x-8">
+                    {/* Header Controls */}
+                    <div className="header-controls">
                         {/* System Status Display */}
-                        <div className="status-monitor">
-                            <div className={`system-status ${isRunning ? 'active' : 'paused'}`}>
-                                <div className={`status-indicator ${isRunning ? 'running' : 'paused'}`}></div>
-                                <span className="status-text">
-                                    {isRunning ? `SYSTEMS ACTIVE ${currentSpeed}X` : 'OPERATIONS PAUSED'}
-                                </span>
-                            </div>
+                        <div className="status-display">
+                            <div className={`status-indicator ${isRunning ? 'status-running' : 'status-paused'}`}></div>
+                            <span>
+                                {isRunning ? `Running ${currentSpeed}x` : 'Paused'}
+                            </span>
                         </div>
 
-                        {/* Time Management Console */}
-                        <div className="time-console">
-                            <TimeComponent />
+                        {/* Time Controls */}
+                        <TimeComponent />
+                    </div>
+                </div>
+            </div>
+
+            {/* Main Content Area */}
+            <div className="flex-1 p-6 bg-slate-50">
+                <div className="max-w-7xl mx-auto">
+                    {/* Dashboard Grid */}
+                    <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+                        {/* Management Section */}
+                        <div className="executive-section xl:col-span-4 space-y-6">
+                            <div className="section-header">
+                                <div className="section-title">
+                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clipRule="evenodd"/>
+                                    </svg>
+                                    Management
+                                </div>
+                                <div className="section-description">
+                                    Financial oversight and company management
+                                </div>
+                            </div>
+
+                            <Card className="game-card">
+                                <FinanceComponent />
+                            </Card>
+                            <Card className="game-card">
+                                <MoraleComponent onMoraleChange={handleMoraleChange} />
+                            </Card>
+                            <Card className="game-card">
+                                <AchievementsComponent onAchievementComplete={handleAchievementComplete} />
+                            </Card>
+                        </div>
+
+                        {/* Development Section */}
+                        <div className="development-section xl:col-span-5 space-y-6">
+                            <div className="section-header">
+                                <div className="section-title">
+                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd"/>
+                                    </svg>
+                                    Development
+                                </div>
+                                <div className="section-description">
+                                    Project creation and team management
+                                </div>
+                            </div>
+
+                            <Card className="game-card">
+                                <ProjectComponent />
+                            </Card>
+                            <Card className="game-card">
+                                <EmployeeComponent />
+                            </Card>
+                            <Card className="game-card">
+                                <ResearchComponent />
+                            </Card>
+                        </div>
+
+                        {/* Business Operations */}
+                        <div className="business-section xl:col-span-3 space-y-6">
+                            <div className="section-header">
+                                <div className="section-title">
+                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                                    </svg>
+                                    Business Operations
+                                </div>
+                                <div className="section-description">
+                                    Market analysis and business growth
+                                </div>
+                            </div>
+
+                            <Card className="game-card">
+                                <ShippingComponent addNotification={notify} />
+                            </Card>
+                            <Card className="game-card">
+                                <EventsComponent />
+                            </Card>
+                            <Card className="game-card">
+                                <FranchisesComponent />
+                            </Card>
+                            <Card className="game-card">
+                                <StocksComponent />
+                            </Card>
+                            <Card className="game-card">
+                                <StudioCultureComponent />
+                            </Card>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Corporate Operations Floor */}
-            <div className="enterprise-workspace">
-                {/* Floating data particles */}
-                <div className="data-particles absolute inset-0 pointer-events-none opacity-20"></div>
-
-                {/* Executive Dashboard Grid */}
-                <div className="executive-dashboard grid grid-cols-1 xl:grid-cols-12 gap-8">
-                    {/* 💼 EXECUTIVE COMMAND CENTER */}
-                    <div className="executive-suite xl:col-span-4 space-y-6">
-                        <div className="department-header">
-                            <div className="department-title executive">
-                                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 animate-pulse"></div>
-                                <div className="relative z-10 text-center">
-                                    <div className="text-4xl mb-3">💼</div>
-                                    <h2>Executive Command</h2>
-                                    <div className="department-subtitle">
-                                        Strategic Operations Control
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <Card className="game-card studio-executive premium-workstation">
-                            <FinanceComponent />
-                        </Card>
-                        <Card className="game-card studio-executive premium-workstation">
-                            <MoraleComponent onMoraleChange={handleMoraleChange} />
-                        </Card>
-                        <Card className="game-card studio-executive premium-workstation">
-                            <AchievementsComponent onAchievementComplete={handleAchievementComplete} />
-                        </Card>
+            {/* Notifications Panel */}
+            <div className="notification-panel">
+                <div className="notification-header">
+                    <div className="notification-title">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 2L3 7v11a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V7l-7-5z"/>
+                        </svg>
+                        Activity Feed
                     </div>
-
-                    {/* 🎯 DEVELOPMENT OPERATIONS */}
-                    <div className="development-suite xl:col-span-5 space-y-6">
-                        <div className="department-header">
-                            <div className="department-title development">
-                                <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-emerald-500/10 animate-pulse"></div>
-                                <div className="relative z-10 text-center">
-                                    <div className="text-4xl mb-3">🎯</div>
-                                    <h2>Development Labs</h2>
-                                    <div className="department-subtitle">
-                                        Innovation & Creation Hub
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <Card className="game-card studio-dev premium-workstation">
-                            <ProjectComponent />
-                        </Card>
-                        <Card className="game-card studio-dev premium-workstation">
-                            <EmployeeComponent />
-                        </Card>
-                        <Card className="game-card studio-dev premium-workstation">
-                            <ResearchComponent />
-                        </Card>
-                    </div>
-
-                    {/* 📈 BUSINESS INTELLIGENCE */}
-                    <div className="business-suite xl:col-span-3 space-y-6">
-                        <div className="department-header">
-                            <div className="department-title business">
-                                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-violet-500/10 animate-pulse"></div>
-                                <div className="relative z-10 text-center">
-                                    <div className="text-4xl mb-3">📈</div>
-                                    <h2>Business Intel</h2>
-                                    <div className="department-subtitle">
-                                        Market & Analytics Center
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <Card className="game-card studio-business premium-workstation">
-                            <ShippingComponent addNotification={notify} />
-                        </Card>
-                        <Card className="game-card studio-business premium-workstation">
-                            <EventsComponent />
-                        </Card>
-                        <Card className="game-card studio-business premium-workstation">
-                            <FranchisesComponent />
-                        </Card>
-                        <Card className="game-card studio-business premium-workstation">
-                            <StocksComponent />
-                        </Card>
-                        <Card className="game-card studio-business premium-workstation">
-                            <StudioCultureComponent />
-                        </Card>
-                    </div>
-                </div>
-            </div>
-
-            {/* 🚀 ENTERPRISE MISSION CONTROL */}
-            <div className="enterprise-mission-control">
-                {/* Mission Control Header */}
-                <div className="absolute inset-0">
-                    <div className="holographic-overlay"></div>
+                    {state.notifications.length > 0 && (
+                        <button
+                            onClick={clearAll}
+                            className="game-button"
+                            title="Clear notifications"
+                        >
+                            Clear All
+                        </button>
+                    )}
                 </div>
 
-                <div className="relative z-10 p-6">
-                    <div className="mission-control-header flex justify-between items-center mb-6">
-                        <div className="control-title">
-                            <div className="flex items-center space-x-3">
-                                <div className="control-icon">
-                                    🚀
-                                </div>
-                                <div>
-                                    <h3>MISSION CONTROL</h3>
-                                    <div className="control-subtitle">
-                                        Enterprise Operations Feed
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {state.notifications.length > 0 && (
+                <div className="notification-list">
+                    {state.notifications.slice(-8).map((notification, index) => (
+                        <div
+                            key={notification.id}
+                            className={`notification-item ${notification.type}`}
+                        >
                             <button
-                                onClick={clearAll}
-                                className="clear-feed-btn"
-                                title="Clear mission feed"
+                                onClick={() => actions.removeNotification(notification.id)}
+                                className="dismiss-button"
+                                title="Dismiss notification"
                             >
-                                🗑️ PURGE
+                                ×
                             </button>
-                        )}
-                    </div>
 
-                    <div className="mission-feed space-y-3 max-h-80 overflow-y-auto">
-                        {state.notifications.slice(-8).map((notification, index) => (
-                            <div
-                                key={notification.id}
-                                className={`mission-log-entry ${notification.type}`}
-                                style={{ animationDelay: `${index * 100}ms` }}
-                            >
-                                {/* Mission log status indicator */}
-                                <div className={`log-status-indicator ${notification.type}`}></div>
-
-                                <button
-                                    onClick={() => actions.removeNotification(notification.id)}
-                                    className="dismiss-btn"
-                                    title="Dismiss log entry"
-                                >
-                                    ✕
-                                </button>
-
-                                <div className="log-content">
-                                    <div className="flex items-center space-x-2 mb-1">
-                                        <span className={`log-type ${notification.type}`}>
-                                            {notification.type === 'success' ? '✅ SUCCESS'
-                                             : notification.type === 'error' ? '🚨 ERROR'
-                                             : notification.type === 'warning' ? '⚠️ WARNING'
-                                             : '📡 INFO'}
-                                        </span>
-                                        {notification.timestamp && (
-                                            <span className="log-timestamp">
-                                                {new Date(notification.timestamp).toLocaleTimeString()}
-                                            </span>
-                                        )}
+                            <div className="notification-content">
+                                <div className={`notification-type ${notification.type}`}>
+                                    {notification.type === 'success' ? 'Success'
+                                     : notification.type === 'error' ? 'Error'
+                                     : notification.type === 'warning' ? 'Warning'
+                                     : 'Info'}
+                                </div>
+                                {notification.timestamp && (
+                                    <div className="notification-timestamp">
+                                        {new Date(notification.timestamp).toLocaleTimeString()}
                                     </div>
-                                    <div className="log-message">
-                                        {notification.message}
-                                    </div>
+                                )}
+                                <div className="notification-message">
+                                    {notification.message}
                                 </div>
                             </div>
-                        ))}
-                        {state.notifications.length === 0 && (
-                            <div className="mission-idle">
-                                <div className="idle-icon">🛸</div>
-                                <div className="idle-title">
-                                    MISSION CONTROL STANDBY
-                                </div>
-                                <div className="idle-subtitle">
-                                    All systems operational
-                                </div>
-                                <div className="status-bar mt-4 flex justify-center">
-                                    <div className="status-cursor">
-                                        ▊
-                                    </div>
-                                </div>
+                        </div>
+                    ))}
+                    {state.notifications.length === 0 && (
+                        <div className="empty-state">
+                            <div className="empty-state-icon">
+                                <svg width="48" height="48" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd"/>
+                                </svg>
                             </div>
-                        )}
-                    </div>
+                            <div className="empty-state-title">
+                                No recent activity
+                            </div>
+                            <div className="empty-state-description">
+                                Notifications will appear here as you work
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 

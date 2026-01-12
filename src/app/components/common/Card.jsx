@@ -12,11 +12,12 @@ const Card = ({
   ariaLabel
 }) => {
   const variantClasses = {
-    default: 'bg-gray-800 border-2 border-gray-700 text-white',
-    dark: 'bg-gray-900 border-2 border-blue-900 text-white',
-    success: 'bg-green-800 border-2 border-green-700 text-white',
-    warning: 'bg-yellow-800 border-2 border-yellow-700 text-white',
-    error: 'bg-red-800 border-2 border-red-700 text-white'
+    default: 'bg-white border border-slate-200 text-slate-900',
+    light: 'bg-slate-50 border border-slate-200 text-slate-900',
+    success: 'bg-green-50 border border-green-200 text-green-900',
+    warning: 'bg-amber-50 border border-amber-200 text-amber-900',
+    error: 'bg-red-50 border border-red-200 text-red-900',
+    info: 'bg-blue-50 border border-blue-200 text-blue-900'
   };
 
   const handleKeyPress = (e) => {
@@ -29,16 +30,15 @@ const Card = ({
   return (
     <div
       className={`
-        rounded-lg
-        shadow-xl
-        transform
+        rounded-xl
+        shadow-sm
         transition-all
-        duration-300
+        duration-200
         ${variantClasses[variant]}
         ${className}
-        ${onHover ? 'hover:scale-105 hover:shadow-2xl cursor-pointer' : ''}
+        ${onHover ? 'hover:-translate-y-1 hover:shadow-md cursor-pointer' : ''}
         ${onClick ? 'cursor-pointer' : ''}
-        ${focusable || onClick ? 'focus:outline-none' : ''}
+        ${focusable || onClick ? 'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2' : ''}
       `}
       onClick={onClick}
       onKeyDown={handleKeyPress}
@@ -47,12 +47,12 @@ const Card = ({
       aria-label={ariaLabel || title}
     >
       {title && (
-        <div className="flex justify-between items-center p-4 border-b border-inherit bg-gray-700/50">
-          <h3 className="text-lg font-bold text-blue-300">{title}</h3>
-          {headerActions && <div>{headerActions}</div>}
+        <div className="flex justify-between items-center px-6 py-4 border-b border-slate-200">
+          <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
+          {headerActions && <div className="flex items-center gap-2">{headerActions}</div>}
         </div>
       )}
-      <div className="p-4 space-y-2">
+      <div className="p-6">
         {children}
       </div>
     </div>
