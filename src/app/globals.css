@@ -5,23 +5,47 @@
 /* Import Unified Design System */
 @import '../../../shared-design-system/index.css';
 
-/* Video Game Clicker Theme Override */
+/* Video Game Tycoon Theme - Custom Gaming Aesthetic */
 [data-theme="game"] {
-  /* Use unified color system with game-specific overrides */
-  --color-primary-600: #4380f6;       /* Enhanced vibrant blue */
-  --color-accent-600: #12c49b;        /* Brighter emerald green */
-  --color-error-600: #f64f6e;         /* More vibrant red-pink */
+  /* Primary Gaming Color Palette */
+  --color-neon-blue: #00D9FF;         /* Electric neon blue */
+  --color-neon-green: #00FF88;        /* Bright arcade green */
+  --color-neon-pink: #FF0080;         /* Hot pink accent */
+  --color-console-red: #FF4444;       /* Classic console red */
+  --color-retro-orange: #FF8800;      /* Warm retro orange */
+  --color-pixel-yellow: #FFDD00;      /* Bright pixel yellow */
+  --color-cyber-purple: #8800FF;      /* Cyberpunk purple */
 
-  /* Dark theme by default for gaming */
-  --bg-primary: #0d1015;              /* Even darker background */
-  --bg-secondary: #1c2634;            /* Enhanced medium background */
-  --bg-muted: #273645;                /* Refined lighter background */
-  --text-primary: #f0f0f0;            /* Slightly brighter primary text */
-  --text-secondary: #b0b0b0;          /* More readable secondary text */
-  --text-muted: #7c8491;              /* Refined tertiary text */
+  /* Studio Environment Colors */
+  --bg-studio-dark: #0A0A0F;          /* Deep studio dark */
+  --bg-office-floor: #1A1A24;         /* Office floor gray-blue */
+  --bg-workstation: #252538;          /* Workstation surface */
+  --bg-screen-glow: #2A2A40;          /* Monitor glow background */
+
+  /* Text & UI Colors */
+  --text-neon-bright: #FFFFFF;        /* Pure white for headers */
+  --text-code-green: #00FF88;         /* Green for positive values */
+  --text-warning-amber: #FFAA00;      /* Amber for warnings */
+  --text-error-red: #FF4444;          /* Red for errors */
+  --text-info: #00D9FF;               /* Blue for info */
+  --text-muted-console: #8A8A9F;      /* Muted text like console */
 
   /* Enhanced accessibility color ratios */
   color-scheme: dark;
+}
+
+/* Gaming Industry Visual Elements */
+:root {
+  /* Gradient definitions for tycoon aesthetic */
+  --gradient-studio: linear-gradient(135deg, var(--bg-studio-dark) 0%, var(--bg-office-floor) 100%);
+  --gradient-neon-border: linear-gradient(90deg, var(--color-neon-blue), var(--color-neon-green), var(--color-neon-pink));
+  --gradient-console: linear-gradient(45deg, var(--color-console-red), var(--color-retro-orange));
+  --gradient-screen: linear-gradient(180deg, var(--bg-screen-glow), var(--bg-workstation));
+
+  /* Shadow definitions for depth */
+  --shadow-neon: 0 0 20px rgba(0, 217, 255, 0.3);
+  --shadow-studio: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-workstation: inset 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -33,8 +57,8 @@
 }
 
 body {
-  color: var(--color-text-primary);
-  background: linear-gradient(135deg, var(--color-background-dark), var(--color-background-medium));
+  color: var(--text-neon-bright, #FFFFFF);
+  background: var(--gradient-studio);
   font-smooth: antialiased;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -44,10 +68,34 @@ body {
   background-size: cover;
   background-position: center;
   overflow-x: hidden;
-  font-family: 'Inter', 'Poppins', 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  line-height: 1.575; /* Slightly tighter line height for better readability */
-  letter-spacing: 0.01em; /* Very slight letter spacing */
-  font-weight: 400; /* Consistent base weight */
+  font-family: 'Fira Code', 'JetBrains Mono', 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Source Code Pro', monospace, 'Inter', 'Poppins', sans-serif;
+  line-height: 1.5;
+  letter-spacing: 0.025em; /* Slightly more spacing for gaming feel */
+  font-weight: 400;
+  position: relative;
+}
+
+/* Add subtle circuit board pattern overlay */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(0, 217, 255, 0.1) 1px, transparent 1px),
+    radial-gradient(circle at 80% 80%, rgba(0, 255, 136, 0.1) 1px, transparent 1px),
+    radial-gradient(circle at 40% 60%, rgba(255, 0, 128, 0.1) 1px, transparent 1px);
+  background-size: 100px 100px, 150px 150px, 200px 200px;
+  pointer-events: none;
+  z-index: -1;
+  animation: circuit-drift 20s linear infinite;
+}
+
+@keyframes circuit-drift {
+  0% { transform: translateX(0) translateY(0); }
+  100% { transform: translateX(-50px) translateY(-50px); }
 }
 
 @keyframes gradient-shift {
@@ -65,15 +113,34 @@ body::before {
   height: 100%;
   background: linear-gradient(
     -45deg,
-    rgba(37, 99, 235, 0.1),
-    rgba(16, 185, 129, 0.1),
-    rgba(239, 68, 68, 0.1),
-    rgba(64, 123, 255, 0.1)
+    rgba(0, 217, 255, 0.05),
+    rgba(0, 255, 136, 0.05),
+    rgba(255, 0, 128, 0.05),
+    rgba(255, 68, 68, 0.05)
   );
   background-size: 400% 400%;
-  animation: gradient-shift 15s ease infinite;
+  animation: studio-ambience 12s ease infinite;
   pointer-events: none;
-  z-index: -1;
+  z-index: -2;
+}
+
+@keyframes studio-ambience {
+  0%, 100% {
+    background-position: 0% 50%;
+    opacity: 0.8;
+  }
+  25% {
+    background-position: 100% 0%;
+    opacity: 1;
+  }
+  50% {
+    background-position: 100% 100%;
+    opacity: 0.6;
+  }
+  75% {
+    background-position: 0% 100%;
+    opacity: 0.9;
+  }
 }
 
 @keyframes subtle-pulse {
@@ -372,41 +439,82 @@ body::before {
   }
 }
 
-/* Typography improvements */
+/* Tycoon Game Studio Typography */
 h1, h2, h3 {
-  font-family: 'Inter', 'Poppins', sans-serif;
+  font-family: 'Fira Code', 'JetBrains Mono', monospace;
   font-weight: 700;
-  color: var(--color-text-primary);
-  margin-bottom: 0.75rem;
-  letter-spacing: -0.025em;
-  line-height: 1.2;
+  color: var(--text-neon-bright);
+  margin-bottom: 1rem;
+  letter-spacing: 0.05em;
+  line-height: 1.3;
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.4);
 }
 
+/* Studio name / Main title */
 h1 {
-  font-size: 2.35rem;
+  font-size: 2.5rem;
   font-weight: 800;
   text-transform: uppercase;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+  background: linear-gradient(45deg, var(--color-neon-blue), var(--color-neon-green), var(--color-neon-pink));
+  background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  letter-spacing: 0.05em;
+  animation: text-glow-shift 3s ease-in-out infinite;
+  letter-spacing: 0.1em;
   line-height: 1.1;
+  position: relative;
 }
 
+/* Add ASCII art style decoration */
+h1::before {
+  content: '▓▓▓ ';
+  color: var(--color-neon-blue);
+  -webkit-text-fill-color: var(--color-neon-blue);
+  text-shadow: 0 0 15px var(--color-neon-blue);
+}
+
+h1::after {
+  content: ' ▓▓▓';
+  color: var(--color-neon-green);
+  -webkit-text-fill-color: var(--color-neon-green);
+  text-shadow: 0 0 15px var(--color-neon-green);
+}
+
+@keyframes text-glow-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+    filter: brightness(1);
+  }
+  50% {
+    background-position: 100% 50%;
+    filter: brightness(1.2);
+  }
+}
+
+/* Section headers */
 h2 {
-  font-size: 1.85rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-text-primary);
-  border-bottom: 2px solid rgba(64, 123, 255, 0.4);
-  padding-bottom: 0.625rem;
-  letter-spacing: 0.025em;
+  color: var(--text-neon-bright);
+  border-bottom: 2px solid var(--color-neon-blue);
+  border-image: var(--gradient-neon-border) 1;
+  padding-bottom: 0.5rem;
+  letter-spacing: 0.08em;
+  position: relative;
 }
 
+h2::before {
+  content: '> ';
+  color: var(--color-neon-green);
+}
+
+/* Component headers */
 h3 {
-  font-size: 1.45rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  color: var(--color-text-secondary);
-  letter-spacing: 0.015em;
+  color: var(--text-neon-bright);
+  letter-spacing: 0.05em;
+  position: relative;
 }
 
 /* Typography adjustments for mobile */
@@ -454,142 +562,515 @@ h3 {
   }
 }
 
-/* Styling for game cards */
+/* Tycoon Game Studio Workstation Cards */
 .game-card {
-  background-color: #1f2937;
-  border-radius: 0.75rem;
-  box-shadow:
-    0 4px 6px rgba(0, 0, 0, 0.2),
-    0 10px 20px rgba(64, 123, 255, 0.1);
+  background: var(--gradient-screen);
+  border-radius: 12px;
+  box-shadow: var(--shadow-studio);
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  border: 1px solid rgba(64, 123, 255, 0.1);
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  border: 2px solid transparent;
+  background-clip: padding-box;
   position: relative;
-  color: #e0e0e0;
-  padding: 1rem;
+  color: var(--text-neon-bright);
+  padding: 1.25rem;
   display: flex;
   flex-direction: column;
 }
 
+/* Workstation screen bezel effect */
 .game-card::before {
   content: '';
   position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: var(--gradient-neon-border);
+  border-radius: 14px;
+  z-index: -1;
+  opacity: 0.6;
+  animation: neon-pulse 3s ease-in-out infinite alternate;
+}
+
+/* Monitor screen scanlines effect */
+.game-card::after {
+  content: '';
+  position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 4px;
-  background: linear-gradient(90deg, #ef4444, #10b981);
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 217, 255, 0.03) 2px,
+    rgba(0, 217, 255, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes neon-pulse {
+  0% {
+    opacity: 0.4;
+    filter: brightness(1) saturate(1);
+  }
+  100% {
+    opacity: 0.8;
+    filter: brightness(1.2) saturate(1.4);
+  }
 }
 
 .game-card:hover {
+  transform: translateY(-8px) scale(1.02);
   box-shadow:
-    0 16px 24px rgba(0, 0, 0, 0.4),
-    0 18px 36px rgba(64, 123, 255, 0.25);
-  transform: translateY(-10px) scale(1.025);
-  border-color: rgba(64, 123, 255, 0.4);
+    var(--shadow-studio),
+    var(--shadow-neon),
+    0 0 30px rgba(0, 217, 255, 0.2);
   z-index: 10;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
+.game-card:hover::before {
+  opacity: 1;
+  animation-duration: 1.5s;
+}
+
+/* Workstation header styling */
 .game-card h3 {
   margin-top: 0;
-  color: #f0f0f0;
+  color: var(--text-neon-bright);
+  font-family: 'Fira Code', monospace;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+}
+
+/* Add terminal-style cursor after headers */
+.game-card h3::after {
+  content: '█';
+  color: var(--color-neon-green);
+  animation: cursor-blink 1s infinite;
+  margin-left: 4px;
+}
+
+@keyframes cursor-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
 }
 
 .game-card p {
-  margin-bottom: 0.5rem;
-  color: #a0a0a0;
-}
-
-/* Button styles */
-.game-button {
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  padding: 0.5rem 1rem;
-  border-radius: 0.625rem; /* Slightly more rounded */
-  will-change: transform, box-shadow;
-  box-shadow:
-    0 4px 8px rgba(0, 0, 0, 0.2),
-    0 3px 6px rgba(59, 130, 246, 0.15); /* Updated shadow */
-  background: linear-gradient(145deg, #3b82f6, #1d4ed8); /* Updated gradient */
-  color: #e6e6e6; /* Softer text color */
+  margin-bottom: 0.75rem;
+  color: var(--text-muted-console);
+  font-family: 'Fira Code', monospace;
+  font-size: 0.85rem;
+  line-height: 1.4;
   position: relative;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.15); /* Slightly more visible border */
-  text-transform: uppercase;
-  letter-spacing: 0.075em; /* Slightly more letter spacing */
+  z-index: 2;
 }
 
-.game-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    120deg,
+/* Studio Area Specific Styling */
+.studio-executive::before {
+  background: linear-gradient(90deg, var(--color-neon-blue), var(--color-neon-pink));
+}
+
+.studio-dev::before {
+  background: linear-gradient(90deg, var(--color-neon-green), var(--color-pixel-yellow));
+}
+
+.studio-business::before {
+  background: linear-gradient(90deg, var(--color-cyber-purple), var(--color-retro-orange));
+}
+
+/* Add subtle area-specific tints */
+.studio-executive {
+  box-shadow: var(--shadow-studio), 0 0 20px rgba(0, 217, 255, 0.15);
+}
+
+.studio-dev {
+  box-shadow: var(--shadow-studio), 0 0 20px rgba(0, 255, 136, 0.15);
+}
+
+.studio-business {
+  box-shadow: var(--shadow-studio), 0 0 20px rgba(136, 0, 255, 0.15);
+}
+
+.studio-executive:hover {
+  box-shadow: var(--shadow-studio), 0 0 30px rgba(0, 217, 255, 0.3);
+}
+
+.studio-dev:hover {
+  box-shadow: var(--shadow-studio), 0 0 30px rgba(0, 255, 136, 0.3);
+}
+
+.studio-business:hover {
+  box-shadow: var(--shadow-studio), 0 0 30px rgba(136, 0, 255, 0.3);
+}
+
+/* Add data flowing animation for active systems */
+@keyframes data-flow {
+  0% {
+    background-position: 0% 50%;
+    opacity: 0.3;
+  }
+  50% {
+    background-position: 100% 50%;
+    opacity: 0.7;
+  }
+  100% {
+    background-position: 200% 50%;
+    opacity: 0.3;
+  }
+}
+
+/* Studio productivity indicators */
+.game-card.active-workstation {
+  position: relative;
+}
+
+.game-card.active-workstation::after {
+  background: repeating-linear-gradient(
+    90deg,
     transparent,
-    rgba(255, 255, 255, 0.1),
-    transparent
+    transparent 10px,
+    rgba(0, 217, 255, 0.1) 10px,
+    rgba(0, 217, 255, 0.1) 12px
   );
-  transition: all 0.6s;
+  animation: data-flow 2s linear infinite;
 }
 
-.game-button:hover:not(:disabled) {
-  transform: translateY(-5px) scale(1.055);
-  box-shadow:
-    0 10px 18px rgba(0, 0, 0, 0.25),
-    0 6px 12px rgba(64, 123, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.4);
-  background: linear-gradient(145deg, #4a8dff, #2563eb);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* Studio growth progression indicators */
+.studio-level-1 { border-image: linear-gradient(90deg, #666, #888) 1; }
+.studio-level-2 { border-image: linear-gradient(90deg, #00D9FF, #0088CC) 1; }
+.studio-level-3 { border-image: linear-gradient(90deg, #00FF88, #00CC66) 1; }
+.studio-level-4 { border-image: linear-gradient(90deg, #FFDD00, #CCAA00) 1; }
+.studio-level-5 { border-image: linear-gradient(90deg, #FF0080, #CC0066) 1; }
+
+/* Money/value display enhancements */
+.money-positive {
+  color: var(--text-code-green) !important;
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
+  font-weight: bold;
 }
 
-.game-button:hover:not(:disabled)::before {
-  left: 100%;
+.money-negative {
+  color: var(--text-error-red) !important;
+  text-shadow: 0 0 8px rgba(255, 68, 68, 0.6);
+  font-weight: bold;
 }
 
-.game-button:active:not(:disabled) {
-  transform: translateY(2px) scale(0.98);
-  box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.1),
-    0 1px 2px rgba(64, 123, 255, 0.05);
-  background: linear-gradient(145deg, #1e40af, #2563eb);
+.money-warning {
+  color: var(--text-warning-amber) !important;
+  text-shadow: 0 0 8px rgba(255, 170, 0, 0.6);
+  font-weight: bold;
 }
 
-.game-button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  box-shadow: none;
-  transform: scale(0.95);
-  background: linear-gradient(145deg, #4b5563, #374151);
-  border-color: transparent;
-  filter: grayscale(0.7) brightness(0.8);
+/* Progress bars with tycoon styling */
+.tycoon-progress {
+  background: var(--bg-workstation);
+  border: 1px solid var(--color-neon-blue);
+  border-radius: 4px;
+  height: 8px;
+  overflow: hidden;
   position: relative;
 }
 
-.game-button:disabled::after {
+.tycoon-progress::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
   height: 100%;
-  background: repeating-linear-gradient(
-    45deg,
-    rgba(0, 0, 0, 0.1),
-    rgba(0, 0, 0, 0.1) 4px,
-    transparent 4px,
-    transparent 8px
-  );
-  pointer-events: none;
+  background: linear-gradient(90deg, var(--color-neon-blue), var(--color-neon-green));
+  transition: width 0.5s ease;
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+}
+
+/* Retro terminal text effects */
+.terminal-text {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.85rem;
+  color: var(--color-neon-green);
+  text-shadow: 0 0 5px rgba(0, 255, 136, 0.8);
+  letter-spacing: 0.05em;
+}
+
+.terminal-prompt::before {
+  content: '> ';
+  color: var(--color-neon-blue);
+}
+
+/* Subtle workstation ambience */
+@keyframes workstation-ambience {
+  0%, 100% {
+    box-shadow: var(--shadow-studio), 0 0 15px rgba(0, 217, 255, 0.1);
+  }
+  50% {
+    box-shadow: var(--shadow-studio), 0 0 25px rgba(0, 217, 255, 0.2);
+  }
+}
+
+.game-card {
+  animation: workstation-ambience 4s ease-in-out infinite;
+}
+
+/* Workstation icon indicators */
+.game-card h3 {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.game-card h3::before {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: inline-block;
+  font-size: 1.2em;
+  line-height: 1;
+  content: '🖥️'; /* Default workstation icon */
+}
+
+/* Specific workstation types based on text content */
+.game-card h3:is([class*="financial"], :contains("Financial"), :contains("Finance"), :contains("Money"))::before {
+  content: '💰';
+}
+
+.game-card h3:is([class*="project"], :contains("Project"), :contains("Development"))::before {
+  content: '🚀';
+}
+
+.game-card h3:is([class*="employee"], :contains("Employee"), :contains("Team"), :contains("Staff"))::before {
+  content: '👥';
+}
+
+.game-card h3:is([class*="research"], :contains("Research"))::before {
+  content: '🔬';
+}
+
+.game-card h3:is([class*="shipping"], :contains("Shipping"), :contains("Release"))::before {
+  content: '📦';
+}
+
+.game-card h3:is([class*="events"], :contains("Events"), :contains("News"))::before {
+  content: '📰';
+}
+
+.game-card h3:is([class*="franchise"], :contains("Franchise"))::before {
+  content: '🏭';
+}
+
+.game-card h3:is([class*="stock"], :contains("Stock"), :contains("Investment"))::before {
+  content: '📈';
+}
+
+.game-card h3:is([class*="culture"], :contains("Culture"), :contains("Morale"))::before {
+  content: '🎭';
+}
+
+.game-card h3:is([class*="achievement"], :contains("Achievement"))::before {
+  content: '🏆';
+}
+
+.game-card h3:is([class*="time"], :contains("Time"))::before {
+  content: '⏰';
+}
+
+/* Enhanced Enterprise Dashboard Styling */
+.enterprise-dashboard {
+  font-family: 'Fira Code', 'JetBrains Mono', monospace;
+}
+
+.executive-header {
+  position: relative;
+  z-index: 100;
+}
+
+/* Animated circuit pattern for header background */
+.circuit-pattern {
+  background-image:
+    linear-gradient(90deg, rgba(0, 217, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(0, 217, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 136, 0.05) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(0, 255, 136, 0.05) 1px, transparent 1px);
+  background-size: 50px 50px, 50px 50px, 100px 100px, 100px 100px;
+  animation: circuit-flow 20s linear infinite;
+}
+
+@keyframes circuit-flow {
+  0% { background-position: 0 0, 0 0, 0 0, 0 0; }
+  100% { background-position: 50px 50px, -50px -50px, 100px 100px, -100px -100px; }
+}
+
+/* Studio logo enhancements */
+.studio-logo-container {
+  position: relative;
+}
+
+.logo-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, rgba(0, 217, 255, 0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: logo-pulse 3s ease-in-out infinite;
+}
+
+@keyframes logo-pulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+}
+
+/* Gradient flow animation for titles */
+@keyframes gradient-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Status indicator animations */
+@keyframes pulse-glow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+/* Tycoon Game Studio Action Buttons */
+.game-button {
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fira Code', monospace;
+  font-weight: 600;
+  font-size: 0.8rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  will-change: transform, box-shadow;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    inset 0 2px 4px rgba(255, 255, 255, 0.1);
+  background: linear-gradient(145deg, var(--color-neon-blue), var(--color-cyber-purple));
+  color: var(--text-neon-bright);
+  position: relative;
+  overflow: hidden;
+  border: 2px solid transparent;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 8px rgba(0, 217, 255, 0.6);
+}
+
+/* Holographic button effect */
+.game-button::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, var(--color-neon-blue), var(--color-neon-green), var(--color-neon-pink), var(--color-cyber-purple));
+  border-radius: 10px;
+  z-index: -1;
+  opacity: 0.7;
+  animation: button-glow 2s linear infinite;
+}
+
+/* Data stream effect */
+.game-button::after {
+  content: '> EXECUTE';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.7rem;
+  opacity: 0;
+  transition: all 0.3s ease;
+  color: var(--color-neon-green);
+  z-index: 2;
+}
+
+@keyframes button-glow {
+  0%, 100% {
+    background-position: 0% 50%;
+    opacity: 0.5;
+  }
+  50% {
+    background-position: 100% 50%;
+    opacity: 0.9;
+  }
+}
+
+.game-button:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.4),
+    0 0 25px rgba(0, 217, 255, 0.4),
+    inset 0 2px 4px rgba(255, 255, 255, 0.2);
+  background: linear-gradient(145deg, var(--color-neon-green), var(--color-neon-blue));
+  text-shadow: 0 0 12px rgba(0, 255, 136, 0.8);
+}
+
+.game-button:hover:not(:disabled)::before {
+  animation-duration: 0.8s;
+  opacity: 1;
+}
+
+.game-button:hover:not(:disabled)::after {
+  opacity: 1;
+}
+
+.game-button:active:not(:disabled) {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.3),
+    0 0 15px rgba(0, 217, 255, 0.3),
+    inset 0 3px 6px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(145deg, var(--color-cyber-purple), var(--color-neon-blue));
+}
+
+/* Disabled button - look like offline workstation */
+.game-button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    inset 0 1px 2px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(145deg, #2A2A3A, #1A1A24);
+  border-color: #333;
+  filter: grayscale(1) brightness(0.5);
+  text-shadow: none;
+  position: relative;
+}
+
+.game-button:disabled::before {
+  animation: none;
+  opacity: 0.2;
+  background: #333;
+}
+
+.game-button:disabled::after {
+  content: '> OFFLINE';
+  opacity: 0.5;
+  color: var(--color-console-red);
 }
 
 /* Dark mode specific styles */
