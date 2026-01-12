@@ -161,6 +161,11 @@ export function useGameLoop() {
     // Process stock price fluctuations
     processStockPriceFluctuations(dayProgress);
 
+    // Process enhanced stock features
+    processDividendPayments();
+    checkPriceAlerts();
+    processMarketEvents(dayProgress);
+
     // Batch apply all changes
     applyBatchedChanges(changes);
   }, [state.projects, state.employees, state.morale, state.currentDate, state.money, state.stocks, actions]);
@@ -536,6 +541,133 @@ export function useGameLoop() {
       actions.updateStockPrices(stockUpdates);
     }
   }, [state.stocks, state.completedProjects, state.currentDate, actions]);
+
+  // Process dividend payments for eligible stocks
+  const processDividendPayments = useCallback(() => {
+    if (!state.portfolio.holdings.length) return;
+
+    const currentTime = new Date();
+    const timeSinceLastCheck = state.portfolio.lastDividendCheck
+      ? (currentTime - new Date(state.portfolio.lastDividendCheck)) / (1000 * 60 * 60 * 24) // days
+      : 90; // First time, assume 90 days passed
+
+    // Check dividends quarterly (every 90 game days)
+    if (timeSinceLastCheck >= 90) {
+      state.portfolio.holdings.forEach(holding => {
+        const stock = state.stocks.find(s => s.id === holding.stockId);
+        if (stock && stock.dividendYield && stock.dividendYield > 0) {
+          const quarterlyDividendRate = stock.dividendYield / 4; // Quarterly payment
+          const dividendAmount = holding.quantity * stock.currentPrice * quarterlyDividendRate;
+
+          if (dividendAmount > 0.01) { // Only pay if significant amount
+            actions.payDividends(stock.id, dividendAmount);
+            actions.addNotification({
+              message: `Received $${dividendAmount.toFixed(2)} dividend from ${stock.symbol}`,
+              type: 'success'
+            });
+          }
+        }
+      });
+
+      // Update last dividend check time
+      actions.updatePortfolio({ lastDividendCheck: currentTime.toISOString() });
+    }
+  }, [state.portfolio, state.stocks, actions]);
+
+  // Check price alerts and trigger notifications
+  const checkPriceAlerts = useCallback(() => {
+    if (!state.portfolio.priceAlerts.length) return;
+
+    state.portfolio.priceAlerts.forEach(alert => {
+      if (!alert.active) return;
+
+      const stock = state.stocks.find(s => s.id === alert.stockId);
+      if (!stock) return;
+
+      let triggered = false;
+      if (alert.direction === 'above' && stock.currentPrice >= alert.targetPrice) {
+        triggered = true;
+      } else if (alert.direction === 'below' && stock.currentPrice <= alert.targetPrice) {
+        triggered = true;
+      }
+
+      if (triggered) {
+        actions.addNotification({
+          message: `🚨 Price Alert: ${stock.symbol} is ${alert.direction} $${alert.targetPrice.toFixed(2)} (Current: $${stock.currentPrice.toFixed(2)})`,
+          type: 'warning'
+        });
+        // Deactivate alert after triggering
+        actions.removePriceAlert(alert.id);
+      }
+    });
+  }, [state.portfolio.priceAlerts, state.stocks, actions]);
+
+  // Process random market events that affect stock prices
+  const processMarketEvents = useCallback((dayProgress) => {
+    // Generate market events randomly (roughly once per month)
+    const eventChance = dayProgress * 0.033; // ~1% chance per day
+    if (Math.random() > eventChance) return;
+
+    const marketEvents = [
+      {
+        title: "Gaming Industry Growth",
+        description: "Reports show strong gaming industry growth this quarter",
+        affectedSectors: ['gaming'],
+        priceImpact: 0.05, // +5%
+        duration: 3 // days
+      },
+      {
+        title: "Tech Stock Rally",
+        description: "Major breakthrough in AI technology drives tech stocks higher",
+        affectedSectors: ['tech'],
+        priceImpact: 0.08,
+        duration: 2
+      },
+      {
+        title: "Market Volatility",
+        description: "Global economic uncertainty causes market-wide volatility",
+        affectedSectors: ['gaming', 'tech', 'hardware', 'media'],
+        priceImpact: -0.03,
+        duration: 5
+      },
+      {
+        title: "Hardware Shortage",
+        description: "Global chip shortage impacts hardware manufacturers",
+        affectedSectors: ['hardware'],
+        priceImpact: -0.06,
+        duration: 7
+      },
+      {
+        title: "Crypto Surge",
+        description: "Cryptocurrency market experiences major rally",
+        affectedSectors: ['crypto'],
+        priceImpact: 0.12,
+        duration: 1
+      }
+    ];
+
+    const selectedEvent = marketEvents[Math.floor(Math.random() * marketEvents.length)];
+
+    // Apply immediate price impact
+    const affectedStocks = state.stocks.filter(stock =>
+      selectedEvent.affectedSectors.includes(stock.sector)
+    );
+
+    if (affectedStocks.length > 0) {
+      const stockUpdates = affectedStocks.map(stock => ({
+        id: stock.id,
+        currentPrice: Math.max(1.0, stock.currentPrice * (1 + selectedEvent.priceImpact)),
+        trend: Math.max(0.95, Math.min(1.05, stock.trend + selectedEvent.priceImpact * 0.5))
+      }));
+
+      actions.updateStockPrices(stockUpdates);
+      actions.triggerMarketEvent(selectedEvent);
+      actions.addNotification({
+        message: `📈 Market Event: ${selectedEvent.title}`,
+        type: 'info'
+      });
+    }
+  }, [state.stocks, actions]);
 
   // Start/stop game loop based on game speed
   useEffect(() => {

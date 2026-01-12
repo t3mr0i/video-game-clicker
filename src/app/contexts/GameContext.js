@@ -34,7 +34,17 @@ const ACTIONS = {
   BUY_STOCK: 'BUY_STOCK',
   SELL_STOCK: 'SELL_STOCK',
   UPDATE_STOCK_PRICES: 'UPDATE_STOCK_PRICES',
-  UPDATE_PORTFOLIO: 'UPDATE_PORTFOLIO'
+  UPDATE_PORTFOLIO: 'UPDATE_PORTFOLIO',
+
+  // Enhanced stock features
+  PAY_DIVIDENDS: 'PAY_DIVIDENDS',
+  ADD_WATCHLIST: 'ADD_WATCHLIST',
+  REMOVE_WATCHLIST: 'REMOVE_WATCHLIST',
+  CREATE_PRICE_ALERT: 'CREATE_PRICE_ALERT',
+  REMOVE_PRICE_ALERT: 'REMOVE_PRICE_ALERT',
+  TRIGGER_MARKET_EVENT: 'TRIGGER_MARKET_EVENT',
+  UPDATE_MARKET_STATUS: 'UPDATE_MARKET_STATUS',
+  CLEAR_ALL_NOTIFICATIONS: 'CLEAR_ALL_NOTIFICATIONS'
 };
 
 // Use the default game state from config
@@ -306,6 +316,92 @@ function gameReducer(state, action) {
         portfolio: { ...state.portfolio, ...action.payload }
       };
 
+    case ACTIONS.PAY_DIVIDENDS:
+      {
+        const { stockId, dividendAmount } = action.payload;
+        return {
+          ...state,
+          money: state.money + dividendAmount,
+          portfolio: {
+            ...state.portfolio,
+            totalDividendsReceived: state.portfolio.totalDividendsReceived + dividendAmount
+          },
+          stocks: state.stocks.map(stock =>
+            stock.id === stockId ? { ...stock, lastDividendDate: new Date().toISOString() } : stock
+          )
+        };
+      }
+
+    case ACTIONS.ADD_WATCHLIST:
+      return {
+        ...state,
+        portfolio: {
+          ...state.portfolio,
+          watchlist: [...state.portfolio.watchlist, action.payload]
+        }
+      };
+
+    case ACTIONS.REMOVE_WATCHLIST:
+      return {
+        ...state,
+        portfolio: {
+          ...state.portfolio,
+          watchlist: state.portfolio.watchlist.filter(stockId => stockId !== action.payload)
+        }
+      };
+
+    case ACTIONS.CREATE_PRICE_ALERT:
+      return {
+        ...state,
+        portfolio: {
+          ...state.portfolio,
+          priceAlerts: [...state.portfolio.priceAlerts, {
+            id: Date.now().toString(),
+            ...action.payload,
+            active: true,
+            createdDate: new Date().toISOString()
+          }]
+        }
+      };
+
+    case ACTIONS.REMOVE_PRICE_ALERT:
+      return {
+        ...state,
+        portfolio: {
+          ...state.portfolio,
+          priceAlerts: state.portfolio.priceAlerts.filter(alert => alert.id !== action.payload)
+        }
+      };
+
+    case ACTIONS.TRIGGER_MARKET_EVENT:
+      return {
+        ...state,
+        stockMarket: {
+          ...state.stockMarket,
+          marketEvents: [...state.stockMarket.marketEvents, {
+            id: Date.now().toString(),
+            ...action.payload,
+            timestamp: new Date().toISOString()
+          }],
+          lastEventDate: new Date().toISOString()
+        }
+      };
+
+    case ACTIONS.UPDATE_MARKET_STATUS:
+      return {
+        ...state,
+        stockMarket: {
+          ...state.stockMarket,
+          ...action.payload
+        }
+      };
+
+    case ACTIONS.CLEAR_ALL_NOTIFICATIONS:
+      return {
+        ...state,
+        notifications: []
+      };
+
     default:
       return state;
   }
@@ -451,6 +547,46 @@ export function GameProvider({ children }) {
     updatePortfolio: (portfolioUpdate) => dispatch({
       type: ACTIONS.UPDATE_PORTFOLIO,
       payload: portfolioUpdate
+    }),
+
+    // Enhanced stock features
+    payDividends: (stockId, dividendAmount) => dispatch({
+      type: ACTIONS.PAY_DIVIDENDS,
+      payload: { stockId, dividendAmount }
+    }),
+
+    addToWatchlist: (stockId) => dispatch({
+      type: ACTIONS.ADD_WATCHLIST,
+      payload: stockId
+    }),
+
+    removeFromWatchlist: (stockId) => dispatch({
+      type: ACTIONS.REMOVE_WATCHLIST,
+      payload: stockId
+    }),
+
+    createPriceAlert: (stockId, targetPrice, direction) => dispatch({
+      type: ACTIONS.CREATE_PRICE_ALERT,
+      payload: { stockId, targetPrice, direction }
+    }),
+
+    removePriceAlert: (alertId) => dispatch({
+      type: ACTIONS.REMOVE_PRICE_ALERT,
+      payload: alertId
+    }),
+
+    triggerMarketEvent: (eventData) => dispatch({
+      type: ACTIONS.TRIGGER_MARKET_EVENT,
+      payload: eventData
+    }),
+
+    updateMarketStatus: (statusUpdate) => dispatch({
+      type: ACTIONS.UPDATE_MARKET_STATUS,
+      payload: statusUpdate
+    }),
+
+    clearAllNotifications: () => dispatch({
+      type: ACTIONS.CLEAR_ALL_NOTIFICATIONS
     }),
 
     // Game management

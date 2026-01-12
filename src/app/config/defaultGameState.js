@@ -934,7 +934,12 @@ export const defaultGameState = {
       historicalPrices: [125.40],
       volatility: 0.03,
       trend: 1.0,
-      sector: 'gaming'
+      sector: 'gaming',
+      dividendYield: 0.015, // 1.5% annual dividend yield
+      lastDividendDate: null,
+      marketCap: 35.2, // billions
+      peRatio: 18.5,
+      description: 'Leading sports and entertainment gaming company'
     },
     {
       id: 'stock_activision',
@@ -944,7 +949,12 @@ export const defaultGameState = {
       historicalPrices: [78.90],
       volatility: 0.04,
       trend: 1.0,
-      sector: 'gaming'
+      sector: 'gaming',
+      dividendYield: 0.021, // 2.1% annual dividend yield
+      lastDividendDate: null,
+      marketCap: 62.1,
+      peRatio: 25.3,
+      description: 'Major publisher of Call of Duty and World of Warcraft'
     },
     {
       id: 'stock_take_two',
@@ -1035,7 +1045,12 @@ export const defaultGameState = {
       historicalPrices: [415.20],
       volatility: 0.02,
       trend: 1.0,
-      sector: 'tech'
+      sector: 'tech',
+      dividendYield: 0.024, // 2.4% annual dividend yield
+      lastDividendDate: null,
+      marketCap: 3100.0,
+      peRatio: 32.8,
+      description: 'Technology giant with Xbox gaming division and cloud services'
     },
     {
       id: 'stock_apple',
@@ -1156,7 +1171,19 @@ export const defaultGameState = {
     totalInvested: 0,
     totalValue: 0,
     unrealizedGainLoss: 0,
-    realizedGainLoss: 0
+    realizedGainLoss: 0,
+    totalDividendsReceived: 0,
+    watchlist: [], // array of stock IDs to monitor
+    priceAlerts: [], // { stockId, targetPrice, direction: 'above'|'below', active: true }
+    lastDividendCheck: null
+  },
+
+  // Stock Market Features
+  stockMarket: {
+    marketEvents: [], // { id, title, description, affectedStocks, priceImpact, duration }
+    marketStatus: 'open', // 'open', 'closed', 'volatile'
+    marketSentiment: 'neutral', // 'bullish', 'bearish', 'neutral'
+    lastEventDate: null
   },
 
   // Statistics
