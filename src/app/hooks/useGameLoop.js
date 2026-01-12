@@ -473,8 +473,9 @@ export function useGameLoop() {
       const momentumFactor = priceChangePercent > 0 ? 1.001 : 0.999;
       const newTrend = Math.max(0.95, Math.min(1.05, stock.trend * momentumFactor));
 
-      // Add some sector-based correlation
+      // Add sector-based correlation and influences
       let sectorInfluence = 0;
+
       if (stock.sector === 'gaming') {
         // Gaming stocks are influenced by overall game industry success
         const recentCompletedProjects = state.completedProjects.filter(p => {
@@ -487,8 +488,31 @@ export function useGameLoop() {
 
         if (recentCompletedProjects.length > 0) {
           const avgSuccess = recentCompletedProjects.reduce((sum, p) => sum + (p.revenue || 0), 0) / recentCompletedProjects.length;
-          sectorInfluence = avgSuccess > 100000 ? 0.001 : -0.001; // Small positive/negative influence
+          sectorInfluence = avgSuccess > 100000 ? 0.002 : -0.001; // Stronger positive influence for successful games
         }
+      } else if (stock.sector === 'tech') {
+        // Tech stocks are influenced by studio growth and technology adoption
+        const studioGrowthFactor = state.employees.length / 10; // More employees = tech adoption
+        const technologyUnlocks = state.platforms.filter(p => p.unlocked).length;
+        sectorInfluence = (studioGrowthFactor + technologyUnlocks) * 0.0001; // Small positive tech influence
+      } else if (stock.sector === 'hardware') {
+        // Hardware stocks influenced by platform diversity and high-end game development
+        const platformDiversity = state.platforms.filter(p => p.unlocked).length;
+        const aaaProjects = state.completedProjects.filter(p => p.size === 3).length;
+        sectorInfluence = (platformDiversity * 0.0002) + (aaaProjects * 0.0005);
+      } else if (stock.sector === 'media') {
+        // Media stocks influenced by game success and reputation
+        const reputationFactor = (state.reputation - 50) / 100; // Normalize around 50 base reputation
+        sectorInfluence = reputationFactor * 0.001;
+      } else if (stock.sector === 'crypto') {
+        // Crypto stocks are more volatile and influenced by tech sector performance
+        const techStocks = state.stocks.filter(s => s.sector === 'tech');
+        const avgTechTrend = techStocks.reduce((sum, s) => sum + s.trend, 0) / techStocks.length;
+        sectorInfluence = (avgTechTrend - 1.0) * 0.002; // Higher correlation with tech trends
+
+        // Add extra volatility for crypto
+        const extraVolatility = (Math.random() - 0.5) * 0.01;
+        sectorInfluence += extraVolatility;
       }
 
       const finalPrice = Math.max(1.0, newPrice * (1 + sectorInfluence));

@@ -925,12 +925,13 @@ export const defaultGameState = {
 
   // Stocks and Investment Portfolio
   stocks: [
+    // Gaming Companies
     {
       id: 'stock_ea',
       symbol: 'EA',
       name: 'Electronic Arts',
-      currentPrice: 145.50,
-      historicalPrices: [145.50],
+      currentPrice: 125.40,
+      historicalPrices: [125.40],
       volatility: 0.03,
       trend: 1.0,
       sector: 'gaming'
@@ -939,8 +940,8 @@ export const defaultGameState = {
       id: 'stock_activision',
       symbol: 'ATVI',
       name: 'Activision Blizzard',
-      currentPrice: 82.75,
-      historicalPrices: [82.75],
+      currentPrice: 78.90,
+      historicalPrices: [78.90],
       volatility: 0.04,
       trend: 1.0,
       sector: 'gaming'
@@ -949,18 +950,69 @@ export const defaultGameState = {
       id: 'stock_take_two',
       symbol: 'TTWO',
       name: 'Take-Two Interactive',
-      currentPrice: 156.25,
-      historicalPrices: [156.25],
+      currentPrice: 142.65,
+      historicalPrices: [142.65],
       volatility: 0.05,
       trend: 1.0,
       sector: 'gaming'
     },
     {
+      id: 'stock_ubisoft',
+      symbol: 'UBI',
+      name: 'Ubisoft Entertainment',
+      currentPrice: 32.15,
+      historicalPrices: [32.15],
+      volatility: 0.07,
+      trend: 1.0,
+      sector: 'gaming'
+    },
+    {
+      id: 'stock_nintendo',
+      symbol: 'NTDOY',
+      name: 'Nintendo Co Ltd',
+      currentPrice: 58.75,
+      historicalPrices: [58.75],
+      volatility: 0.04,
+      trend: 1.0,
+      sector: 'gaming'
+    },
+    {
+      id: 'stock_sony',
+      symbol: 'SNE',
+      name: 'Sony Group Corporation',
+      currentPrice: 89.45,
+      historicalPrices: [89.45],
+      volatility: 0.03,
+      trend: 1.0,
+      sector: 'gaming'
+    },
+    {
+      id: 'stock_epic',
+      symbol: 'EPIC',
+      name: 'Epic Games (Private)',
+      currentPrice: 165.00,
+      historicalPrices: [165.00],
+      volatility: 0.08,
+      trend: 1.0,
+      sector: 'gaming'
+    },
+    {
+      id: 'stock_valve',
+      symbol: 'VALVE',
+      name: 'Valve Corporation',
+      currentPrice: 210.80,
+      historicalPrices: [210.80],
+      volatility: 0.06,
+      trend: 1.0,
+      sector: 'gaming'
+    },
+    // Technology Companies
+    {
       id: 'stock_unity',
       symbol: 'U',
       name: 'Unity Software',
-      currentPrice: 34.80,
-      historicalPrices: [34.80],
+      currentPrice: 28.60,
+      historicalPrices: [28.60],
       volatility: 0.08,
       trend: 1.0,
       sector: 'tech'
@@ -969,8 +1021,8 @@ export const defaultGameState = {
       id: 'stock_nvidia',
       symbol: 'NVDA',
       name: 'NVIDIA Corporation',
-      currentPrice: 485.60,
-      historicalPrices: [485.60],
+      currentPrice: 520.35,
+      historicalPrices: [520.35],
       volatility: 0.06,
       trend: 1.0,
       sector: 'tech'
@@ -979,11 +1031,124 @@ export const defaultGameState = {
       id: 'stock_microsoft',
       symbol: 'MSFT',
       name: 'Microsoft Corporation',
-      currentPrice: 378.85,
-      historicalPrices: [378.85],
+      currentPrice: 415.20,
+      historicalPrices: [415.20],
       volatility: 0.02,
       trend: 1.0,
       sector: 'tech'
+    },
+    {
+      id: 'stock_apple',
+      symbol: 'AAPL',
+      name: 'Apple Inc',
+      currentPrice: 195.75,
+      historicalPrices: [195.75],
+      volatility: 0.03,
+      trend: 1.0,
+      sector: 'tech'
+    },
+    {
+      id: 'stock_google',
+      symbol: 'GOOGL',
+      name: 'Alphabet Inc',
+      currentPrice: 138.90,
+      historicalPrices: [138.90],
+      volatility: 0.04,
+      trend: 1.0,
+      sector: 'tech'
+    },
+    {
+      id: 'stock_amazon',
+      symbol: 'AMZN',
+      name: 'Amazon.com Inc',
+      currentPrice: 155.25,
+      historicalPrices: [155.25],
+      volatility: 0.04,
+      trend: 1.0,
+      sector: 'tech'
+    },
+    {
+      id: 'stock_meta',
+      symbol: 'META',
+      name: 'Meta Platforms Inc',
+      currentPrice: 485.60,
+      historicalPrices: [485.60],
+      volatility: 0.05,
+      trend: 1.0,
+      sector: 'tech'
+    },
+    // Emerging Tech / Gaming Hardware
+    {
+      id: 'stock_amd',
+      symbol: 'AMD',
+      name: 'Advanced Micro Devices',
+      currentPrice: 125.80,
+      historicalPrices: [125.80],
+      volatility: 0.07,
+      trend: 1.0,
+      sector: 'hardware'
+    },
+    {
+      id: 'stock_intel',
+      symbol: 'INTC',
+      name: 'Intel Corporation',
+      currentPrice: 42.15,
+      historicalPrices: [42.15],
+      volatility: 0.05,
+      trend: 1.0,
+      sector: 'hardware'
+    },
+    {
+      id: 'stock_qualcomm',
+      symbol: 'QCOM',
+      name: 'QUALCOMM Inc',
+      currentPrice: 165.90,
+      historicalPrices: [165.90],
+      volatility: 0.04,
+      trend: 1.0,
+      sector: 'hardware'
+    },
+    // Entertainment & Media
+    {
+      id: 'stock_disney',
+      symbol: 'DIS',
+      name: 'Walt Disney Company',
+      currentPrice: 98.35,
+      historicalPrices: [98.35],
+      volatility: 0.04,
+      trend: 1.0,
+      sector: 'media'
+    },
+    {
+      id: 'stock_netflix',
+      symbol: 'NFLX',
+      name: 'Netflix Inc',
+      currentPrice: 445.80,
+      historicalPrices: [445.80],
+      volatility: 0.05,
+      trend: 1.0,
+      sector: 'media'
+    },
+    // Cryptocurrency/Blockchain
+    {
+      id: 'stock_coinbase',
+      symbol: 'COIN',
+      name: 'Coinbase Global Inc',
+      currentPrice: 185.40,
+      historicalPrices: [185.40],
+      volatility: 0.12,
+      trend: 1.0,
+      sector: 'crypto'
+    },
+    {
+      id: 'stock_riot',
+      symbol: 'RIOT',
+      name: 'Riot Platforms Inc',
+      currentPrice: 12.85,
+      historicalPrices: [12.85],
+      volatility: 0.15,
+      trend: 1.0,
+      sector: 'crypto'
     }
   ],
   portfolio: {
